@@ -1,0 +1,6 @@
+git+https://github.com/sebastien/wwwclient.git
+argparse==1.2.1
+distribute==0.6.31
+wsgiref==0.1.2
+requests==2.0.1
+requests-cache==0.4.3

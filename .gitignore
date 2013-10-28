@@ -1,0 +1,6 @@
+venv/
+*.pyc
+*.db
+*.log
+fabfile.py
+*.sqlite
