@@ -7,48 +7,41 @@
 # -----------------------------------------------------------------------------
 # License : proprietary journalism++
 # -----------------------------------------------------------------------------
-# Creation : 28-Oct-2013
-# Last mod : 28-Oct-2013
+# Creation : 29-Oct-2013
+# Last mod : 29-Oct-2013
 # -----------------------------------------------------------------------------
 
 from collector          import Article
 from collector.channels import Channel, channel
 import collector.utils  as utils
 
-@channel("The New-York Times")
-class NewYorkTimes(Channel):
+@channel("The Guardian")
+class TheGuardian(Channel):
 	"""
-	based on NYT ARTICLE SEARCH API VERSION 2
-
-		doc: http://developer.nytimes.com/docs/read/article_search_api_v2#building-search
-
-		restrictions for `articlesearch`:
-			10      Calls per second
-			10,000  Calls per day
+	Key Rate Limits
+		12		Calls per second
+		5,000	Calls per day
 	"""
 
-	URI     = "http://api.nytimes.com/svc/search/v2/articlesearch.json"
-	API_KEY = "fb70195272f6883497bbda131a223746:5:68327206"
+	URI     = "http://content.guardianapis.com/search"
+	API_KEY = "79t54uxw5duhevew9arubq4v"
 
 	def get_articles(self, year, month=None, day=None):
 		different_date_formats = utils.get_all_date_formats(year, month, day)
 		articles = []
 		for format in different_date_formats:
 			response = self.request_api(keyword=format)
-			for article in response['response']['docs']:
+			for article in response['response']['results']:
 				# escaping conditions
-				if article.get('document_type') not in ('article', 'blog'):
-					# it's not an article
-					continue
 				if article.get('web_url') in [_.url for _ in articles] :
 					# this url is already added in the response
 					continue
-				a = Article(NewYorkTimes.__module__)
-				a.url      = article.get('web_url')
-				a.title    = article.get('headline')['main']
-				a.source   = article.get('source') or "The New York Times"
-				a.pub_date = article.get('pub_date')
-				a.snippet  = article.get('snippet')
+				a = Article(TheGuardian.__module__)
+				a.url      = article.get('webUrl')
+				a.title    = article.get('webTitle')
+				a.source   = "The Guardian"
+				a.pub_date = article.get('webPublicationDate')
+				a.snippet  = article.get('fields').get('trailText')
 				# a.images   = TODO
 				# scrape body from page
 				a.body     = self.scrape_body_article(a.url)
@@ -57,15 +50,21 @@ class NewYorkTimes(Channel):
 
 	def request_api(self, keyword):
 		payload  = {
-			"api-key" : NewYorkTimes.API_KEY,
-			"fq"      : "body:\"%s\"" % keyword
+			"api-key"     : TheGuardian.API_KEY,
+			"q"           : "\"%s\"" % keyword,
+			"show-fields" : "all",
+			# section list here: http://content.guardianapis.com/search?api-key=79t54uxw5duhevew9arubq4v
+			"section"     : "-fashion,-music,-artanddesign",
+			"page-size"   : 50 # maximum
 		}
-		r = self.session.get(NewYorkTimes.URI, params=payload)
+		r = self.session.get(TheGuardian.URI, params=payload)
+		if r.status_code != 200:
+			raise Exception("API returns an error:\n %s" % r.text)
 		return r.json()
 
 	def scrape_body_article(self, url):
 		r = self.session.get(url)
-		paragraphs = self.HTML.parse(r.text).query('.articleBody')
+		paragraphs = self.HTML.parse(r.text).query('#content')
 		body = " ".join(map(lambda _:_.text() ,paragraphs))
 		return body
 
@@ -76,11 +75,11 @@ class NewYorkTimes(Channel):
 # -----------------------------------------------------------------------------
 import unittest
 
-class TestNewYorkTimes(unittest.TestCase):
+class TestTheGuardian(unittest.TestCase):
 	'''Test Class'''
 
 	def setUp(self):
-		self.obj = NewYorkTimes()
+		self.obj = TheGuardian()
 
 	def test_get_articles(self):
 		date  = (2013,)
@@ -90,22 +89,13 @@ class TestNewYorkTimes(unittest.TestCase):
 		print "results: ", len(articles)
 		assert len(articles) > 0
 		for article in articles:
-			assert article.url  is not None
-			assert article.body is not None
+			assert article.url  is not None, article
+			assert article.body is not None, article
 			# print article.url
-
-	def test_scrape_body_article(self):
-		body = self.obj.scrape_body_article("http://www.nytimes.com/reuters/2013/10/24/world/africa/24reuters-kenya-security-australia.html?gwh=FD09ABA7920134DF9952DDAC7B08B332&_r=0")
-		assert type(body) is unicode
-		assert body != ""
-		# start of the article
-		assert "Militants may be planning attacks on nightclubs and other" in body
-		# end of the article
-		assert "indications of an imminent attack by Islamist militants." in body
 
 if __name__ == "__main__":
 	# unittest.main()
-	suite = unittest.TestLoader().loadTestsFromTestCase(TestNewYorkTimes)
+	suite = unittest.TestLoader().loadTestsFromTestCase(TestTheGuardian)
 	unittest.TextTestRunner(verbosity=2).run(suite)
 
 # EOF
