@@ -22,8 +22,9 @@ oparser.add_option("-C", "--nocache", action="store_true", dest="nocache",
 options, args = oparser.parse_args()
 assert len(args) > 0 and len(args) <= 3
 
-results = Collector().get_articles(*args)
+results = Collector(("collector.channels.nytimes.NewYorkTimes",)).get_articles(*args)
 
 print json.dumps([_.__dict__ for _ in results])
+
 exit()
 # EOF
