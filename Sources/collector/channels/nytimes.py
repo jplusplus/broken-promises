@@ -43,7 +43,7 @@ class NewYorkTimes(Channel):
 				if article.get('web_url') in [_.url for _ in articles] :
 					# this url is already added in the response
 					continue
-				a = Article(NewYorkTimes)
+				a = Article(NewYorkTimes.__module__)
 				a.url      = article.get('web_url')
 				a.title    = article.get('headline')['main']
 				a.source   = article.get('source') or "The New York Times"

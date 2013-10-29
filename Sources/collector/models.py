@@ -28,6 +28,7 @@ class Article:
 		self.ref_date = ref_date
 		self.images   = images
 		self.headline = headline
+		self.channel  = channel
 
 	def __unicode__(self):
 		return u"\"%s - %s...\"" % (self.source, self.title[:20])
