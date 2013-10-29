@@ -53,7 +53,7 @@ def get_all_date_formats(year, month=None, day=None):
 #------------------------------------------------
 import unittest
 
-class UtilsTimes(unittest.TestCase):
+class TestUtils(unittest.TestCase):
 	'''Test Class'''
 
 	def test_get_all_date_formats(self):
@@ -71,7 +71,7 @@ class UtilsTimes(unittest.TestCase):
 
 if __name__ == "__main__":
 	# unittest.main()
-	suite = unittest.TestLoader().loadTestsFromTestCase(UtilsTimes)
+	suite = unittest.TestLoader().loadTestsFromTestCase(TestUtils)
 	unittest.TextTestRunner(verbosity=2).run(suite)
 
 # EOF
