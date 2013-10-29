@@ -19,8 +19,8 @@ import collector.utils  as utils
 class TheGuardian(Channel):
 	"""
 	Key Rate Limits
-		12		Calls per second
-		5,000	Calls per day
+		12      Calls per second
+		5,000   Calls per day
 	"""
 
 	URI     = "http://content.guardianapis.com/search"
