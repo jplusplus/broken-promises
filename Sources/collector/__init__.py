@@ -40,7 +40,13 @@ class TestCollector(unittest.TestCase):
 	'''Test Class'''
 
 	def test_get_articles(self):
-		collector = Collector(("collector.channels.nytimes",))
+		channels = (
+			"collector.channels.nytimes",
+			# "collector.channels.guardian",
+		)
+		# channels  = utils.get_available_channels()
+
+		collector = Collector(channels)
 		results   = collector.get_articles("2014", "1")
 		print 
 		print "results:", len(results)
