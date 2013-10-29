@@ -23,10 +23,11 @@ requests_cache.install_cache('broken-promise', backend='sqlite', expire_after=30
 # DECORATORS
 #
 # -----------------------------------------------------------------------------
-def channel(name, description):
+def channel(description):
 	"""A decorator that allows to declare a specific channel with its
 	documentation."""
-	def wrapper(_): return Catalogue.RegisterChannel(name,description,_)
+	def wrapper(_):
+		return Catalogue.RegisterChannel(_.__module__.split('.')[-1],description,_)
 	return wrapper
 
 # -----------------------------------------------------------------------------

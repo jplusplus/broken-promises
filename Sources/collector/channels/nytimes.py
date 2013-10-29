@@ -11,11 +11,11 @@
 # Last mod : 28-Oct-2013
 # -----------------------------------------------------------------------------
 
-from collector.channels import Channel, channel
 from collector          import Article
-from collector.utils    import get_all_date_formats
+from collector.channels import Channel, channel
+import collector.utils as utils
 
-@channel("nytimes", "The New-York Times")
+@channel("The New-York Times")
 class NewYorkTimes(Channel):
 	"""
 	based on NYT ARTICLE SEARCH API VERSION 2
@@ -31,7 +31,7 @@ class NewYorkTimes(Channel):
 	API_KEY = "fb70195272f6883497bbda131a223746:5:68327206"
 
 	def get_articles(self, year, month=None, day=None):
-		different_date_formats = get_all_date_formats(year, month, day)
+		different_date_formats = utils.get_all_date_formats(year, month, day)
 		articles = []
 		for format in different_date_formats:
 			response = self.request_api(keyword=format)
