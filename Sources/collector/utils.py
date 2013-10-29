@@ -46,11 +46,27 @@ def get_all_date_formats(year, month=None, day=None):
 		formats.append("%s" % year)
 	return formats
 
-#------------------------------------------------
+import collector.channels  as channels
+import importlib
+
+def perform_channels_import(val):
+	if type(val) in (tuple, list):
+		return (import_channels_from_string(item) for item in val)
+	elif type(val) is type(""):
+		return (import_channels_from_string(val),)
+	else:
+		return (val,)
+
+def import_channels_from_string(val):
+	importlib.import_module(val)
+	module_name = val.split('.')[-1]
+	return channels.Catalogue.CHANNELS[module_name]['class']
+
+# -----------------------------------------------------------------------------
 #
 # TESTS
 #
-#------------------------------------------------
+# -----------------------------------------------------------------------------
 import unittest
 
 class TestUtils(unittest.TestCase):

@@ -11,7 +11,7 @@
 # Last mod : 29-Oct-2013
 # -----------------------------------------------------------------------------
 from models import Article
-import importlib
+import collector.utils as utils
 
 # -----------------------------------------------------------------------------
 #
@@ -21,7 +21,7 @@ import importlib
 class Collector:
 
 	def __init__(self, channels=tuple()):
-		self.channels = [channel() for channel in self.__perform_channels_import(channels)]
+		self.channels = [channel() for channel in utils.perform_channels_import(channels)]
 
 	def get_articles(self, year, month=None, day=None):
 		results = []
@@ -29,32 +29,18 @@ class Collector:
 			results += channel.get_articles(year, month, day)
 		return results
 
-	def __perform_channels_import(self, val):
-		if type(val) in (tuple, list):
-			return (self.__import_channels_from_string(item) for item in val)
-		elif type(val) is type(""):
-			return (self.__import_channels_from_string(val),)
-		else:
-			return (val,)
-
-	def __import_channels_from_string(self, val):
-		parts = val.split('.')
-		module_path, class_name = '.'.join(parts[:-1]), parts[-1]
-		module = importlib.import_module(module_path)
-		return getattr(module, class_name)
-
-#------------------------------------------------
+# -----------------------------------------------------------------------------
 #
 # TESTS
 #
-#------------------------------------------------
+# -----------------------------------------------------------------------------
 import unittest
 
 class TestCollector(unittest.TestCase):
 	'''Test Class'''
 
 	def test_get_articles(self):
-		collector = Collector(("collector.channels.nytimes.NewYorkTimes",))
+		collector = Collector(("collector.channels.nytimes",))
 		results   = collector.get_articles("2014", "1")
 		print 
 		print "results:", len(results)

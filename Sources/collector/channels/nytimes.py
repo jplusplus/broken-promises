@@ -11,10 +11,11 @@
 # Last mod : 28-Oct-2013
 # -----------------------------------------------------------------------------
 
-from collector.channels import Channel
+from collector.channels import Channel, channel
 from collector          import Article
 from collector.utils    import get_all_date_formats
 
+@channel("nytimes", "The New-York Times")
 class NewYorkTimes(Channel):
 	"""
 	based on NYT ARTICLE SEARCH API VERSION 2
@@ -68,11 +69,11 @@ class NewYorkTimes(Channel):
 		body = " ".join(map(lambda _:_.text() ,paragraphs))
 		return body
 
-#------------------------------------------------
+# -----------------------------------------------------------------------------
 #
 # TESTS
 #
-#------------------------------------------------
+# -----------------------------------------------------------------------------
 import unittest
 
 class TestNewYorkTimes(unittest.TestCase):

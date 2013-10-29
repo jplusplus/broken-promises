@@ -20,6 +20,39 @@ requests_cache.install_cache('broken-promise', backend='sqlite', expire_after=30
 
 # -----------------------------------------------------------------------------
 #
+# DECORATORS
+#
+# -----------------------------------------------------------------------------
+def channel(name, description):
+	"""A decorator that allows to declare a specific channel with its
+	documentation."""
+	def wrapper(_): return Catalogue.RegisterChannel(name,description,_)
+	return wrapper
+
+# -----------------------------------------------------------------------------
+#
+# CATALOGUE
+#
+# -----------------------------------------------------------------------------
+class Catalogue:
+	"""The Catalogue is a singleton that acts a registry for data sources
+	and their  channel, allowing to list and instanciate data collection
+	objects."""
+
+	CHANNELS    = {}
+
+	@classmethod
+	def RegisterChannel( self, name, description, channelClass ):
+		if name in self.CHANNELS: return channelClass
+		self.CHANNELS[name] = {
+			"name"  :name,
+			"doc"   :description,
+			"class" :channelClass
+		}
+		return channelClass
+
+# -----------------------------------------------------------------------------
+#
 #    CHANNEL BASE CLASS
 #
 # -----------------------------------------------------------------------------
@@ -27,11 +60,9 @@ requests_cache.install_cache('broken-promise', backend='sqlite', expire_after=30
 #  [ ] set an environment shared by all jobs in this module.
 #  [ ] handle error from scrapping, api, http requests
 #  [ ] logging
-
 class Channel:
 	"""A data channel is a class that allows to retrieve information from
 	a given channel (ie. The Guardian, New York Times, RSS, etc...)."""
-
 
 	def __init__(self):
 		self.HTML    = HTML
