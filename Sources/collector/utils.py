@@ -11,6 +11,10 @@
 # Last mod : 28-Oct-2013
 # -----------------------------------------------------------------------------
 import datetime
+import collector.channels  as channels
+import importlib
+import pkgutil
+import sys
 
 def get_all_date_formats(year, month=None, day=None):
 	formats = []
@@ -46,8 +50,8 @@ def get_all_date_formats(year, month=None, day=None):
 		formats.append("%s" % year)
 	return formats
 
-import collector.channels  as channels
-import importlib
+def get_available_channels():
+	return ["collector.channels.%s" % _[1] for _ in pkgutil.walk_packages(sys.modules['collector.channels'].__path__)]
 
 def perform_channels_import(val):
 	if type(val) in (tuple, list):
@@ -84,6 +88,11 @@ class TestUtils(unittest.TestCase):
 		formats = get_all_date_formats("2013", 10, "10")
 		formats.sort()
 		assert(formats == ['10 October 2013', '10 October, 2013', '10 by October 2013', '10 by October, 2013', '10 in October 2013', '10 in October, 2013', '10 of October 2013', '10 of October, 2013', '10th October 2013', '10th by October 2013', '10th by October, 2013', '10th in October 2013', '10th in October, 2013', '10th of October 2013', '10th of October, 2013', '2013-10-10', '2013/10/10']), formats
+
+	def test_get_available_channels(self):
+		channels = get_available_channels()
+		assert len(channels) > 0
+		assert "collector.channels.nytimes" in channels
 
 if __name__ == "__main__":
 	# unittest.main()
