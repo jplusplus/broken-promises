@@ -44,11 +44,12 @@ source .env
 pip install -r requirements_core.txt
 ```
 
-## Usage
+## CLI
+
+### Usage
 
 	$ ./Scripts/get_articles.py
 
-Options:
 
 ```
 Options:
