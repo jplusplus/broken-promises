@@ -13,16 +13,25 @@
 
 import optparse
 import json
-from   collector import Collector
+from collector import Collector
+import collector.utils as utils
 
 oparser = optparse.OptionParser(usage ="\n./%prog [options] year \n./%prog [options] year month\n./%prog [options] year month day")
 oparser.add_option("-C", "--nocache", action="store_true", dest="nocache",
-	help="Prevents from using the cache", default=False
-)
+	help = "Prevents from using the cache", default=False)
+oparser.add_option("-f", "--channelslistfile", action="store", dest="channels_file",
+	help = "Use this that as channels list to use", default=None)
 options, args = oparser.parse_args()
 assert len(args) > 0 and len(args) <= 3
 
-results = Collector(("collector.channels.nytimes.NewYorkTimes",)).get_articles(*args)
+channels = []
+if options.channels_file:
+	with open(options.channels_file) as f:
+		channels = [line.replace("\n", "") for line in f.readlines()]
+else:
+	channels = utils.get_available_channels()
+
+results = Collector(channels).get_articles(*args)
 
 print json.dumps([_.__dict__ for _ in results])
 
