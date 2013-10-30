@@ -21,6 +21,8 @@ oparser.add_option("-C", "--nocache", action="store_true", dest="nocache",
 	help = "Prevents from using the cache", default=False)
 oparser.add_option("-f", "--channelslistfile", action="store", dest="channels_file",
 	help = "Use this that as channels list to use", default=None)
+oparser.add_option("-c", "--channels", action="store", dest="channels_list",
+	help = "channels list comma separated", default=None)
 options, args = oparser.parse_args()
 assert len(args) > 0 and len(args) <= 3
 
@@ -30,6 +32,8 @@ if options.channels_file:
 		channels = [line.replace("\n", "") for line in f.readlines()]
 else:
 	channels = utils.get_available_channels()
+if options.channels_list:
+	channels = options.channels_list.split(",")
 
 results = Collector(channels).get_articles(*args)
 
