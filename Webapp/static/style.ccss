@@ -1,0 +1,25 @@
+table:
+	.pub_date, .ref_date:
+		border-radius: 10px
+		padding: 2px 4px
+	.ref_date:
+		float: left
+		background-color: #A7CEFF
+	.pub_date:
+		background-color: #FCBDC0
+	.title:
+		clear:both
+	.source:
+		margin: 0 auto
+		position:absolute
+		margin-left: 100px
+		font-size: 1.3em
+		color:#1D1D2C
+		border-radius: 10px
+		padding: 0px 4px
+		background-color: #ACF0A2
+	.title:
+		color:#000434
+		font-size: 1.3em
+	.url:
+		margin-top:10px

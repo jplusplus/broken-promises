@@ -4,3 +4,9 @@ distribute==0.6.31
 wsgiref==0.1.2
 requests==2.0.1
 requests-cache==0.4.3
+Flask==0.10.1
+Jinja2==2.7.1
+MarkupSafe==0.18
+Werkzeug==0.9.4
+itsdangerous==0.23
+Flask-Assets==0.8

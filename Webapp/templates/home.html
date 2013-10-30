@@ -1,0 +1,28 @@
+[% extends 'base.html' %]
+[% block content %]
+<h1>Broken Promises/Control Tower</h1>
+<div ng-controller="ArticlesCtrl">
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>Articles</th>
+				<th>Publication</th>
+				<th>Grade</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="article in articles" ng-click="pouet('{{article.$id}}')">
+				<td>
+					<div class="ref_date">{{article.ref_date}}</div>
+					<div class="source">{{article.source}}</div>
+					<div class="title">{{article.title}}</div>
+					<div class="snippet">{{article.snippet}}</div>
+					<div class="url"><a href="{{article.url}}">{{article.url}}</a></div>
+				</td>
+				<td><span class="pub_date">{{article.pub_date}}</span></td>
+				<td>-1 / +1 / +2</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+[% endblock %]

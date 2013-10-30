@@ -4,3 +4,5 @@ venv/
 *.log
 fabfile.py
 *.sqlite
+Webapp/static/.webassets-cache/
+Webapp/static/gen/*
