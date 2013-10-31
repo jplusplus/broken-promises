@@ -1,12 +1,21 @@
 table:
-	.pub_date, .ref_date:
+	tbody tr.article:
+		& td:
+			transition-property: background-color
+			transition-duration: .55s
+		&:hover:
+			& td:
+				background-color: #DBE3FF
+	.pub_date span, .ref_date:
 		border-radius: 10px
 		padding: 2px 4px
 	.ref_date:
 		float: left
 		background-color: #A7CEFF
 	.pub_date:
-		background-color: #FCBDC0
+		white-space:nowrap
+		span:
+			background-color: #FCBDC0
 	.title:
 		clear:both
 	.source:
@@ -18,8 +27,12 @@ table:
 		border-radius: 10px
 		padding: 0px 4px
 		background-color: #ACF0A2
+	.snippet:
+		font-size: 1.2em
 	.title:
 		color:#000434
 		font-size: 1.3em
 	.url:
 		margin-top:10px
+	.grade:
+		white-space:nowrap

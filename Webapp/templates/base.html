@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-app>
+<html lang="en" ng-app="brokenPromisesApp">
 	<head>
 		<meta charset="utf-8"></meta>
 		<link href='http://fonts.googleapis.com/css?family=Source+Code+Pro' rel='stylesheet' type='text/css' />
@@ -7,7 +7,7 @@
 		<link type="text/css" rel="stylesheet" href="[[url_for('static', filename='css/bootstrap.css')]]" media="all" />
 		<link type="text/css" rel="stylesheet" href="[[url_for('static', filename='css/bootstrap-theme.css')]]" media="all" />
 		<script type="text/javascript" src="//code.jquery.com/jquery.js"></script>
-		[% assets filter="clevercss", output="gen/style.css", "style.ccss" %]
+		[% assets filter="clevercss", output="gen/style.css", "ccss/style.ccss" %]
 			<link type="text/css" rel="stylesheet" href="[[ ASSET_URL ]]" media="all" />
 		[% endassets %]
 	</head>
@@ -16,7 +16,8 @@
 		[% block content %][% endblock %]
 		<script type="text/javascript" src="[[url_for('static', filename='js/angular.min.js') ]]"></script>
 		<script type="text/javascript" src="[[url_for('static', filename='js/bootstrap.js') ]]"></script>
-		[% assets filter="coffeescript", output="gen/scripts.js", "scripts.coffee" %]
+		<script type="text/javascript" src="[[url_for('static', filename='js/scrollto.js') ]]"></script>
+		[% assets filter="coffeescript", output="gen/scripts.js", "coffee/filters/nl2br.coffee", "coffee/directives/scroll-to.coffee","coffee/scripts.coffee" %]
 			<script type="text/javascript" src="[[ ASSET_URL ]]"></script>
 		[% endassets %]
 	</body>
