@@ -8,10 +8,10 @@
 # License : proprietary journalism++
 # -----------------------------------------------------------------------------
 # Creation : 28-Oct-2013
-# Last mod : 29-Oct-2013
+# Last mod : 31-Oct-2013
 # -----------------------------------------------------------------------------
 from models import Article
-import collector.utils as utils
+import collector.utils
 
 # -----------------------------------------------------------------------------
 #
@@ -21,7 +21,7 @@ import collector.utils as utils
 class Collector:
 
 	def __init__(self, channels=tuple()):
-		self.channels = [channel() for channel in utils.perform_channels_import(channels)]
+		self.channels = [channel() for channel in collector.utils.perform_channels_import(channels)]
 
 	def get_articles(self, year, month=None, day=None):
 		results = []
@@ -44,7 +44,7 @@ class TestCollector(unittest.TestCase):
 			"collector.channels.nytimes",
 			# "collector.channels.guardian",
 		)
-		# channels  = utils.get_available_channels()
+		# channels  = collector.utils.get_available_channels()
 
 		collector = Collector(channels)
 		results   = collector.get_articles("2014", "1")

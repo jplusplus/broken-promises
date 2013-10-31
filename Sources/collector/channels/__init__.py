@@ -27,7 +27,7 @@ def channel(description):
 	"""A decorator that allows to declare a specific channel with its
 	documentation."""
 	def wrapper(_):
-		return Catalogue.RegisterChannel(_.__module__.split('.')[-1],description,_)
+		return Catalogue.RegisterChannel( _.__module__.split('.')[-1], description, _ )
 	return wrapper
 
 # -----------------------------------------------------------------------------
