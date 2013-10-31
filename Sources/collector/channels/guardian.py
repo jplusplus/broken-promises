@@ -30,7 +30,12 @@ class TheGuardian(Channel):
 		different_date_formats = utils.get_all_date_formats(year, month, day)
 		articles = []
 		for format in different_date_formats:
-			response = self.request_api(keyword=format)
+			try:
+				response = self.request_api(keyword=format)
+			except Exception as e:
+				# log error
+				# print e
+				continue
 			for article in response['response']['results']:
 				# escaping conditions
 				if article.get('web_url') in [_.url for _ in articles] :
@@ -51,7 +56,7 @@ class TheGuardian(Channel):
 	def request_api(self, keyword):
 		payload  = {
 			"api-key"     : TheGuardian.API_KEY,
-			"q"           : "\"%s\"" % keyword,
+			"q"           : "\"%s\"" % (keyword),
 			"show-fields" : "all",
 			# section list here: http://content.guardianapis.com/search?api-key=79t54uxw5duhevew9arubq4v
 			"section"     : "-fashion,-music,-artanddesign",
@@ -59,7 +64,7 @@ class TheGuardian(Channel):
 		}
 		r = self.session.get(TheGuardian.URI, params=payload)
 		if r.status_code != 200:
-			raise Exception("API returns an error:\n %s" % r.text)
+			raise Exception("API returns an error:\n %s\n\n%s" % (r.text, payload))
 		return r.json()
 
 	def scrape_body_article(self, url):
@@ -82,7 +87,7 @@ class TestTheGuardian(unittest.TestCase):
 		self.obj = TheGuardian()
 
 	def test_get_articles(self):
-		date  = (2013,)
+		date  = (2013, 12)
 		articles = self.obj.get_articles(*date)
 		print
 		print date
