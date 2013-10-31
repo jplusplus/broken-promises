@@ -8,7 +8,7 @@
 # License : proprietary journalism++
 # -----------------------------------------------------------------------------
 # Creation : 28-Oct-2013
-# Last mod : 28-Oct-2013
+# Last mod : 31-Oct-2013
 # -----------------------------------------------------------------------------
 
 import optparse
@@ -26,18 +26,32 @@ oparser.add_option("-c", "--channels", action="store", dest="channels_list",
 options, args = oparser.parse_args()
 assert len(args) > 0 and len(args) <= 3
 
-channels = []
+channels = utils.get_available_channels()
 if options.channels_file:
 	with open(options.channels_file) as f:
 		channels = [line.replace("\n", "") for line in f.readlines()]
-else:
-	channels = utils.get_available_channels()
 if options.channels_list:
 	channels = options.channels_list.split(",")
 
 results = Collector(channels).get_articles(*args)
 
-print json.dumps([_.__dict__ for _ in results])
+#  MONGO
+from pymongo import MongoClient
+from bson.json_util import dumps
+
+client     = MongoClient('localhost', 27017)
+db         = client['broken-promises']
+collection = db['articles']
+
+for article in results:
+	previous = collection.find_one({"url" : article.url})
+	if not previous:
+		collection.insert(article.__dict__)
+	else:
+		collection.update({'_id':previous['_id']}, article.__dict__)
+
+# OUTPUT
+print dumps([_.__dict__ for _ in results])
 
 exit()
 # EOF

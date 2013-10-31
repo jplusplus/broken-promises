@@ -48,15 +48,17 @@ pip install -r requirements_core.txt
 
 ### Usage
 
-	$ ./Scripts/get_articles.py
+	$ ./Scripts/collect_articles.py
 
 
 ```
 Options:
   -h, --help            show this help message and exit
   -C, --nocache         Prevents from using the cache
-  -f CHANNELSFILE, --channelslistfile=CHANNELSFILE
-                        Use that file as channels list to use
+  -f CHANNELS_FILE, --channelslistfile=CHANNELS_FILE
+                        Use this that as channels list to use
+  -c CHANNELS_LIST, --channels=CHANNELS_LIST
+                        channels list comma separated
 ```
 
 ## Run tests
