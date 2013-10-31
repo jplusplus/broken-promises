@@ -27,6 +27,12 @@ class Collector:
 		results = []
 		for channel in self.channels:
 			results += channel.get_articles(year, month, day)
+		# TODO
+		# 	[ ]  check date in body
+		# 	[ ]  get the snippets with dates
+		# 	[ ]  set ref_date, multiple allowed
+		for result in results:
+			result.ref_date = (year, month, day)
 		return results
 
 # -----------------------------------------------------------------------------
