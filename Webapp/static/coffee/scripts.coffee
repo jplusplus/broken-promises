@@ -30,6 +30,7 @@ angular.module('brokenPromisesApp')
 				$scope.active_article = a
 
 		$scope.vote = (article, note) ->
+			article.note = note
 			Restangular.one('articles', article._id).get().then((article) =>
 				article.note = note
 				article.put()

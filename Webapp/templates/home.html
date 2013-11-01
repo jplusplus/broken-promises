@@ -11,16 +11,25 @@
 			</tr>
 		</thead>
 		<tbody>
-			<tr class="article" ng-repeat="article in articles" ng-click="setArticle(article)">
-				<td>
+			<tr
+				class="article"
+				ng-repeat="article in articles" 
+				ng-class="{
+					minus    : article.note   == -1, 
+					plus     : article.note   ==  1, 
+					plusplus : article.note   ==  2, 
+					active   : active_article == article,
+					voted    : article.note
+				}">
+				<td ng-click="setArticle(article)">
 					<div class="ref_date">{{article.ref_date | ref_date }}</div>
 					<div class="source">{{article.source}}</div>
 					<div class="title">{{article.title}}</div>
 					<div class="snippet">{{article.snippet}}</div>
 					<div class="body"
-						 ng-bind-html = "article.body | nl2br" 
-						 ng-if        = "active > 0 && active_article.$$hashKey == article.$$hashKey"
-						 scroll-to    = "300">
+						ng-bind-html = "article.body | nl2br"
+						ng-if        = "active > 0 && active_article.$$hashKey == article.$$hashKey"
+						scroll-to    = "300">		
 					</div>
 					<div class="url"><a href="{{article.url}}">{{article.url}}</a></div>
 				</td>
@@ -29,6 +38,7 @@
 					<a ng-click="vote(article, -1)">-1</a> / 
 					<a ng-click="vote(article,  1)">+1</a> / 
 					<a ng-click="vote(article,  2)">+2</a>
+					<div class="note">{{ article.note }}</div>
 				</td>
 			</tr>
 		</tbody>

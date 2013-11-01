@@ -1,39 +1,61 @@
 table:
 	tbody tr.article:
-		& td:
+		td:
 			transition-property: background-color
 			transition-duration: .55s
+		td:first-child:
 			cursor: pointer
-		&:hover:
-			& td:
+		&:not(.active):hover:
+			td:
 				background-color: #DBE3FF
-	.pub_date span, .ref_date:
-		border-radius: 10px
-		padding: 2px 4px
-	.ref_date:
-		float: left
-		background-color: #A7CEFF
-	.pub_date:
-		white-space:nowrap
-		span:
-			background-color: #FCBDC0
-	.title:
-		clear:both
-	.source:
-		margin: 0 auto
-		position:absolute
-		margin-left: 100px
-		font-size: 1.3em
-		color:#1D1D2C
-		border-radius: 10px
-		padding: 0px 4px
-		background-color: #ACF0A2
-	.snippet:
-		font-size: 1.2em
-	.title:
-		color:#000434
-		font-size: 1.3em
-	.url:
-		margin-top:10px
-	.grade:
-		white-space:nowrap
+		&.voted:
+			opacity:0.6
+			.title:
+				text-decoration: line-through
+		&.active:
+			opacity:1
+		.pub_date span, .ref_date:
+			border-radius: 10px
+			padding: 2px 4px
+		.ref_date:
+			float: left
+			background-color: #A7CEFF
+		.pub_date:
+			white-space:nowrap
+			span:
+				background-color: #FCBDC0
+		.title:
+			clear:both
+		.source:
+			margin: 0 auto
+			position:absolute
+			margin-left: 100px
+			font-size: 1.3em
+			color:#1D1D2C
+			border-radius: 10px
+			padding: 0px 4px
+			background-color: #ACF0A2
+		.snippet:
+			font-size: 1.2em
+		.title:
+			color:#000434
+			font-size: 1.3em
+		.url:
+			margin-top:10px
+		.body:
+			position: relative
+			overflow: auto
+			padding: 0px 40% 20px 20px
+		.grade:
+			white-space:nowrap
+			text-align:center
+			font-size: 1.4em
+			a:
+				cursor : pointer
+		.note:
+			font-size:2em
+			text-align:center
+		&.minus .note:
+			color: #EF3131
+		&.plusplus .note:
+			color: #249907
