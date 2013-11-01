@@ -20,7 +20,8 @@ RESOURCE_METHODS = ['GET', 'POST', 'DELETE']
 # Enable reads (GET), edits (PATCH), replacements (PUT) and deletes of
 # individual items  (defaults to read-only item access).
 ITEM_METHODS = ['GET', 'PATCH', 'PUT', 'DELETE']
-PAGINATION_DEFAULT = 1000
+PAGINATION_DEFAULT = 1000000
+PAGINATION_LIMIT = 1000000
 EXTRA_RESPONSE_FIELDS = []
 ALLOW_UNKNOWN = True
 schema = {

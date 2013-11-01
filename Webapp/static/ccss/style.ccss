@@ -1,8 +1,10 @@
 table:
 	tbody tr.article:
+		transition-property: opacity
+		transition-duration: .50s
 		td:
 			transition-property: background-color
-			transition-duration: .55s
+			transition-duration: .50s
 		td:first-child:
 			cursor: pointer
 		&:not(.active):hover:
