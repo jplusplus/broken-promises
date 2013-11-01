@@ -14,10 +14,12 @@
 
 	<body class="use-base">
 		[% block content %][% endblock %]
+		<script type="text/javascript" src="[[url_for('static', filename='js/underscore.js') ]]"></script>
 		<script type="text/javascript" src="[[url_for('static', filename='js/angular.min.js') ]]"></script>
+		<script type="text/javascript" src="[[url_for('static', filename='js/restangular.js') ]]"></script>
 		<script type="text/javascript" src="[[url_for('static', filename='js/bootstrap.js') ]]"></script>
 		<script type="text/javascript" src="[[url_for('static', filename='js/scrollto.js') ]]"></script>
-		[% assets filter="coffeescript", output="gen/scripts.js", "coffee/filters/nl2br.coffee", "coffee/directives/scroll-to.coffee","coffee/scripts.coffee" %]
+		[% assets filter="coffeescript", output="gen/scripts.js", "coffee/scripts.coffee", "coffee/filters/filters.coffee", "coffee/directives/scroll-to.coffee" %]
 			<script type="text/javascript" src="[[ ASSET_URL ]]"></script>
 		[% endassets %]
 	</body>

@@ -3,6 +3,7 @@ table:
 		& td:
 			transition-property: background-color
 			transition-duration: .55s
+			cursor: pointer
 		&:hover:
 			& td:
 				background-color: #DBE3FF

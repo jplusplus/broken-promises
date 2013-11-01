@@ -11,3 +11,9 @@ Werkzeug==0.9.4
 itsdangerous==0.23
 Flask-Assets==0.8
 pymongo==2.6.3
+Flask-RESTful==0.2.5
+eve==0.1.1
+cerberus==0.4.0
+events==0.2.0
+simplejson==3.3.0
+flask-pymongo==0.3.0

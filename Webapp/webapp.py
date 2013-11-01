@@ -13,8 +13,9 @@
 from flask import Flask, render_template, request, send_file, \
 	send_from_directory, Response, abort, session, redirect, url_for, make_response
 from flask.ext.assets import Environment
+from eve import Eve
 
-class CustomFlask(Flask):
+class CustomFlask(Eve):
 	jinja_options = Flask.jinja_options.copy()
 	jinja_options.update(dict(
 		block_start_string='[%',
@@ -26,16 +27,13 @@ class CustomFlask(Flask):
 	))
  
 app = CustomFlask(__name__)
-
-# app = Flask(__name__)
-app.config.from_pyfile("settings.py")
 assets = Environment(app)
 # -----------------------------------------------------------------------------
 #
 # Site pages
 #
 # -----------------------------------------------------------------------------
-@app.route('/')
+@app.route('/ui')
 def index():
 	response = make_response(render_template('home.html'))
 	return response
@@ -46,6 +44,7 @@ def index():
 #
 # -----------------------------------------------------------------------------
 if __name__ == '__main__':
-	app.run()
+	import os
+	app.run(extra_files=[os.path.join(os.path.dirname(__file__), "settings.py")])
 
 # EOF
