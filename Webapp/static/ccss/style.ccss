@@ -12,8 +12,9 @@ table:
 				background-color: #DBE3FF
 		&.voted:
 			opacity:0.6
-			.title:
-				text-decoration: line-through
+			&.minus:
+				.title:
+					text-decoration: line-through
 		&.active:
 			opacity:1
 		.pub_date span, .ref_date:
