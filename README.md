@@ -41,7 +41,7 @@ source .env
 **a. Install python modules required**
 
 ```bash
-pip install -r requirements_core.txt
+pip install -r requirements.txt
 ```
 
 ## CLI
