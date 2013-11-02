@@ -12,12 +12,13 @@ angular.module('brokenPromisesApp', ['restangular'])
 
 angular.module('brokenPromisesApp')
 	.controller('ArticlesCtrl', ($scope, Restangular, $http, $location) =>
-		$scope.active   = -1
-		baseArticles    = Restangular.all('articles')
+		
+		$scope.active = -1
 
-		baseArticles.getList().then((articles) =>
-			$scope.articles = articles._items
-		)
+		Restangular
+			.all('articles?sort=[(\'ref_date\', 1), (\'title\', 1)]')
+			.getList().then (articles) =>
+				$scope.articles = articles._items
 
 		$scope.setArticle = (a) ->
 			if $scope.active_article == a
