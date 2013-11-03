@@ -3,46 +3,30 @@ Broken-Promises
 
 ## Installation
 
-### 1. Set up your python environment
 
-**a. Install python packages:**
-
+**a. Prerequired**
 ```bash
 sudo apt-get install build-essential git-core python python-pip python-dev
-```
-
-**b. Install virtualenv** a tool to isolate your dependencies
-
-```bash
 sudo pip install virtualenv
 ```
 
-**c.  Download the project**
+**b.  Download the project**
 ```bash
 git clone git@github.com:jplusplus/broken-promises.git
-```
-
-**d.  Create the virtualenv folder for this project**
-  > Every python dependencies will be installed in this folder to keep your system's environment clean.
-
-```bash
 cd broken-promises
-virtualenv venv --no-site-packages --distribute --prompt=BrokenPromises
 ```
 
-**e. Activate your new virtualenv**
-
+**c. Install**
 ```bash
-source .env
+make install
 ```
-  > Tips: you can install [autoenv](https://github.com/kennethreitz/autoenv) to source this file automatically each time you `cd` this folder.
 
-### 2. Install dependencies
-**a. Install python modules required**
-
+## Run Web Application
 ```bash
-pip install -r requirements.txt
+make run
 ```
+
+Then visit [http://127.0.0.1/ui/](http://127.0.0.1/ui/)
 
 ## CLI
 
