@@ -49,6 +49,7 @@ def index():
 if __name__ == '__main__':
 	import os
 	app.run(
-		extra_files=[os.path.join(os.path.dirname(__file__), "settings.py")])
+		extra_files=[os.path.join(os.path.dirname(__file__), "settings.py")]
+	)
 
 # EOF
