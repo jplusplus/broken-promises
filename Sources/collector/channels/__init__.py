@@ -16,7 +16,7 @@ import requests
 import requests_cache
 
 # Set up cache for requests
-requests_cache.install_cache('broken-promise', backend='sqlite', expire_after=3000)
+requests_cache.install_cache('broken-promise', backend='sqlite', expire_after=86400)
 
 # -----------------------------------------------------------------------------
 #
