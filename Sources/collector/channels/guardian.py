@@ -70,6 +70,8 @@ class TheGuardian(Channel):
 	def scrape_body_article(self, url):
 		r = self.session.get(url)
 		paragraphs = self.HTML.parse(r.text).query('#content')
+		paragraphs = map(lambda _: _.filter(reject=self.HTML.withName('script'), recursive=True),
+						 paragraphs)
 		body = " ".join(map(lambda _:_.text() ,paragraphs))
 		return body
 
