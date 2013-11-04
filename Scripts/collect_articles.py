@@ -12,7 +12,6 @@
 # -----------------------------------------------------------------------------
 
 import optparse
-import json
 from collector import Collector
 import collector.utils as utils
 
