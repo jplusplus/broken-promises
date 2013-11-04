@@ -64,6 +64,9 @@ schema = {
 	'channel' : {
 		'type' : 'string'
 	},
+	'snippets' : {
+		'type' : 'array'
+	},
 	'note' : {
 		'type' : 'integer'
 	}

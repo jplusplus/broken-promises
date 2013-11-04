@@ -19,7 +19,7 @@
 class Article:
 
 	def __init__(self, channel, title=None, url=None, source=None, body=None, 
-                 pub_date=None, ref_date=[], images=[], headline=None):
+                 pub_date=None, ref_date=[], images=[], headline=None, snippets=[]):
 		self.title    = title
 		self.url      = url
 		self.source   = source
@@ -28,6 +28,7 @@ class Article:
 		self.ref_date = ref_date
 		self.images   = images
 		self.headline = headline
+		self.snippets = snippets
 		self.channel  = channel
 
 	def __unicode__(self):
