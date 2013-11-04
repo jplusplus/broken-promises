@@ -7,7 +7,7 @@
 		<link type="text/css" rel="stylesheet" href="[[url_for('static', filename='css/bootstrap.css')]]" media="all" />
 		<link type="text/css" rel="stylesheet" href="[[url_for('static', filename='css/bootstrap-theme.css')]]" media="all" />
 		<script type="text/javascript" src="[[url_for('static', filename='js/jquery.js')]]"></script>
-		[% assets filter="clevercss", output="gen/style.css", "ccss/style.ccss" %]
+		[% assets filters="clevercss", output="gen/style.css", "ccss/style.ccss" %]
 			<link type="text/css" rel="stylesheet" href="[[ ASSET_URL ]]" media="all" />
 		[% endassets %]
 	</head>
@@ -19,7 +19,7 @@
 		<script type="text/javascript" src="[[url_for('static', filename='js/restangular.js') ]]"></script>
 		<script type="text/javascript" src="[[url_for('static', filename='js/bootstrap.js') ]]"></script>
 		<script type="text/javascript" src="[[url_for('static', filename='js/scrollto.js') ]]"></script>
-		[% assets filter="coffeescript", output="gen/scripts.js", "coffee/scripts.coffee", "coffee/filters/filters.coffee", "coffee/directives/scroll-to.coffee" %]
+		[% assets filters="coffeescript", output="gen/scripts.js", "coffee/scripts.coffee", "coffee/filters/filters.coffee", "coffee/directives/scroll-to.coffee" %]
 			<script type="text/javascript" src="[[ ASSET_URL ]]"></script>
 		[% endassets %]
 	</body>
