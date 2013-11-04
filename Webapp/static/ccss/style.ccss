@@ -62,3 +62,5 @@ table:
 			color: #EF3131
 		&.plusplus .note:
 			color: #249907
+		.littlepart:
+			background-color:#FFFF00

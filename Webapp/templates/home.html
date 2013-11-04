@@ -25,11 +25,11 @@
 					<div class="ref_date">{{article.ref_date | ref_date }}</div>
 					<div class="source">{{article.source}}</div>
 					<div class="title">{{article.title}}</div>
-					<div class="snippet">{{article.snippet}}</div>
+					<div class="snippet" ng-bind-html = "article.snippets[0]['context'] | snippet:article.snippets[0]['element']"></div>
 					<div class="body"
-						ng-bind-html = "article.body | nl2br"
+						ng-bind-html = "article.body | nl2br | snippet:article.snippets[0]['element']"
 						ng-if        = "active > 0 && active_article.$$hashKey == article.$$hashKey"
-						scroll-to    = "300">		
+						scroll-to    = "300">
 					</div>
 					<div class="url"><a href="{{article.url}}">{{article.url}}</a></div>
 				</td>
