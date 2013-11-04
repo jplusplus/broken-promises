@@ -1,14 +1,17 @@
-# import os
+import os
+
 DEBUG          = True
 # LIB_DIR        = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'lib')
 # FREEZER_RELATIVE_URLS = True
 ASSETS_DEBUG   = DEBUG
 
 # EVE
-
-MONGO_HOST = 'localhost'
-MONGO_PORT = 27017
-MONGO_DBNAME = 'broken-promises'
+if os.environ.get('MONGOLAB_URI'):
+	MONGO_HOST = os.environ.get('MONGOLAB_URI')
+else:
+	MONGO_HOST = 'localhost'
+	MONGO_PORT = 27017
+	MONGO_DBNAME = 'broken-promises'
 
 # Enable reads (GET), inserts (POST) and DELETE for resources/collections
 # (if you omit this line, the API will default to ['GET'] and provide
