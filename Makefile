@@ -6,7 +6,7 @@ VIRTUALENV = venv/
 
 run:
 	mongod&
-	. $(VIRTUALENV)bin/activate ; python $(WEBAPP)
+	. $(VIRTUALENV)bin/activate ; export PYTHONPATH=`pwd`/Sources/:`pwd`/Webapp/:$(PYTHONPATH) ; python $(WEBAPP)
 
 install:
 	virtualenv venv --no-site-packages --distribute --prompt=BrokenPromises
