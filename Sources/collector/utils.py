@@ -66,6 +66,26 @@ def import_channels_from_string(val):
 	module_name = val.split('.')[-1]
 	return channels.Catalogue.CHANNELS[module_name]['class']
 
+def get_snippets(body, to_find=[]):
+	snippets = []
+	if type(to_find) == type(""):
+		to_find = [to_find]
+	for elmt in to_find:
+		pos = body.find(elmt)
+		if pos > -1:
+			sentences = body.split(".")
+			cur_pos = 0
+			for sentence in sentences:
+				cur_pos += len(sentence) + 1 # +1 for dot
+				if pos <= cur_pos:
+					snippets.append({
+						"element"             : elmt,
+						"context"             : sentence,
+						"position"            : [pos, pos + len(elmt)],
+						"position_in_context" : [sentence.find(elmt), sentence.find(elmt) + len(elmt)]
+					})
+	return snippets
+
 # -----------------------------------------------------------------------------
 #
 # TESTS

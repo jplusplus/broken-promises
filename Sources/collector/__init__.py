@@ -8,7 +8,7 @@
 # License : proprietary journalism++
 # -----------------------------------------------------------------------------
 # Creation : 28-Oct-2013
-# Last mod : 31-Oct-2013
+# Last mod : 04-Nov-2013
 # -----------------------------------------------------------------------------
 from models import Article
 import collector.utils
@@ -31,8 +31,10 @@ class Collector:
 		# 	[ ]  check date in body
 		# 	[ ]  get the snippets with dates
 		# 	[ ]  set ref_date, multiple allowed
+		date_formats = collector.utils.get_all_date_formats(year, month, day)
 		for result in results:
 			result.ref_date = (year, month, day)
+			result.snippets = collector.utils.get_snippets(date_formats)
 		return results
 
 # -----------------------------------------------------------------------------

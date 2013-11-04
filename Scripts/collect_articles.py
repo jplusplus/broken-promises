@@ -14,6 +14,7 @@
 import optparse
 from collector import Collector
 import collector.utils as utils
+from bson.json_util import dumps
 
 oparser = optparse.OptionParser(usage ="\n./%prog [options] year \n./%prog [options] year month\n./%prog [options] year month day")
 oparser.add_option("-C", "--nocache", action="store_true", dest="nocache",
@@ -39,7 +40,6 @@ results = Collector(channels).get_articles(*args)
 #  MONGO
 if options.mongodb_uri:
 	from pymongo import MongoClient
-	from bson.json_util import dumps
 	from urlparse import urlparse
 
 	client     = MongoClient(options.mongodb_uri)
