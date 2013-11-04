@@ -14,6 +14,7 @@ from flask import Flask, render_template, request, send_file, \
 	send_from_directory, Response, abort, session, redirect, url_for, make_response
 from flask.ext.assets import Environment
 from eve import Eve
+import os
 
 class CustomFlask(Eve):
 	jinja_options = Flask.jinja_options.copy()
@@ -25,8 +26,10 @@ class CustomFlask(Eve):
 		comment_start_string='[#',
 		comment_end_string='#]',
 	))
- 
-app = CustomFlask(__name__)
+
+app = CustomFlask(__name__, 
+	settings = os.path.join(os.path.abspath(os.path.dirname(__file__)), "settings.py")
+)
 assets = Environment(app)
 # -----------------------------------------------------------------------------
 #
@@ -45,6 +48,7 @@ def index():
 # -----------------------------------------------------------------------------
 if __name__ == '__main__':
 	import os
-	app.run(extra_files=[os.path.join(os.path.dirname(__file__), "settings.py")])
+	app.run(
+		extra_files=[os.path.join(os.path.dirname(__file__), "settings.py")])
 
 # EOF
