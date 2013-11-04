@@ -36,6 +36,11 @@ Then visit [http://127.0.0.1/ui/](http://127.0.0.1/ui/)
 
 
 ```
+Usage: 
+./collect_articles.py [options] year 
+./collect_articles.py [options] year month
+./collect_articles.py [options] year month day
+
 Options:
   -h, --help            show this help message and exit
   -C, --nocache         Prevents from using the cache
@@ -43,6 +48,9 @@ Options:
                         Use this that as channels list to use
   -c CHANNELS_LIST, --channels=CHANNELS_LIST
                         channels list comma separated
+  -m MONGODB_URI, --mongodb=MONGODB_URI
+                        uri to mongodb instance to persist results
+
 ```
 
 ## Run tests

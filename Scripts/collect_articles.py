@@ -23,6 +23,8 @@ oparser.add_option("-f", "--channelslistfile", action="store", dest="channels_fi
 	help = "Use this that as channels list to use", default=None)
 oparser.add_option("-c", "--channels", action="store", dest="channels_list",
 	help = "channels list comma separated", default=None)
+oparser.add_option("-m", "--mongodb", action="store", dest="mongodb_uri",
+	help = "uri to mongodb instance to persist results", default=None)
 options, args = oparser.parse_args()
 assert len(args) > 0 and len(args) <= 3
 
@@ -36,19 +38,21 @@ if options.channels_list:
 results = Collector(channels).get_articles(*args)
 
 #  MONGO
-from pymongo import MongoClient
-from bson.json_util import dumps
+if options.mongodb_uri:
+	from pymongo import MongoClient
+	from bson.json_util import dumps
+	from urlparse import urlparse
 
-client     = MongoClient('localhost', 27017)
-db         = client['broken-promises']
-collection = db['articles']
+	client     = MongoClient(options.mongodb_uri)
+	db         = client[urlparse(options.mongodb_uri).path.split("/")[-1]]
+	collection = db['articles']
 
-for article in results:
-	previous = collection.find_one({"url" : article.url})
-	if not previous:
-		collection.insert(article.__dict__)
-	else:
-		collection.update({'_id':previous['_id']}, article.__dict__)
+	for article in results:
+		previous = collection.find_one({"url" : article.url})
+		if not previous:
+			collection.insert(article.__dict__)
+		else:
+			collection.update({'_id':previous['_id']}, article.__dict__)
 
 # OUTPUT
 print dumps([_.__dict__ for _ in results])
