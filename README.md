@@ -55,4 +55,4 @@ Options:
 
 ## Run tests
 
-	$ python Tests/all.py
+	$ make test
