@@ -8,7 +8,7 @@
 # License : proprietary journalism++
 # -----------------------------------------------------------------------------
 # Creation : 28-Oct-2013
-# Last mod : 28-Oct-2013
+# Last mod : 05-Nov-2013
 # -----------------------------------------------------------------------------
 
 # -----------------------------------------------------------------------------
@@ -19,7 +19,7 @@
 class Article:
 
 	def __init__(self, channel, title=None, url=None, source=None, body=None, 
-                 pub_date=None, ref_date=[], images=[], headline=None, snippets=[]):
+				 pub_date=None, ref_date=[], images=[], headline=None, snippets=[]):
 		self.title    = title
 		self.url      = url
 		self.source   = source

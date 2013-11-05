@@ -8,7 +8,7 @@
 # License : proprietary journalism++
 # -----------------------------------------------------------------------------
 # Creation : 28-Oct-2013
-# Last mod : 28-Oct-2013
+# Last mod : 05-Nov-2013
 # -----------------------------------------------------------------------------
 
 from   wwwclient import HTML
@@ -68,5 +68,28 @@ class Channel:
 	def __init__(self):
 		self.HTML    = HTML
 		self.session = requests
+
+# -----------------------------------------------------------------------------
+#
+# MODULE functions
+#
+# -----------------------------------------------------------------------------
+import importlib, pkgutil, sys
+
+def get_available_channels():
+	return ["collector.channels.%s" % _[1] for _ in pkgutil.walk_packages(sys.modules['collector.channels'].__path__)]
+
+def perform_channels_import(val):
+	if type(val) in (tuple, list):
+		return (__import_channels_from_string(item) for item in val)
+	elif type(val) is type(""):
+		return (__import_channels_from_string(val),)
+	else:
+		return (val,)
+
+def __import_channels_from_string(val):
+	importlib.import_module(val)
+	module_name = val.split('.')[-1]
+	return Catalogue.CHANNELS[module_name]['class']
 
 # EOF

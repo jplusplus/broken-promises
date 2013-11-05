@@ -12,8 +12,8 @@
 # -----------------------------------------------------------------------------
 
 import optparse
-from collector import Collector
-import collector.utils as utils
+from collector.operations import CollectArticles
+import collector.channels
 from bson.json_util import dumps
 
 oparser = optparse.OptionParser(usage ="\n./%prog [options] year \n./%prog [options] year month\n./%prog [options] year month day")
@@ -28,14 +28,14 @@ oparser.add_option("-m", "--mongodb", action="store", dest="mongodb_uri",
 options, args = oparser.parse_args()
 assert len(args) > 0 and len(args) <= 3
 
-channels = utils.get_available_channels()
+channels = collector.channels.get_available_channels()
 if options.channels_file:
 	with open(options.channels_file) as f:
 		channels = [line.replace("\n", "") for line in f.readlines()]
 if options.channels_list:
 	channels = options.channels_list.split(",")
 
-results = Collector(channels).get_articles(*args)
+results = CollectArticles(channels, *args).run()
 
 #  MONGO
 if options.mongodb_uri:
@@ -57,4 +57,5 @@ if options.mongodb_uri:
 print dumps([_.__dict__ for _ in results])
 
 exit()
+
 # EOF
