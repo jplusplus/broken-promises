@@ -54,7 +54,7 @@ schema = {
 	'pub_date' : {
 		'type' : 'string'
 	},
-	'ref_date' : {
+	'ref_dates' : {
 		'type' : 'list'
 	},
 	'headline' : {
