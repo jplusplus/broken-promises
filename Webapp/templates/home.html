@@ -22,7 +22,7 @@
 					voted    : article.note
 				}">
 				<td ng-click="setArticle(article)">
-					<div class="ref_date">{{article.ref_date | ref_date }}</div>
+					<div class="ref_date">{{article.ref_dates[0].date | ref_date }}</div>
 					<div class="source">{{article.source}}</div>
 					<div class="title">{{article.title}}</div>
 					<div class="snippet" ng-bind-html = "article.ref_dates[0]['extract'] | snippet:article.ref_dates[0]['extracted_date']"></div>
