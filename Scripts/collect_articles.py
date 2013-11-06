@@ -25,6 +25,8 @@ oparser.add_option("-c", "--channels", action="store", dest="channels_list",
 	help = "channels list comma separated", default=None)
 oparser.add_option("-m", "--mongodb", action="store", dest="mongodb_uri",
 	help = "uri to mongodb instance to persist results", default=None)
+oparser.add_option("-d", "--drop", action="store_true", dest="mongodb_drop",
+	help = "drop the previous articles from database before", default=False)
 options, args = oparser.parse_args()
 assert len(args) > 0 and len(args) <= 3
 
@@ -51,7 +53,7 @@ if options.mongodb_uri:
 		if not previous:
 			collection.insert(article.__dict__)
 		else:
-			collection.update({'_id':previous['_id']}, article.__dict__)
+			collection.update({'_id':previous['_id']}, dict(previous.items() + article.__dict__.items()))
 
 # OUTPUT
 print dumps([_.__dict__ for _ in results])
