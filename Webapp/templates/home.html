@@ -13,7 +13,7 @@
 		<tbody>
 			<tr
 				class="article"
-				ng-repeat="article in articles | orderBy:['ref_date', 'source', 'title']" 
+				ng-repeat="article in articles | orderBy:['ref_dates.0.date', 'source', 'title']" 
 				ng-class="{
 					minus    : article.note   == -1, 
 					plus     : article.note   ==  1, 
