@@ -10,9 +10,9 @@ run:
 
 install:
 	virtualenv venv --no-site-packages --distribute --prompt=BrokenPromises
-	. $(VIRTUALENV)bin/activate; pip install -r requirements.txt
+	. $(VIRTUALENV)bin/activate ; pip install -r requirements.txt
 
 test:
-	python $(TEST)
+	. $(VIRTUALENV)bin/activate ; export PYTHONPATH=`pwd`/Sources/:`pwd`/Webapp/:$(PYTHONPATH) ; python $(TEST)
 
 # EOF
