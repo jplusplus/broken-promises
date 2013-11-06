@@ -50,6 +50,7 @@ Options:
                         channels list comma separated
   -m MONGODB_URI, --mongodb=MONGODB_URI
                         uri to mongodb instance to persist results
+  -d, --drop            drop the previous articles from database before
 
 ```
 
