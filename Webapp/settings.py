@@ -32,10 +32,7 @@ PAGINATION_DEFAULT = 1000000
 PAGINATION_LIMIT = 1000000
 EXTRA_RESPONSE_FIELDS = []
 ALLOW_UNKNOWN = True
-if os.environ.get('X_DOMAINS'):
-	X_DOMAINS = os.environ.get('X_DOMAINS').split(",")
-else:
-	X_DOMAINS = 'http://localhost:9000'
+X_DOMAINS = '*'
 schema = {
 	# Schema definition, based on Cerberus grammar. Check the Cerberus project
 	# (https://github.com/nicolaiarocci/cerberus) for details.
