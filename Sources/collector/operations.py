@@ -86,7 +86,6 @@ class TestOperations(unittest.TestCase):
 		assert len(results) > 0
 		for result in results:
 			assert result.ref_dates
-			print result.ref_dates
 
 	def test_retrieve_referenced_dates(self):
 		text = """
