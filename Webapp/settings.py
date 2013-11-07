@@ -27,13 +27,13 @@ RESOURCE_METHODS = ['GET', 'POST', 'DELETE']
 
 # Enable reads (GET), edits (PATCH), replacements (PUT) and deletes of
 # individual items  (defaults to read-only item access).
-ITEM_METHODS = ['GET', 'PATCH', 'PUT', 'DELETE']
-PAGINATION_DEFAULT = 1000000
-PAGINATION_LIMIT = 1000000
+ITEM_METHODS          = ['GET', 'PATCH', 'PUT', 'DELETE']
+PAGINATION_DEFAULT    = 1000000
+PAGINATION_LIMIT      = 1000000
 EXTRA_RESPONSE_FIELDS = []
-ALLOW_UNKNOWN = True
-X_DOMAINS = '*'
-schema = {
+ALLOW_UNKNOWN         = True
+X_DOMAINS             = '*'
+schema                = {
 	# Schema definition, based on Cerberus grammar. Check the Cerberus project
 	# (https://github.com/nicolaiarocci/cerberus) for details.
 	'title': {
