@@ -33,7 +33,7 @@ class TheGuardian(Channel):
 			try:
 				response = self.request_api(keyword=format)
 			except Exception as e:
-				# log error
+				# TODO: log error
 				# print e
 				continue
 			for article in response['response']['results']:
@@ -50,8 +50,10 @@ class TheGuardian(Channel):
 				# a.images   = TODO
 				# scrape body from page
 				a.body     = self.scrape_body_article(a.url)
-				if a.body != "":
+				if a.body:
 					articles.append(a)
+				else:
+					print a
 		return articles
 
 	def request_api(self, keyword):
@@ -59,8 +61,8 @@ class TheGuardian(Channel):
 			"api-key"     : TheGuardian.API_KEY,
 			"q"           : "\"%s\"" % (keyword),
 			"show-fields" : "all",
-			# section list here: http://content.guardianapis.com/search?api-key=79t54uxw5duhevew9arubq4v
-			"section"     : "-fashion,-music,-artanddesign",
+			# section list here: http://content.guardianapis.com/sections
+			"section"     : "-fashion,-music,-artanddesign,-film",
 			"page-size"   : 50 # maximum
 		}
 		r = self.session.get(TheGuardian.URI, params=payload)
@@ -71,10 +73,18 @@ class TheGuardian(Channel):
 	def scrape_body_article(self, url):
 		r = self.session.get(url)
 		paragraphs = self.HTML.parse(r.text).query('#article-body-blocks')
-		paragraphs = map(lambda _: _.filter(reject=self.HTML.withName('script'), recursive=True),
-						 paragraphs)
-		body = " ".join(map(lambda _:_.text() ,paragraphs))
-		return body
+		if not paragraphs:
+			paragraphs =  self.HTML.parse(r.text).query('#live-blog-blocks')
+		# return None if nothing found
+		if not paragraphs:
+			# TODO : Logging
+			return None
+		paragraphs = paragraphs[0]
+		# fitlers
+		paragraphs = filter(lambda  _: _.name() != "script"                       , paragraphs)
+		paragraphs = filter(lambda  _: "This article was amended" not in _.text() , paragraphs)
+
+		return "\n".join(map(lambda _:_.text() ,paragraphs))
 
 # -----------------------------------------------------------------------------
 #
@@ -101,6 +111,11 @@ class TestTheGuardian(unittest.TestCase):
 			assert article.body is not None, article
 			# print article.url
 
+	def test_filter_article(self):
+		contains = """This article was amended on 3 November 2013""" # and should be filtered
+		url      = "http://www.theguardian.com/politics/2013/nov/03/gerry-adams-jean-mcconville"
+		body     = self.obj.scrape_body_article(url)
+		assert contains not in body
 if __name__ == "__main__":
 	# unittest.main()
 	suite = unittest.TestLoader().loadTestsFromTestCase(TestTheGuardian)
