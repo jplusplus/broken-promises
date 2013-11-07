@@ -16,26 +16,7 @@ import nltk
 import os
 import dateseeker
 
-# -----------------------------------------------------------------------------
-#
-#    Collect Articles
-#
-# -----------------------------------------------------------------------------
-class CollectArticles:
-
-	def __init__(self, channels, year, month=None, day=None):
-		self.channels = [channel() for channel in collector.channels.perform_channels_import(channels)]
-		self.date     = (year, month, day)
-
-	def run(self):
-		results = []
-		# retrieve articles from channels
-		for channel in self.channels:
-			results += channel.get_articles(*self.date)
-		# search dates in the body articles
-		for result in results:
-			result.ref_dates = self.retrieve_referenced_dates(result.body)
-		return results
+class Collector:
 
 	@classmethod
 	def retrieve_referenced_dates(cls, text):
@@ -62,6 +43,48 @@ class CollectArticles:
 				break
 			sentence = None
 		return sentence
+
+	def pre_filter(self, results):
+		# articles with no body
+		results = filter(lambda _: _.body, results)
+		return results
+
+# -----------------------------------------------------------------------------
+#
+#    Collect Articles
+#
+# -----------------------------------------------------------------------------
+class CollectArticles(Collector):
+
+	def __init__(self, channels, year, month=None, day=None):
+		self.channels = [channel() for channel in collector.channels.perform_channels_import(channels)]
+		self.date     = (year, month, day)
+
+	def run(self):
+		articles = []
+		# retrieve articles from channels
+		for channel in self.channels:
+			articles += channel.get_articles(*self.date)
+		# filters
+		articles = self.pre_filter(articles)
+		# search dates in the body articles
+		for result in articles:
+			result.ref_dates = self.retrieve_referenced_dates(result.body)
+		return articles
+
+class RefreshArticles(Collector):
+
+	def __init__(self, articles):
+		self.articles = articles
+
+	def run(self):
+		articles = self.articles
+		# filter
+		self.pre_filter(articles)
+		# parsing date
+		for article in articles:
+			article.ref_dates = self.retrieve_referenced_dates(article.body)
+		return articles
 
 # -----------------------------------------------------------------------------
 #

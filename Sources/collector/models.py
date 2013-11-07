@@ -19,7 +19,7 @@
 class Article:
 
 	def __init__(self, channel, title=None, url=None, source=None, body=None, 
-				 pub_date=None, ref_dates=[], images=[], headline=None):
+				 pub_date=None, ref_dates=[], images=[], headline=None, *args, **kwargs):
 		self.title     = title
 		self.url       = url
 		self.source    = source
