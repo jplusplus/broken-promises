@@ -53,7 +53,9 @@ class TheGuardian(Channel):
 				if a.body:
 					articles.append(a)
 				else:
-					print a
+					# TODO Loggin
+					# print a, a.url
+					pass
 		return articles
 
 	def request_api(self, keyword):
