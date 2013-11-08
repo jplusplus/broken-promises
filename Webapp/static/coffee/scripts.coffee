@@ -11,7 +11,7 @@ angular.module('brokenPromisesApp', ['restangular'])
 	]
 
 angular.module('brokenPromisesApp')
-	.controller('ArticlesCtrl', ($scope, Restangular, $http, $location) =>
+	.controller('ArticlesCtrl', ($scope, Restangular) =>
 		
 		$scope.active = -1
 

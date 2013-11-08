@@ -24,6 +24,8 @@ angular.module('brokenPromisesApp').filter 'pub_date', () ->
 		return str
 
 angular.module("brokenPromisesApp").filter "snippet", ->
-	(string ,word) ->
-		if string?
-			return string.replace(word, "<span class=\"littlepart\">" + word + "</span>")
+	(string ,ref_dates) ->
+		if ref_dates? and ref_dates.length > 0
+			for ref_date in ref_dates
+				string = string.replace(ref_date['extracted_date'], "<span class=\"littlepart\">" + ref_date['extracted_date'] + "</span>")
+		return string
