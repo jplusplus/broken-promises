@@ -23,6 +23,7 @@ table:
 		.ref_date:
 			float: left
 			background-color: #A7CEFF
+			margin-right:3px
 		.pub_date:
 			white-space:nowrap
 			span:
