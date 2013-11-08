@@ -45,7 +45,7 @@ RE_DMY      = "(year|day|week|month)"
 RE_REL_DAY  = "(today|yesterday|tomorrow|tonight|tonite)"
 RE_EXP1     = "(before|after|earlier|later|ago)"
 RE_EXP2     = "(this|next|last)"
-RE_YEAR     = "(?P<year>(?<=\s)\d{4}|^\d{4})"
+RE_Y        = "(?P<year>(?<=\s)(19|20)\d\d|^(19|20)\d\d)"
 RE_REGXP1   = "((\d+|(" + RE_NUMBERS + "[-\s]?)+) " + RE_DMY + "s? " + RE_EXP1 + ")"
 RE_REGXP2   = "(" + RE_EXP2 + " (" + RE_DMY + "|" + RE_WEEK_DAY + "|" + RE_MONTH + "))"
 
@@ -79,18 +79,22 @@ RE_ISO2      = re.compile("(?P<day>[0-9]{2})[/-](?P<month>[0-9]{2})[/-](?P<year>
 # [X] 3th in October, 2013
 # [X] 3th of October 2013
 # [X] 3th of October, 2013
-RE_FULL_DATE = re.compile("(?P<day>\d+)(?:th)? (?:by |in |of )?" + RE_MONTH + "[,]? " + RE_YEAR, re.IGNORECASE)
+RE_FULL_DATE = re.compile("(?<!\d)(?P<day>\d{1,2})(?:th)? (?:by |in |of )?" + RE_MONTH + "[,]? " + RE_Y, re.IGNORECASE)
 
 # Month ---------------------
 # [X] October 2013
 # [X] October, 2013
-RE_FULL_MONTH = re.compile(RE_MONTH + "[,]? " + RE_YEAR, re.IGNORECASE)
+RE_FULL_MONTH = re.compile(RE_MONTH + "[,]? " + RE_Y, re.IGNORECASE)
+
+# Year ---------------------
+# [X] 2013
+RE_YEAR = re.compile(RE_Y, re.IGNORECASE)
 
 # REG1 = re.compile(RE_REGXP1, re.IGNORECASE)
 # REG2 = re.compile(RE_REGXP2, re.IGNORECASE)
 # REG3 = re.compile(RE_REL_DAY, re.IGNORECASE)
 # REG4 = re.compile(RE_ISO)
-# REG5 = re.compile(RE_YEAR)
+# REG5 = re.compile(RE_Y)
 # FULL_DATE = re.compile(FULL_DATE, re.IGNORECASE)
 # REGS = (REG1,REG2,REG3,REG4,REG5,REG6)
 # REGS = (REG6,)
@@ -142,7 +146,6 @@ def _parse_month(month):
 def get_date_obj(mx_date):
     return (mx_date.year, mx_date.month, mx_date.day)
 
-
 def find_dates(text, base_date=None):
     """
 
@@ -153,10 +156,9 @@ def find_dates(text, base_date=None):
 
     def already_full_parsed(this_row, this_pos):
         for date_obj, date_row, date_pos in dates_found:
-            date_pos_range = range(*date_pos)
-            if this_pos[0] in date_pos_range        \
-                and this_pos[0]-1 in date_pos_range \
-                and this_row in date_row:
+            if this_pos[0]      >= date_pos[0] \
+                and this_pos[1] <= date_pos[1] \
+                and this_row    in date_row:
                 return True
         return False
 
@@ -197,6 +199,9 @@ def find_dates(text, base_date=None):
     find_regex(RE_FULL_MONTH, (
         ("month" , _parse_month),
         ("year"  , int)
+    ))
+    find_regex(RE_YEAR, (
+        ("year"  , int),
     ))
 
     return dates_found

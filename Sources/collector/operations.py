@@ -117,6 +117,7 @@ class TestOperations(unittest.TestCase):
 			("10 october, 2013"      , (2013, 10, 10)),
 			("10 by October 2013"    , (2013, 10, 10)),
 			("10 by October, 2013"   , (2013, 10, 10)),
+			("Jan 2014"              , (2014, 1, None)),
 			("10 in October 2013"    , (2013, 10, 10)),
 			("10 in October, 2013"   , (2013, 10, 10)),
 			("10 of October 2013"    , (2013, 10, 10)),
@@ -129,19 +130,23 @@ class TestOperations(unittest.TestCase):
 			("10th of October 2013"  , (2013, 10, 10)),
 			("10th of October, 2013" , (2013, 10, 10)),
 			("2013-10-10"            , (2013, 10, 10)),
-			("2013/10/10"            , (2013, 10, 10)))
+			("2013/10/10"            , (2013, 10, 10)),
+			("August, 2013"          , (2013, 8, None)),
+			("2013"                  , (2013, None, None)),
+		)
 
 		text  = " bla bli 123. Bu \n pouet12 \n 12432 ".join([_[0] for _ in dates])
 		refs  = CollectArticles.retrieve_referenced_dates(text)
+		date_found = [_['extracted_date'] for _ in refs]
 		for searched_date in dates:
 			try:
 				ref = filter(lambda _: _["extracted_date"] == searched_date[0], refs)[0]
 			except:
-				raise Exception("%s not found in document" % searched_date[0])
-			assert ref['extracted_date'] == searched_date[0]
+				raise Exception("\"%s\" not found in document" % searched_date[0])
+			assert ref['extracted_date'] in searched_date[0]
 			assert ref['date']           == searched_date[1]
-			assert searched_date[0]      in ref['extract']
-		assert len(refs) == len(dates), "%s != %s" % (len(refs), len(dates))
+			date_found.remove(ref['extracted_date'])
+		assert len(refs) == len(dates), "%s != %s\nToo much : %s" % (len(refs), len(dates), date_found)
 
 if __name__ == "__main__":
 	# unittest.main()
