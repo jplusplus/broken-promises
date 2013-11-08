@@ -8,20 +8,20 @@
 # License : proprietary journalism++
 # -----------------------------------------------------------------------------
 # Creation : 05-Nov-2013
-# Last mod : 07-Nov-2013
+# Last mod : 08-Nov-2013
 # -----------------------------------------------------------------------------
 import collector.channels
 import collector.utils
 import nltk
 import os
-import dateseeker
+import dateparser
 
 class Collector:
 
 	@classmethod
 	def retrieve_referenced_dates(cls, text):
 		references = []
-		dates = dateseeker.find_dates(text)
+		dates = dateparser.find_dates(text)
 		for date in dates:
 			date_obj, date_row, date_position = date
 			reference = {

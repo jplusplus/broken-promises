@@ -23,7 +23,7 @@
 #  limitations under the License.
 # -----------------------------------------------------------------------------
 # Creation : 05-Nov-2013
-# Last mod : 07-Nov-2013
+# Last mod : 08-Nov-2013
 # -----------------------------------------------------------------------------
 # From https://code.google.com/p/nltk/source/browse/trunk/nltk_contrib/nltk_contrib/timex.py
 
