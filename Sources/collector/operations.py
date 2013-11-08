@@ -21,9 +21,7 @@ class Collector:
 	@classmethod
 	def retrieve_referenced_dates(cls, text):
 		references = []
-		dates = dateparser.find_dates(text)
-		for date in dates:
-			date_obj, date_row, date_position = date
+		for date_obj, date_row, date_position in dateparser.find_dates(text):
 			reference = {
 				"date"           : date_obj,
 				"extract"        : cls.get_sentence(text, date_row),
@@ -133,6 +131,7 @@ class TestOperations(unittest.TestCase):
 			("2013/10/10"            , (2013, 10, 10)),
 			("August, 2013"          , (2013, 8, None)),
 			("2013"                  , (2013, None, None)),
+			("November 4, 2013"      , (2013, 11, 4)),
 		)
 
 		text  = " bla bli 123. Bu \n pouet12 \n 12432 ".join([_[0] for _ in dates])

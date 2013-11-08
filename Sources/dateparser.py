@@ -79,7 +79,10 @@ RE_ISO2      = re.compile("(?P<day>[0-9]{2})[/-](?P<month>[0-9]{2})[/-](?P<year>
 # [X] 3th in October, 2013
 # [X] 3th of October 2013
 # [X] 3th of October, 2013
-RE_FULL_DATE = re.compile("(?<!\d)(?P<day>\d{1,2})(?:th)? (?:by |in |of )?" + RE_MONTH + "[,]? " + RE_Y, re.IGNORECASE)
+RE_FULL_DATE1 = re.compile("(?<!\d)(?P<day>\d{1,2})(?:th)? (?:by |in |of )?" + RE_MONTH + "[,]? " + RE_Y, re.IGNORECASE)
+# [X] October 3, 2013
+# [X] October 3 2013
+RE_FULL_DATE2 = re.compile(RE_MONTH + " (?P<day>\d{1,2})(?:th)?[,]? " + RE_Y, re.IGNORECASE)
 
 # Month ---------------------
 # [X] October 2013
@@ -181,7 +184,12 @@ def find_dates(text, base_date=None):
                 )
             )
 
-    find_regex(RE_FULL_DATE, (
+    find_regex(RE_FULL_DATE1, (
+        ("day"   , int),
+        ("month" , _parse_month),
+        ("year"  , int)
+    ))
+    find_regex(RE_FULL_DATE2, (
         ("day"   , int),
         ("month" , _parse_month),
         ("year"  , int)
