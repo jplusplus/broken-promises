@@ -34,7 +34,8 @@ class TheGuardian(Channel):
 				response = self.request_api(keyword=format)
 			except Exception as e:
 				# TODO: log error
-				# print e
+				import sys
+				print >> sys.stderr, e
 				continue
 			for article in response['response']['results']:
 				# escaping conditions

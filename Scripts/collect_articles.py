@@ -51,8 +51,6 @@ if options.mongodb_uri:
 	from pymongo import MongoClient
 	from urlparse import urlparse
 
-		
-
 	client     = MongoClient(options.mongodb_uri)
 	db         = client[urlparse(options.mongodb_uri).path.split("/")[-1]]
 	collection = db['articles']

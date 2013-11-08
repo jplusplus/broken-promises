@@ -34,7 +34,13 @@ class NewYorkTimes(Channel):
 		different_date_formats = utils.get_all_date_formats(year, month, day)
 		articles = []
 		for format in different_date_formats:
-			response = self.request_api(keyword=format)
+			try:
+				response = self.request_api(keyword=format)
+			except Exception as e:
+				# TODO: log error
+				import sys
+				print >> sys.stderr, e
+				continue
 			for article in response['response']['docs']:
 				# escaping conditions
 				if article.get('document_type') not in ('article', 'blog'):
@@ -61,6 +67,8 @@ class NewYorkTimes(Channel):
 			"fq"      : "body:\"%s\"" % keyword
 		}
 		r = self.session.get(NewYorkTimes.URI, params=payload)
+		if r.status_code != 200:
+			raise Exception("API returns an error:\n %s\n\n%s" % (r.text, payload))
 		return r.json()
 
 	def scrape_body_article(self, url):
