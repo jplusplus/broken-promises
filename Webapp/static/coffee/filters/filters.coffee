@@ -27,7 +27,8 @@ angular.module("brokenPromisesApp").filter "snippet", ->
 	(string ,ref_dates) ->
 		if ref_dates? and ref_dates.length > 0
 			for ref_date in ref_dates
-				string = string.replace(ref_date['extracted_date'], "<span class=\"littlepart\">" + ref_date['extracted_date'] + "</span>")
+				re = new RegExp(ref_date['extracted_date'], 'g')
+				string = string.replace(re, "<span class=\"littlepart\">" + ref_date['extracted_date'] + "</span>")
 		return string
 
 ###
