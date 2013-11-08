@@ -22,10 +22,10 @@
 					voted    : article.note
 				}">
 				<td ng-click="setArticle(article)">
-					<div class="ref_date">{{article.ref_dates[0].date | ref_date }}</div>
+					<span class="ref_date" ng-repeat="ref_date in article.ref_dates | unique">{{ ref_date.date | ref_date }}</span>
 					<div class="source">{{article.source}}</div>
 					<div class="title">{{article.title}}</div>
-					<div class="snippet" ng-bind-html = "article.ref_dates[0]['extract'] | snippet:article.ref_dates"></div>
+					<div class="snippet" ng-bind-html = "article.ref_dates[0]['extract'] | snippet:article.ref_dates|unique"></div>
 					<div class="body"
 						ng-bind-html = "article.body | nl2br | snippet:article.ref_dates"
 						ng-if        = "active > 0 && active_article.$$hashKey == article.$$hashKey"

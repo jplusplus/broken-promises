@@ -29,3 +29,39 @@ angular.module("brokenPromisesApp").filter "snippet", ->
 			for ref_date in ref_dates
 				string = string.replace(ref_date['extracted_date'], "<span class=\"littlepart\">" + ref_date['extracted_date'] + "</span>")
 		return string
+
+###
+Filters out all duplicate items from an array by checking the specified key
+@param [key] {string} the name of the attribute of each object to compare for uniqueness
+if the key is empty, the entire object will be compared
+if the key === false then no filtering will be performed
+@return {array}
+###
+angular.module("brokenPromisesApp").filter "unique", ->
+	(items, filterOn) ->
+		return items  if filterOn is false
+		if (filterOn or angular.isUndefined(filterOn)) and angular.isArray(items)
+			hashCheck = {}
+			newItems = []
+			extractValueToCompare = (item) ->
+				if angular.isObject(item) and angular.isString(filterOn)
+					item[filterOn]
+				else
+					item
+
+			angular.forEach items, (item) ->
+				valueToCheck = undefined
+				isDuplicate = false
+				i = 0
+
+				while i < newItems.length
+					if angular.equals(extractValueToCompare(newItems[i]), extractValueToCompare(item))
+						isDuplicate = true
+						break
+					i++
+				newItems.push item  unless isDuplicate
+
+			items = newItems
+		items
+
+# EOF

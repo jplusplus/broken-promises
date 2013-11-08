@@ -31,7 +31,8 @@ table:
 			clear:both
 		.source:
 			margin: 0 auto
-			position:absolute
+			position:relative
+			float:right
 			margin-left: 100px
 			font-size: 1.3em
 			color:#1D1D2C

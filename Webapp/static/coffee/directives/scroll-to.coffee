@@ -7,12 +7,12 @@ angular.module('brokenPromisesApp').directive "scrollTo", ->
 			setTimeout(=> # because of the final page height is not already known
 				body = container.find(".body")
 				$(window).scrollTo(container, attrs.scrollTo or 0, ->
-					body.css {
-						height: $(window).height() - 65
-					}
 					$('body').css {
 						position : "fixed",
 						top      : -container.offset().top
+					}
+					body.css {
+						height: $(window).height() - body.offset().top
 					}
 				)
 			,100)
