@@ -51,7 +51,10 @@ Options:
   -m MONGODB_URI, --mongodb=MONGODB_URI
                         uri to mongodb instance to persist results
   -d, --drop            drop the previous articles from database before
-
+  -o OUTPUT_FILE, --output=OUTPUT_FILE
+                        Specify  a file to write the export to. If you do not
+                        specify a file name, the program writes data to
+                        standard output (e.g. stdout)
 ```
 
 ## Run tests
