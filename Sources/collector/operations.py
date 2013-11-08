@@ -43,8 +43,20 @@ class Collector:
 		return sentence
 
 	def pre_filter(self, results):
+		""" Excecuted before the dates parsing """
 		# articles with no body
 		results = filter(lambda _: _.body, results)
+		return results
+
+	def post_filter(self, results):
+		""" Excecuted after the dates parsing """
+		import datetime
+		# TODO: TO TEST
+		# filter ref_dates anterior to pub_date
+		for result in results:
+			result.ref_dates = filter(lambda _: datetime.date(_['date'][0], _['date'][1] or 1, _['date'][2] or 1) >= result.pub_date.date(), result.ref_dates)
+		# filter results when ref_dates is empty
+		results = filter(lambda _: _.ref_dates, results)
 		return results
 
 # -----------------------------------------------------------------------------
@@ -63,11 +75,13 @@ class CollectArticles(Collector):
 		# retrieve articles from channels
 		for channel in self.channels:
 			articles += channel.get_articles(*self.date)
-		# filters
+		# pre-filters
 		articles = self.pre_filter(articles)
 		# search dates in the body articles
 		for result in articles:
 			result.ref_dates = self.retrieve_referenced_dates(result.body)
+		# post-filters
+		articles = self.post_filter(articles)
 		return articles
 
 class RefreshArticles(Collector):
@@ -77,11 +91,13 @@ class RefreshArticles(Collector):
 
 	def run(self):
 		articles = self.articles
-		# filter
+		# pre-filters
 		self.pre_filter(articles)
 		# parsing date
 		for article in articles:
 			article.ref_dates = self.retrieve_referenced_dates(article.body)
+		# post-filters
+		articles = self.post_filter(articles)
 		return articles
 
 # -----------------------------------------------------------------------------
@@ -96,8 +112,8 @@ class TestOperations(unittest.TestCase):
 
 	def test_get_articles(self):
 		channels = (
-			"collector.channels.nytimes",
-			# "collector.channels.guardian",
+			# "collector.channels.nytimes",
+			"collector.channels.guardian",
 		)
 		# channels  = collector.utils.get_available_channels()
 
