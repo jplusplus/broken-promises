@@ -67,7 +67,7 @@ if options.mongodb_uri:
 
 # OUTPUT
 print dumps([_.__dict__ for _ in results])
-
+print >> sys.stderr, "%d articles collected." % (len(results))
 exit()
 
 # EOF
