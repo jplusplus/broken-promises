@@ -40,7 +40,7 @@ ninety|hundred|thousand)"
 RE_DAY      = "(monday|tuesday|wednesday|thursday|friday|saturday|sunday)"
 RE_WEEK_DAY = "(monday|tuesday|wednesday|thursday|friday|saturday|sunday)"
 RE_MONTH    = "(?P<month>january|february|march|april|may|june|july|august|september|\
-october|november|december)"
+october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)"
 RE_DMY      = "(year|day|week|month)"
 RE_REL_DAY  = "(today|yesterday|tomorrow|tonight|tonite)"
 RE_EXP1     = "(before|after|earlier|later|ago)"
