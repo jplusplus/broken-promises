@@ -15,6 +15,7 @@ import optparse
 from collector.operations import CollectArticles
 import collector.channels
 from bson.json_util import dumps
+import sys
 
 oparser = optparse.OptionParser(usage ="\n./%prog [options] year \n./%prog [options] year month\n./%prog [options] year month day")
 oparser.add_option("-C", "--nocache", action="store_true", dest="nocache",
@@ -27,8 +28,14 @@ oparser.add_option("-m", "--mongodb", action="store", dest="mongodb_uri",
 	help = "uri to mongodb instance to persist results", default=None)
 oparser.add_option("-d", "--drop", action="store_true", dest="mongodb_drop",
 	help = "drop the previous articles from database before", default=False)
+oparser.add_option("-o", "--output", action="store", dest="output_file",
+	help = "Specify  a file to write the export to. If you do not specify a file name, the program writes data to standard output (e.g. stdout)", default=None)
+
 options, args = oparser.parse_args()
 assert len(args) > 0 and len(args) <= 3
+
+if options.output_file:
+	sys.stdout = open(options.output_file, 'a')
 
 channels = collector.channels.get_available_channels()
 if options.channels_file:
