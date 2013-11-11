@@ -8,8 +8,9 @@
 # License : proprietary journalism++
 # -----------------------------------------------------------------------------
 # Creation : 28-Oct-2013
-# Last mod : 05-Nov-2013
+# Last mod : 11-Nov-2013
 # -----------------------------------------------------------------------------
+import datetime
 
 # -----------------------------------------------------------------------------
 #
@@ -19,7 +20,8 @@
 class Article:
 
 	def __init__(self, channel, title=None, url=None, source=None, body=None, 
-				 pub_date=None, ref_dates=[], images=[], headline=None, *args, **kwargs):
+				 pub_date=None, ref_dates=[], images=[], headline=None, created=None, 
+				 *args, **kwargs):
 		self.title     = title
 		self.url       = url
 		self.source    = source
@@ -29,6 +31,7 @@ class Article:
 		self.images    = images
 		self.headline  = headline
 		self.channel   = channel
+		self.created   = created or datetime.datetime.now()
 
 	def __unicode__(self):
 		return u"\"%s - %s...\"" % (self.source, self.title[:20])
