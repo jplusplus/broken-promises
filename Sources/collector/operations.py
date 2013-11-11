@@ -131,6 +131,7 @@ class TestOperations(unittest.TestCase):
 		dates = (
 			("10 October 2013"       , (2013, 10, 10)),
 			("10 october, 2013"      , (2013, 10, 10)),
+			("4 by October 2013"     , (2013, 10, 4)),
 			("10 by October 2013"    , (2013, 10, 10)),
 			("10 by October, 2013"   , (2013, 10, 10)),
 			("Jan 2014"              , (2014, 1, None)),
@@ -149,6 +150,7 @@ class TestOperations(unittest.TestCase):
 			("2013/10/10"            , (2013, 10, 10)),
 			("August, 2013"          , (2013, 8, None)),
 			("2013"                  , (2013, None, None)),
+			("November 04, 2013"     , (2013, 11, 4)),
 			("November 4, 2013"      , (2013, 11, 4)),
 		)
 
