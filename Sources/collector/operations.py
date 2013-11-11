@@ -53,8 +53,10 @@ class Collector:
 		import datetime
 		# TODO: TO TEST
 		# filter ref_dates anterior to pub_date
+		def _filter_anterior_pub_date(_):
+			return datetime.date(_['date'][0], _['date'][1] or 1, _['date'][2] or 1) >= result.pub_date.date()
 		for result in results:
-			result.ref_dates = filter(lambda _: datetime.date(_['date'][0], _['date'][1] or 1, _['date'][2] or 1) >= result.pub_date.date(), result.ref_dates)
+			result.ref_dates = filter(_filter_anterior_pub_date, result.ref_dates)
 		# filter results when ref_dates is empty
 		results = filter(lambda _: _.ref_dates, results)
 		return results
