@@ -14,6 +14,7 @@
 from collector          import Article
 from collector.channels import Channel, channel
 import collector.utils  as utils
+import datetime
 
 @channel("The Guardian")
 class TheGuardian(Channel):
@@ -46,7 +47,7 @@ class TheGuardian(Channel):
 				a.url      = article.get('webUrl')
 				a.title    = article.get('webTitle')
 				a.source   = "The Guardian"
-				a.pub_date = article.get('webPublicationDate')
+				a.pub_date = datetime.datetime.strptime(article.get('webPublicationDate'), "%Y-%m-%dT%H:%M:%SZ")
 				a.snippet  = article.get('fields').get('trailText')
 				# a.images   = TODO
 				# scrape body from page
@@ -70,7 +71,7 @@ class TheGuardian(Channel):
 		}
 		r = self.session.get(TheGuardian.URI, params=payload)
 		if r.status_code != 200:
-			raise Exception("API returns an error:\n %s\n\n%s" % (r.text, payload))
+			raise Exception("API returns an error for %s:\n %s\n\n%s" % (TheGuardian.URI, r.text, payload))
 		return r.json()
 
 	def scrape_body_article(self, url):
