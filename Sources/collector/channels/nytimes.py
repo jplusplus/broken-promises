@@ -104,13 +104,13 @@ class TestNewYorkTimes(unittest.TestCase):
 			# print article.url
 
 	def test_scrape_body_article(self):
-		body = self.obj.scrape_body_article("http://www.nytimes.com/reuters/2013/10/24/world/africa/24reuters-kenya-security-australia.html?gwh=FD09ABA7920134DF9952DDAC7B08B332&_r=0")
-		assert type(body) is unicode
+		body = self.obj.scrape_body_article("http://www.nytimes.com/aponline/2013/11/05/us/ap-us-school-to-prison-pipeline.html")
+		assert type(body) is unicode, type(body)
 		assert body != ""
 		# start of the article
-		assert "Militants may be planning attacks on nightclubs and other" in body
+		assert "One of the nation's largest school districts" in body
 		# end of the article
-		assert "indications of an imminent attack by Islamist militants." in body
+		assert "infractions like flatulence or vulgar language." in body
 
 if __name__ == "__main__":
 	# unittest.main()
