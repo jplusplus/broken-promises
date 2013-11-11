@@ -1,6 +1,8 @@
 Broken-Promises
 ===============
 
+[![Build Status](http://travis-ci.org/jplusplus/broken-promises.png)](http://travis-ci.org/jplusplus/broken-promises)
+
 ## Installation
 
 
