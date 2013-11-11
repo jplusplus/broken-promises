@@ -77,7 +77,7 @@ class Channel:
 import importlib, pkgutil, sys
 
 def get_available_channels():
-	return ["collector.channels.%s" % _[1] for _ in pkgutil.walk_packages(sys.modules['collector.channels'].__path__)]
+	return ["brokenpromises.channels.%s" % _[1] for _ in pkgutil.walk_packages(sys.modules['brokenpromises.channels'].__path__)]
 
 def perform_channels_import(val):
 	if type(val) in (tuple, list):

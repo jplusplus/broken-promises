@@ -11,9 +11,9 @@
 # Last mod : 28-Oct-2013
 # -----------------------------------------------------------------------------
 
-from collector          import Article
-from collector.channels import Channel, channel
-import collector.utils  as utils
+from brokenpromises          import Article
+from brokenpromises.channels import Channel, channel
+import brokenpromises.utils  as utils
 import datetime
 
 @channel("The New-York Times")

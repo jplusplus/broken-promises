@@ -10,8 +10,8 @@
 # Creation : 05-Nov-2013
 # Last mod : 08-Nov-2013
 # -----------------------------------------------------------------------------
-import collector.channels
-import collector.utils
+import brokenpromises.channels
+import brokenpromises.utils
 import nltk
 import os
 import dateparser
@@ -69,7 +69,7 @@ class Collector:
 class CollectArticles(Collector):
 
 	def __init__(self, channels, year, month=None, day=None):
-		self.channels = [channel() for channel in collector.channels.perform_channels_import(channels)]
+		self.channels = [channel() for channel in brokenpromises.channels.perform_channels_import(channels)]
 		self.date     = (year, month, day)
 
 	def run(self):
@@ -114,10 +114,10 @@ class TestOperations(unittest.TestCase):
 
 	def test_get_articles(self):
 		channels = (
-			# "collector.channels.nytimes",
-			"collector.channels.guardian",
+			# "brokenpromises.channels.nytimes",
+			"brokenpromises.channels.guardian",
 		)
-		# channels  = collector.utils.get_available_channels()
+		# channels  = brokenpromises.utils.get_available_channels()
 
 		collector = CollectArticles(channels, "2014", "1")
 		results   = collector.run()

@@ -12,8 +12,8 @@
 # -----------------------------------------------------------------------------
 
 import optparse
-from collector.operations import CollectArticles
-import collector.channels
+from brokenpromises.operations import CollectArticles
+import brokenpromises.channels
 from bson.json_util import dumps
 import sys
 
@@ -37,7 +37,7 @@ assert len(args) > 0 and len(args) <= 3
 if options.output_file:
 	sys.stdout = open(options.output_file, 'a')
 
-channels = collector.channels.get_available_channels()
+channels = brokenpromises.channels.get_available_channels()
 if options.channels_file:
 	with open(options.channels_file) as f:
 		channels = [line.replace("\n", "") for line in f.readlines()]
