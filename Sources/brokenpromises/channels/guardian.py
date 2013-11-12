@@ -8,7 +8,7 @@
 # License : GNU General Public License
 # -----------------------------------------------------------------------------
 # Creation : 29-Oct-2013
-# Last mod : 29-Oct-2013
+# Last mod : 12-Nov-2013
 # -----------------------------------------------------------------------------
 # This file is part of Broken Promises.
 # 
@@ -26,7 +26,7 @@
 #     along with Broken Promises.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from brokenpromises          import Article
+from brokenpromises          import Article, settings
 from brokenpromises.channels import Channel, channel
 import brokenpromises.utils  as utils
 import datetime
@@ -40,7 +40,7 @@ class TheGuardian(Channel):
 	"""
 
 	URI     = "http://content.guardianapis.com/search"
-	API_KEY = "79t54uxw5duhevew9arubq4v"
+	API_KEY = settings.BP_CHANNEL_GUARDIAN_API_KEY
 
 	def get_articles(self, year, month=None, day=None):
 		different_date_formats = utils.get_all_date_formats(year, month, day)

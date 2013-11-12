@@ -7,3 +7,4 @@ fabfile.py
 Webapp/static/.webassets-cache/
 Webapp/static/gen/*
 dump*
+.env_dev

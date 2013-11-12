@@ -8,7 +8,7 @@
 # License : GNU General Public License
 # -----------------------------------------------------------------------------
 # Creation : 28-Oct-2013
-# Last mod : 28-Oct-2013
+# Last mod : 12-Nov-2013
 # -----------------------------------------------------------------------------
 # This file is part of Broken Promises.
 # 
@@ -26,7 +26,7 @@
 #     along with Broken Promises.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from brokenpromises          import Article
+from brokenpromises          import Article, settings
 from brokenpromises.channels import Channel, channel
 import brokenpromises.utils  as utils
 import datetime
@@ -44,7 +44,7 @@ class NewYorkTimes(Channel):
 	"""
 
 	URI     = "http://api.nytimes.com/svc/search/v2/articlesearch.json"
-	API_KEY = "fb70195272f6883497bbda131a223746:5:68327206"
+	API_KEY = settings.BP_CHANNEL_NYTIMES_API_KEY
 
 	def get_articles(self, year, month=None, day=None):
 		different_date_formats = utils.get_all_date_formats(year, month, day)
