@@ -1,10 +1,10 @@
 language: python
 python:
-  - "2.7"
-  - "2.6"
-# command to install dependencies, e.g. pip install -r requirements.txt --use-mirrors
+- '2.7'
+- '2.6'
 install: make install
-# command to run tests, e.g. python setup.py test
-script:  make test
-
-# EOF
+script: make test
+env:
+  global:
+  - secure: J/RbAX/OYUfHx7e0bZcJXKxA5vSzaTNO/gvf8MDJJS/BwK85R47yPZJmZfqvoOin27/S0TGr1f9WX6f8YBr3BTcJU36z8QHsWPyEMTJ2eyFgeHgKce42/MjCiwHZ2b4D5Yd1aICjHHhYUhe0a+hdJH4ML+nuwyDK3S7MqF1nfNw=
+  - secure: KbtJT1Ltn0FNdruzbQTeDjw4rLWwpvpV3hRVu5kw0jM2wqwKFJtcubdXwcZzX0hIVaSpCyD+p2i+sVZONy2375fEOIwMYZkuudBBvFEDhDm4zlz5qjEiWaRJFMG/iTpsFggRmGeYjZKN7DOBkVVi6GewohLNfK/O4Ju287M06TM=
