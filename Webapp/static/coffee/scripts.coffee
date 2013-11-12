@@ -16,7 +16,7 @@ angular.module('brokenPromisesApp')
 		$scope.active = -1
 
 		Restangular
-			.all('articles')
+			.all('articles?ts=' + new Date().getTime())
 			.getList().then (articles) =>
 				$scope.articles = articles._items
 
