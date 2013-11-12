@@ -95,12 +95,14 @@ def get_available_channels():
 	return ["brokenpromises.channels.%s" % _[1] for _ in pkgutil.walk_packages(sys.modules['brokenpromises.channels'].__path__)]
 
 def perform_channels_import(val):
+	response = None
 	if type(val) in (tuple, list):
-		return (__import_channels_from_string(item) for item in val)
-	elif type(val) is type(""):
-		return (__import_channels_from_string(val),)
+		response = (__import_channels_from_string(item) for item in val)
+	elif type(val) in (unicode, str):
+		response = __import_channels_from_string(val)
 	else:
-		return (val,)
+		response = val
+	return response
 
 def __import_channels_from_string(val):
 	importlib.import_module(val)
