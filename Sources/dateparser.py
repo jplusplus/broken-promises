@@ -28,18 +28,20 @@
 # Inspired from https://code.google.com/p/nltk/source/browse/trunk/nltk_contrib/nltk_contrib/timex.py
 import re
 
-RE_NUMBERS  = "(^a(?=\s)|one|two|three|four|five|six|seven|eight|nine|ten|\
+RE_NUMBERS      = "(^a(?=\s)|one|two|three|four|five|six|seven|eight|nine|ten|\
 eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|\
 eighteen|nineteen|twenty|thirty|forty|fifty|sixty|seventy|eighty|\
 ninety|hundred|thousand)"
-RE_DAY      = "(monday|tuesday|wednesday|thursday|friday|saturday|sunday)"
-RE_MONTH    = "(?P<month>january|february|march|april|may|june|july|august|september|\
+RE_DAY          = "(monday|tuesday|wednesday|thursday|friday|saturday|sunday)"
+RE_MONTH        = "(?P<month>january|february|march|april|may|june|july|august|september|\
 october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)"
-RE_DMY      = "(year|day|week|month)"
-RE_REL_DAY  = "(today|yesterday|tomorrow|tonight|tonite)"
-RE_EXP1     = "(before|after|earlier|later|ago)"
-RE_EXP2     = "(this|next|last)"
-RE_Y        = "(?P<year>(?<=\s)(19|20)\d\d|^(19|20)\d\d)"
+RE_DMY          = "(year|day|week|month)"
+RE_REL_DAY      = "(today|yesterday|tomorrow|tonight|tonite)"
+RE_EXP1         = "(before|after|earlier|later|ago)"
+RE_EXP2         = "(this|next|last)"
+RE_Y            = "(?P<year>(?<=\s)(19|20)\d\d|^(19|20)\d\d)"
+RE_DAY_NUMBER   = "(?P<day>0[1-9]|[12][0-9]|3[01]|[1-9])"
+RE_MONTH_NUMBER = "(?P<month>0[1-9]|1[0-2]|[1-9])"
 
 # -----------------------------------------------------------------------------
 #
@@ -50,10 +52,10 @@ RE_Y        = "(?P<year>(?<=\s)(19|20)\d\d|^(19|20)\d\d)"
 # ISO -----------------------
 # [X] 2013-10-3
 # [X] 2013/10/3
-RE_ISO1      = re.compile("(?P<year>[0-9]{4})[/-](?P<month>0[1-9]|1[0-2]|[1-9])[/-](?P<day>0[1-9]|[12][0-9]|3[01]|[1-9])")
+RE_ISO1      = re.compile(RE_Y + "[/-]" + RE_MONTH_NUMBER + "[/-]" + RE_DAY_NUMBER)
 # [X] 3-10-2013
 # [X] 3/10/2013
-RE_ISO2      = re.compile("(?P<day>0[1-9]|[12][0-9]|3[01]|[1-9])[/-](?P<month>0[1-9]|1[0-2]|[1-9])[/-](?P<year>[0-9]{4})")
+RE_ISO2      = re.compile(RE_DAY_NUMBER + "[/-]" + RE_MONTH_NUMBER + "[/-]" + RE_Y)
 
 # Full Dates ----------------
 # [x] 3 October 2013
@@ -71,10 +73,10 @@ RE_ISO2      = re.compile("(?P<day>0[1-9]|[12][0-9]|3[01]|[1-9])[/-](?P<month>0[
 # [X] 3th in October, 2013
 # [X] 3th of October 2013
 # [X] 3th of October, 2013
-RE_FULL_DATE1 = re.compile("(?<!\d)(?P<day>0[1-9]|[12][0-9]|3[01]|[1-9])(?:th)? (?:by |in |of )?" + RE_MONTH + "[,]? " + RE_Y, re.IGNORECASE)
+RE_FULL_DATE1 = re.compile("(?<!\d)" + RE_DAY_NUMBER + "(?:th)? (?:by |in |of )?" + RE_MONTH + "[,]? " + RE_Y, re.IGNORECASE)
 # [X] October 3, 2013
 # [X] October 3 2013
-RE_FULL_DATE2 = re.compile(RE_MONTH + " (?P<day>0[1-9]|[12][0-9]|3[01]|[1-9])(?:th)?[,]? " + RE_Y, re.IGNORECASE)
+RE_FULL_DATE2 = re.compile(RE_MONTH + " " + RE_DAY_NUMBER + "(?:th)?[,]? " + RE_Y, re.IGNORECASE)
 
 # Month ---------------------
 # [X] October 2013
