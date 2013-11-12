@@ -50,10 +50,10 @@ RE_Y        = "(?P<year>(?<=\s)(19|20)\d\d|^(19|20)\d\d)"
 # ISO -----------------------
 # [X] 2013-10-3
 # [X] 2013/10/3
-RE_ISO1      = re.compile("(?P<year>[0-9]{4})[/-](?P<month>[0-9]{2})[/-](?P<day>[0-9]{2})")
+RE_ISO1      = re.compile("(?P<year>[0-9]{4})[/-](?P<month>0[1-9]|1[0-2]|[1-9])[/-](?P<day>0[1-9]|[12][0-9]|3[01]|[1-9])")
 # [X] 3-10-2013
 # [X] 3/10/2013
-RE_ISO2      = re.compile("(?P<day>[0-9]{2})[/-](?P<month>[0-9]{2})[/-](?P<year>[0-9]{4})")
+RE_ISO2      = re.compile("(?P<day>0[1-9]|[12][0-9]|3[01]|[1-9])[/-](?P<month>0[1-9]|1[0-2]|[1-9])[/-](?P<year>[0-9]{4})")
 
 # Full Dates ----------------
 # [x] 3 October 2013
@@ -71,10 +71,10 @@ RE_ISO2      = re.compile("(?P<day>[0-9]{2})[/-](?P<month>[0-9]{2})[/-](?P<year>
 # [X] 3th in October, 2013
 # [X] 3th of October 2013
 # [X] 3th of October, 2013
-RE_FULL_DATE1 = re.compile("(?<!\d)(?P<day>([1-9]|0[1-9]|[12][0-9]|3[01]))(?:th)? (?:by |in |of )?" + RE_MONTH + "[,]? " + RE_Y, re.IGNORECASE)
+RE_FULL_DATE1 = re.compile("(?<!\d)(?P<day>0[1-9]|[12][0-9]|3[01]|[1-9])(?:th)? (?:by |in |of )?" + RE_MONTH + "[,]? " + RE_Y, re.IGNORECASE)
 # [X] October 3, 2013
 # [X] October 3 2013
-RE_FULL_DATE2 = re.compile(RE_MONTH + " (?P<day>([1-9]|0[1-9]|[12][0-9]|3[01]))(?:th)?[,]? " + RE_Y, re.IGNORECASE)
+RE_FULL_DATE2 = re.compile(RE_MONTH + " (?P<day>0[1-9]|[12][0-9]|3[01]|[1-9])(?:th)?[,]? " + RE_Y, re.IGNORECASE)
 
 # Month ---------------------
 # [X] October 2013
