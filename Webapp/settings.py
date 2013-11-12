@@ -1,11 +1,9 @@
 import os
 
 DEBUG          = True
-# LIB_DIR        = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'lib')
-# FREEZER_RELATIVE_URLS = True
 ASSETS_DEBUG   = DEBUG
 
-# EVE
+# MongoDB
 MONGOLAB_URI = os.environ.get('MONGOLAB_URI')
 if MONGOLAB_URI:
 	from urlparse import urlparse
