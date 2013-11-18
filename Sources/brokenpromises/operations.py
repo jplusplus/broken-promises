@@ -69,7 +69,13 @@ class Collector:
 		# TODO: TO TEST
 		# filter ref_dates anterior to pub_date
 		def _pub_date_is_anterior(_):
-			return datetime.date(_['date'][0], _['date'][1] or 1, _['date'][2] or 1) > result.pub_date.date()
+			try:
+				return datetime.date(_['date'][0], _['date'][1] or 1, _['date'][2] or 1) > result.pub_date.date()
+			except AttributeError as e:
+				import sys
+				print >> sys.stderr, "error: %s\nIs %s a datetime instance ? (type: %s)" % (e, result.pub_date, type(result.pub_date))
+				raise Exception(e)
+
 		for result in results:
 			result.ref_dates = filter(_pub_date_is_anterior, result.ref_dates)
 		# filter results when ref_dates is empty
@@ -84,7 +90,7 @@ class Collector:
 class CollectArticles(Collector):
 
 	def __init__(self, channels, year, month=None, day=None):
-		self.channels = [channel() for channel in brokenpromises.channels.perform_channels_import(channels)]
+		self.channels = [Channel() for Channel in brokenpromises.channels.perform_channels_import(channels)]
 		self.date     = (year, month, day)
 
 	def run(self):
@@ -103,8 +109,9 @@ class CollectArticles(Collector):
 
 class RefreshArticles(Collector):
 
-	def __init__(self, articles):
+	def __init__(self, articles, scrape=False):
 		self.articles = articles
+		self.scrape = scrape
 
 	def run(self):
 		articles = self.articles
@@ -112,6 +119,9 @@ class RefreshArticles(Collector):
 		self.pre_filter(articles)
 		# parsing date
 		for article in articles:
+			if self.scrape:
+				Channel      = brokenpromises.channels.perform_channels_import(article.channel)
+				article.body = Channel().scrape_body_article(article.url)
 			article.ref_dates = self.retrieve_referenced_dates(article.body)
 		# post-filters
 		articles = self.post_filter(articles)

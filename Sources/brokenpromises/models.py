@@ -41,6 +41,11 @@ class Article:
 		self.url       = url
 		self.source    = source
 		self.body      = body
+		if type(pub_date) in (unicode, str):
+			# TODO: date peuvent etre en unicode (Tue, 21 May 2013 08:23:00 GMT), doivent être parsées
+			self.pub_date = pub_date
+		else:
+			self.pub_date = pub_date
 		self.pub_date  = pub_date
 		self.ref_dates = ref_dates
 		self.images    = images

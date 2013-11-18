@@ -102,8 +102,7 @@ class TheGuardian(Channel):
 		# fitlers
 		paragraphs = filter(lambda  _: _.name() != "script"                       , paragraphs)
 		paragraphs = filter(lambda  _: "This article was amended" not in _.text() , paragraphs)
-
-		return "\n".join(map(lambda _:_.text() ,paragraphs))
+		return "".join(map(lambda _:_.html() ,paragraphs))
 
 # -----------------------------------------------------------------------------
 #

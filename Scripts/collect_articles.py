@@ -46,6 +46,8 @@ oparser.add_option("-d", "--drop", action="store_true", dest="mongodb_drop",
 oparser.add_option("-o", "--output", action="store", dest="output_file",
 	help = "Specify  a file to write the export to. If you do not specify a file name, the program writes data to standard output (e.g. stdout)", default=None)
 
+# Think to update the README.md file after modifying the options
+
 options, args = oparser.parse_args()
 assert len(args) > 0 and len(args) <= 3
 
