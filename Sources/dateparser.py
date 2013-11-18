@@ -73,7 +73,7 @@ RE_ISO2      = re.compile(RE_DAY_NUMBER + "[/-]" + RE_MONTH_NUMBER + "[/-]" + RE
 # [X] 3th in October, 2013
 # [X] 3th of October 2013
 # [X] 3th of October, 2013
-RE_FULL_DATE1 = re.compile("(?<!\d)" + RE_DAY_NUMBER + "(?:th)? (?:by |in |of )?" + RE_MONTH + "[,]? " + RE_Y, re.IGNORECASE)
+RE_FULL_DATE1 = re.compile("(?<!\d)(?<!£)(?<!&pound;)(?<!$)" + RE_DAY_NUMBER + "(?:th)? (?:by |in |of )?" + RE_MONTH + "[,]? " + RE_Y, re.IGNORECASE)
 # [X] October 3, 2013
 # [X] October 3 2013
 RE_FULL_DATE2 = re.compile(RE_MONTH + " " + RE_DAY_NUMBER + "(?:th)?[,]? " + RE_Y, re.IGNORECASE)

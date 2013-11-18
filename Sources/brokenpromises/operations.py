@@ -70,10 +70,15 @@ class Collector:
 		# filter ref_dates anterior to pub_date
 		def _pub_date_is_anterior(_):
 			try:
-				return datetime.date(_['date'][0], _['date'][1] or 1, _['date'][2] or 1) > result.pub_date.date()
+				date = (_['date'][0], _['date'][1] or 1, _['date'][2] or 1)
+				return datetime.date(*date) > result.pub_date.date()
 			except AttributeError as e:
 				import sys
 				print >> sys.stderr, "error: %s\nIs %s a datetime instance ? (type: %s)" % (e, result.pub_date, type(result.pub_date))
+				raise Exception(e)
+			except ValueError as e:
+				import sys
+				print >> sys.stderr, "error: %s\nIs %s a real date ?\n\nobj: %s" % (e, date, result.__dict__)
 				raise Exception(e)
 
 		for result in results:
@@ -179,16 +184,16 @@ class TestOperations(unittest.TestCase):
 			("November 4, 2013"      , (2013, 11, 4)),
 		)
 
-		text  = " bla bli 123. Bu \n pouet12 \n 12432 ".join([_[0] for _ in dates])
+		text  = " bla bli 123. Bu \n pouet12 \n 12412 ".join([_[0] for _ in dates])
 		refs  = CollectArticles.retrieve_referenced_dates(text)
 		date_found = [_['extracted_date'] for _ in refs]
 		for searched_date in dates:
 			try:
 				ref = filter(lambda _: _["extracted_date"] == searched_date[0], refs)[0]
 			except:
-				raise Exception("\"%s\" not found in document" % searched_date[0])
+				raise Exception("\"%s\" not found in document. Date found:\n%s" % (searched_date[0], "\n".join(date_found)))
 			assert ref['extracted_date'] in searched_date[0]
-			assert ref['date']           == searched_date[1]
+			assert ref['date']           == searched_date[1], "%s != %s" % (ref['date'], searched_date[1])
 			date_found.remove(ref['extracted_date'])
 		assert len(refs) == len(dates), "%s != %s\nToo much : %s" % (len(refs), len(dates), date_found)
 
