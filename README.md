@@ -28,7 +28,7 @@ make install
 make run
 ```
 
-Then visit [http://127.0.0.1/ui/](http://127.0.0.1/ui/)
+Then visit [http://127.0.0.1:5000/ui/](http://127.0.0.1:5000/ui/)
 
 ## CLI
 
