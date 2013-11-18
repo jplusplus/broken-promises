@@ -81,7 +81,7 @@ class TheGuardian(Channel):
 			"q"           : "\"%s\"" % (keyword),
 			"show-fields" : "all",
 			# section list here: http://content.guardianapis.com/sections
-			"section"     : "-fashion,-music,-artanddesign,-film",
+			"section"     : "-fashion,-music,-artanddesign,-film,-guardian-masterclasses",
 			"page-size"   : 50 # maximum
 		}
 		r = self.session.get(TheGuardian.URI, params=payload)
