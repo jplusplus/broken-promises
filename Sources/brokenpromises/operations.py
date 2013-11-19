@@ -32,6 +32,7 @@ import os
 import dateparser
 import datetime
 import reporter
+from   wwwclient import HTML
 
 debug, trace, info, warning, error, fatal = reporter.bind(__name__)
 
@@ -40,6 +41,11 @@ class Collector:
 	@classmethod
 	def retrieve_referenced_dates(cls, text):
 		references = []
+		# filters tags if it's html
+		text = HTML.parse(text)
+		text = filter(lambda _: _.name() != "img", text)
+		text = "".join(map(lambda _:_.html() ,text))
+		# search and add dates to `refrences`
 		for date_obj, date_row, date_position in dateparser.find_dates(text):
 			reference = {
 				"date"           : date_obj,
