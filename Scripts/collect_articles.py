@@ -88,7 +88,7 @@ if options.mongodb_uri:
 			collection.update({'_id':previous['_id']}, dict(previous.items() + article.__dict__.items()))
 
 # OUTPUT
-print dumps([_.__dict__ for _ in results])
+print dumps([_.__dict__ for _ in results]).encode('utf-8')
 info("%d articles collected." % (len(results)))
 exit()
 

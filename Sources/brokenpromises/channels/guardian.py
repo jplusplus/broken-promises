@@ -110,7 +110,7 @@ class TheGuardian(Channel):
 		paragraphs = filter(lambda  _: "was amended on"  not in _.text() , paragraphs)
 		paragraphs = filter(lambda  _: "was changed on"  not in _.text() , paragraphs)
 		paragraphs = filter(lambda  _: "was edited on"   not in _.text() , paragraphs)
-		return "".join(map(lambda _:_.html().encode('utf-8') ,paragraphs))
+		return "".join(map(lambda _:_.html() ,paragraphs))
 
 # -----------------------------------------------------------------------------
 #
