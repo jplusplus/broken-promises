@@ -97,7 +97,7 @@ def get_available_channels():
 def perform_channels_import(val):
 	response = None
 	if type(val) in (tuple, list):
-		response = (__import_channels_from_string(item) for item in val)
+		response = tuple(__import_channels_from_string(item) for item in val)
 	elif type(val) in (unicode, str):
 		response = __import_channels_from_string(val)
 	else:
