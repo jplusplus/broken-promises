@@ -102,9 +102,10 @@ class TheGuardian(Channel):
 			return None
 		paragraphs = paragraphs[0]
 		# fitlers
-		paragraphs = filter(lambda  _: _.name() != "script"                      , paragraphs)
-		paragraphs = filter(lambda  _: "his article was amended" not in _.text() , paragraphs)
-		paragraphs = filter(lambda  _: "his article was edited"  not in _.text() , paragraphs)
+		paragraphs = filter(lambda  _: _.name() != "script"              , paragraphs)
+		paragraphs = filter(lambda  _: "was amended on"  not in _.text() , paragraphs)
+		paragraphs = filter(lambda  _: "was changed on"  not in _.text() , paragraphs)
+		paragraphs = filter(lambda  _: "was edited on"   not in _.text() , paragraphs)
 		return "".join(map(lambda _:_.html() ,paragraphs))
 
 # -----------------------------------------------------------------------------
