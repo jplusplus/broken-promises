@@ -30,6 +30,9 @@ from brokenpromises          import Article, settings
 from brokenpromises.channels import Channel, channel
 import brokenpromises.utils  as utils
 import datetime
+import reporter
+
+debug, trace, info, warning, error, fatal = reporter.bind(__name__)
 
 @channel("The Guardian")
 class TheGuardian(Channel):
@@ -46,33 +49,28 @@ class TheGuardian(Channel):
 		different_date_formats = utils.get_all_date_formats(year, month, day)
 		articles = []
 		for format in different_date_formats:
-			try:
-				response = self.request_api(keyword=format)
-			except Exception as e:
-				# TODO: log error
-				import sys
-				print >> sys.stderr, e
-				continue
-			for article in response['response']['results']:
-				# escaping conditions
-				if article.get('web_url') in [_.url for _ in articles] :
-					# this url is already added in the response
-					continue
-				a = Article(TheGuardian.__module__)
-				a.url      = article.get('webUrl')
-				a.title    = article.get('webTitle')
-				a.source   = "The Guardian"
-				a.pub_date = datetime.datetime.strptime(article.get('webPublicationDate'), "%Y-%m-%dT%H:%M:%SZ")
-				a.snippet  = article.get('fields').get('trailText')
-				# a.images   = TODO
-				# scrape body from page
-				a.body     = self.scrape_body_article(a.url)
-				if a.body:
-					articles.append(a)
-				else:
-					# TODO Loggin
-					# print a, a.url
-					pass
+			response = self.request_api(keyword=format)
+			if response:
+				for article in response['response']['results']:
+					# escaping conditions
+					if article.get('web_url') in [_.url for _ in articles] :
+						# this url is already added in the response
+						continue
+					a = Article(TheGuardian.__module__)
+					a.url      = article.get('webUrl')
+					a.title    = article.get('webTitle')
+					a.source   = "The Guardian"
+					a.pub_date = datetime.datetime.strptime(article.get('webPublicationDate'), "%Y-%m-%dT%H:%M:%SZ")
+					a.snippet  = article.get('fields').get('trailText')
+					# a.images   = TODO
+					# scrape body from page
+					a.body     = self.scrape_body_article(a.url)
+					if a.body:
+						articles.append(a)
+					else:
+						# TODO Loggin
+						# print a, a.url
+						pass
 		return articles
 
 	def request_api(self, keyword):
@@ -86,7 +84,12 @@ class TheGuardian(Channel):
 		}
 		r = self.session.get(TheGuardian.URI, params=payload)
 		if r.status_code != 200:
-			raise Exception("API returns an error for %s:\n %s\n\n%s" % (TheGuardian.URI, r.text, payload))
+			if r.json()['response']['message'] == "only one value allowed in q parameter":
+				# error known
+				return None
+			else:
+				error("Guardian returns an error for %s:\n %s\n%s" % (TheGuardian.URI, r.json(), payload))
+				return None
 		return r.json()
 
 	def scrape_body_article(self, url):

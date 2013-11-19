@@ -31,6 +31,9 @@ import nltk
 import os
 import dateparser
 import datetime
+import reporter
+
+debug, trace, info, warning, error, fatal = reporter.bind(__name__)
 
 class Collector:
 
@@ -73,14 +76,11 @@ class Collector:
 				date = (_['date'][0], _['date'][1] or 1, _['date'][2] or 1)
 				return datetime.date(*date) > result.pub_date.date()
 			except AttributeError as e:
-				import sys
-				print >> sys.stderr, "error: %s\nIs %s a datetime instance ? (type: %s)" % (e, result.pub_date, type(result.pub_date))
-				raise Exception(e)
+				error("%s\nIs %s a datetime instance ? (type: %s)\nobj:" % (e, result.pub_date, type(result.pub_date), result.__dict__))
+				return False
 			except ValueError as e:
-				import sys
-				print >> sys.stderr, "error: %s\nIs %s a real date ?\n\nobj: %s" % (e, date, result.__dict__)
-				raise Exception(e)
-
+				error("%s\nIs %s a real date ?\nobj: %s" % (e, date, result.__dict__))
+				return False
 		for result in results:
 			result.ref_dates = filter(_pub_date_is_anterior, result.ref_dates)
 		# filter results when ref_dates is empty

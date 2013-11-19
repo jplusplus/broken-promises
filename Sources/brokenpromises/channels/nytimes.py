@@ -30,6 +30,9 @@ from brokenpromises          import Article, settings
 from brokenpromises.channels import Channel, channel
 import brokenpromises.utils  as utils
 import datetime
+import reporter
+
+debug, trace, info, warning, error, fatal = reporter.bind(__name__)
 
 @channel("The New-York Times")
 class NewYorkTimes(Channel):
@@ -50,31 +53,26 @@ class NewYorkTimes(Channel):
 		different_date_formats = utils.get_all_date_formats(year, month, day)
 		articles = []
 		for format in different_date_formats:
-			try:
-				response = self.request_api(keyword=format)
-			except Exception as e:
-				# TODO: log error
-				import sys
-				print >> sys.stderr, e
-				continue
-			for article in response['response']['docs']:
-				# escaping conditions
-				if article.get('document_type') not in ('article', 'blog'):
-					# it's not an article
-					continue
-				if article.get('web_url') in [_.url for _ in articles] :
-					# this url is already added in the response
-					continue
-				a = Article(NewYorkTimes.__module__)
-				a.url      = article.get('web_url')
-				a.title    = article.get('headline')['main']
-				a.source   = article.get('source') or "The New York Times"
-				a.pub_date = datetime.datetime.strptime(article.get('pub_date'), "%Y-%m-%dT%H:%M:%SZ")
-				a.snippet  = article.get('snippet')
-				# a.images   = TODO
-				# scrape body from page
-				a.body     = self.scrape_body_article(a.url)
-				articles.append(a)
+			response = self.request_api(keyword=format)
+			if response:
+				for article in response['response']['docs']:
+					# escaping conditions
+					if article.get('document_type') not in ('article', 'blog'):
+						# it's not an article
+						continue
+					if article.get('web_url') in [_.url for _ in articles] :
+						# this url is already added in the response
+						continue
+					a = Article(NewYorkTimes.__module__)
+					a.url      = article.get('web_url')
+					a.title    = article.get('headline')['main']
+					a.source   = article.get('source') or "The New York Times"
+					a.pub_date = datetime.datetime.strptime(article.get('pub_date'), "%Y-%m-%dT%H:%M:%SZ")
+					a.snippet  = article.get('snippet')
+					# a.images   = TODO
+					# scrape body from page
+					a.body     = self.scrape_body_article(a.url)
+					articles.append(a)
 		return articles
 
 	def request_api(self, keyword):
@@ -84,7 +82,8 @@ class NewYorkTimes(Channel):
 		}
 		r = self.session.get(NewYorkTimes.URI, params=payload)
 		if r.status_code != 200:
-			raise Exception("API returns an error for %s:\n %s\n\n%s" % (NewYorkTimes.URI, r.text, payload))
+			error("Nytimes returns an error for %s:\n %s\n%s" % (NewYorkTimes.URI, r.json(), payload))
+			return None
 		return r.json()
 
 	def scrape_body_article(self, url):

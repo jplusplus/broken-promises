@@ -31,6 +31,11 @@ from brokenpromises.operations import CollectArticles
 import brokenpromises.channels
 from bson.json_util import dumps
 import sys
+import brokenpromises.reporter as reporter
+
+reporter.REPORTER.register(reporter.StderrReporter())
+
+debug, trace, info, warning, error, fatal = reporter.bind("script_collect_articles")
 
 oparser = optparse.OptionParser(usage ="\n./%prog [options] year \n./%prog [options] year month\n./%prog [options] year month day")
 oparser.add_option("-C", "--nocache", action="store_true", dest="nocache",
@@ -84,7 +89,7 @@ if options.mongodb_uri:
 
 # OUTPUT
 print dumps([_.__dict__ for _ in results])
-print >> sys.stderr, "%d articles collected." % (len(results))
+info("%d articles collected." % (len(results)))
 exit()
 
 # EOF
