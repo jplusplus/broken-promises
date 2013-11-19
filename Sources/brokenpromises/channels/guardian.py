@@ -68,8 +68,7 @@ class TheGuardian(Channel):
 					if a.body:
 						articles.append(a)
 					else:
-						# TODO Loggin
-						# print a, a.url
+						warning("no body for article %s" % (a.__dict__))
 						pass
 		return articles
 
@@ -99,7 +98,7 @@ class TheGuardian(Channel):
 			paragraphs =  self.HTML.parse(r.text).query('#live-blog-blocks')
 		# return None if nothing found
 		if not paragraphs:
-			# TODO : Logging
+			warning("there is no paragraph found for article %s" % (url))
 			return None
 		paragraphs = paragraphs[0]
 		# fitlers
