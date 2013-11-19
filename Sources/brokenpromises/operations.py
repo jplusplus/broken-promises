@@ -36,7 +36,13 @@ from   wwwclient import HTML
 
 debug, trace, info, warning, error, fatal = reporter.bind(__name__)
 
-class Collector:
+class Collector(object):
+
+	def __init__(self):
+		self.report = None
+
+	def get_report(self):
+		return self.report
 
 	@classmethod
 	def retrieve_referenced_dates(cls, text):
@@ -101,6 +107,7 @@ class Collector:
 class CollectArticles(Collector):
 
 	def __init__(self, channels, year, month=None, day=None):
+		super(CollectArticles, self).__init__()
 		self.channels = [Channel() for Channel in brokenpromises.channels.perform_channels_import(channels)]
 		self.date     = (year, month, day)
 
@@ -121,8 +128,9 @@ class CollectArticles(Collector):
 class RefreshArticles(Collector):
 
 	def __init__(self, articles, scrape=False):
+		super(RefreshArticles, self).__init__()
 		self.articles = articles
-		self.scrape = scrape
+		self.scrape   = scrape
 
 	def run(self):
 		articles = self.articles
