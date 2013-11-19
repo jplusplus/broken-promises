@@ -93,20 +93,24 @@ class TheGuardian(Channel):
 
 	def scrape_body_article(self, url):
 		r = self.session.get(url)
-		paragraphs = self.HTML.parse(r.text).query('#article-body-blocks')
+		paragraphs = self.HTML.tree(r.text).query('#article-body-blocks')
 		if not paragraphs:
-			paragraphs =  self.HTML.parse(r.text).query('#live-blog-blocks')
+			paragraphs =  self.HTML.tree(r.text).query('#live-blog-blocks')
 		# return None if nothing found
 		if not paragraphs:
 			warning("there is no paragraph found for article %s" % (url))
 			return None
 		paragraphs = paragraphs[0]
 		# fitlers
+		# remove comments (need to be first)
+		paragraphs = paragraphs.filter(reject=lambda _: _.hasClass("element-comment"), recursive=True)
+		# TODO: remove all the blockquotes (for tweet). Should preserve a date inside the quote.
+		paragraphs = paragraphs.filter(reject=lambda _: _.hasName("blockquote"), recursive=True)
 		paragraphs = filter(lambda  _: _.name() != "script"              , paragraphs)
 		paragraphs = filter(lambda  _: "was amended on"  not in _.text() , paragraphs)
 		paragraphs = filter(lambda  _: "was changed on"  not in _.text() , paragraphs)
 		paragraphs = filter(lambda  _: "was edited on"   not in _.text() , paragraphs)
-		return "".join(map(lambda _:_.html() ,paragraphs))
+		return "".join(map(lambda _:_.html().encode('utf-8') ,paragraphs))
 
 # -----------------------------------------------------------------------------
 #
