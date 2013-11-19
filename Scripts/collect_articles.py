@@ -31,7 +31,7 @@ from brokenpromises.operations import CollectArticles
 import brokenpromises.channels
 from bson.json_util import dumps
 import sys
-import brokenpromises.reporter as reporter
+import reporter
 
 reporter.REPORTER.register(reporter.StderrReporter())
 
