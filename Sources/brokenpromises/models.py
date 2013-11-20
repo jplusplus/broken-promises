@@ -34,7 +34,7 @@ import datetime
 # -----------------------------------------------------------------------------
 class Article:
 
-	def __init__(self, channel, title=None, url=None, source=None, body=None, 
+	def __init__(self, channel=None, title=None, url=None, source=None, body=None, 
 				 pub_date=None, ref_dates=[], images=[], headline=None, created=None, 
 				 *args, **kwargs):
 		self.title     = title
@@ -52,9 +52,13 @@ class Article:
 		self.headline  = headline
 		self.channel   = channel
 		self.created   = created or datetime.datetime.now()
+		# set extra fields, like _id from mongodb
+		for _k, _v in kwargs.items():
+			if not hasattr(self, _k):
+				setattr(self, _k, _v)
 
 	def __unicode__(self):
-		return u"\"%s - %s...\"" % (self.source, self.title[:20])
+		return u"\"%s - %s...\"" % (self.source, self.title and self.title[:20] or "untitled")
 	def __repr__(self):
 		return self.__unicode__()
 	def __str__(self):

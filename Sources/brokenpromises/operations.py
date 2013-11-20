@@ -27,6 +27,7 @@
 
 import brokenpromises.channels
 import brokenpromises.utils
+from brokenpromises.storage import Storage
 import nltk
 import os
 import dateparser
@@ -113,11 +114,13 @@ class Collector(object):
 # -----------------------------------------------------------------------------
 class CollectArticles(Collector):
 
-	def __init__(self, channels, year, month=None, day=None):
+	def __init__(self, channels, year, month=None, day=None, use_storage=False):
 		super(CollectArticles, self).__init__()
-		self.channels_active = channels
+		self.use_storage = use_storage
 		self.channels = [Channel() for Channel in brokenpromises.channels.perform_channels_import(channels)]
 		self.date     = (year, month, day)
+		if self.use_storage:
+			self.storage = Storage()
 
 	def run(self):
 		articles = []
@@ -134,10 +137,13 @@ class CollectArticles(Collector):
 		# reporting
 		self.set_report(
 			count         = len(articles),
-			channels      = self.channels_active,
+			channels      = [c.__module__ for c in self.channels],
 			date_searched = self.date,
 			urls_found    = [_.url for _ in articles]
 		)
+		if self.use_storage:
+			res = self.storage.save_article(articles)
+			articles = [article for article, code in res]
 		return articles
 
 # -----------------------------------------------------------------------------
@@ -206,18 +212,46 @@ def collect_and_save(title, date, mongo_uri):
 #
 # -----------------------------------------------------------------------------
 import unittest
-
+import settings
 class TestOperations(unittest.TestCase):
 	'''Test Class'''
+
+	def setUp(self):
+		original_mongo_uri = settings.MONGODB_URI
+		original_db        = original_mongo_uri.split("/")[-1]
+		self.test_db       = "test" + original_db
+		test_uri           = "/".join(original_mongo_uri.split("/")[0:-1]) + "/" + self.test_db
+		self.storage       = Storage(uri=test_uri)
+
+	def tearDown(self):
+		Storage().get_connection().drop_database(self.test_db)
 
 	def test_get_articles(self):
 		channels = (
 			# "brokenpromises.channels.nytimes",
 			"brokenpromises.channels.guardian",
 		)
-		# channels  = brokenpromises.utils.get_available_channels()
 
 		collector = CollectArticles(channels, "2014", "1")
+		results   = collector.run()
+		print 
+		print "results:", len(results)
+		assert len(results) > 0
+		for result in results:
+			assert result.ref_dates, "%s : %s" % (result, result.url)
+		assert collector.get_report()
+		assert collector.get_report().collector               == "brokenpromises.operations.CollectArticles"
+		assert collector.get_report().meta['count']           == len(results)
+		assert len(collector.get_report().meta['urls_found']) == len(results)
+
+	def test_get_articles_with_storage(self):
+		channels = (
+			# "brokenpromises.channels.nytimes",
+			"brokenpromises.channels.guardian",
+		)
+		collector = CollectArticles(channels, "2014", 1, use_storage=True)
+		# custom storage (testing db)
+		collector.storage = self.storage
 		results   = collector.run()
 		print 
 		print "results:", len(results)

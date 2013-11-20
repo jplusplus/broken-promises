@@ -30,6 +30,8 @@ import os
 BP_CHANNEL_GUARDIAN_API_KEY = os.environ['BP_CHANNEL_GUARDIAN_API_KEY']
 BP_CHANNEL_NYTIMES_API_KEY  = os.environ['BP_CHANNEL_NYTIMES_API_KEY']
 
+MONGODB_URI = os.getenv("MONGODB_URI", "mongodb://localhost/broken-promises")
+
 # set cache for http requests
 import requests_cache
 requests_cache.install_cache('requests_cache', backend='sqlite', expire_after=864000)
