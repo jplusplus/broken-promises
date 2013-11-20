@@ -168,31 +168,6 @@ class RefreshArticles(Collector):
 
 # -----------------------------------------------------------------------------
 #
-#    Worker
-#
-# -----------------------------------------------------------------------------
-class RedisWorker(object):
-
-	def __init__(self):
-		import rq
-		import redis
-		conn       = redis.from_url(os.getenv('REDISTOGO_URL', 'redis://localhost:6379'))
-		self.queue = rq.Queue(connection=conn)
-
-	def run(self, job, *arg, **kwargs):
-		job = self.queue.enqueue(job.run, *arg, **kwargs)
-
-class SimpleWorker(object):
-
-	def __init__(self):
-		pass
-
-	def run(self, job, *arg, **kwargs):
-		return job.run(*arg, **kwargs)
-
-Worker = SimpleWorker()
-# -----------------------------------------------------------------------------
-#
 #    Utils
 #
 # -----------------------------------------------------------------------------
@@ -298,3 +273,5 @@ if __name__ == "__main__":
 	# unittest.main()
 	suite = unittest.TestLoader().loadTestsFromTestCase(TestOperations)
 	unittest.TextTestRunner(verbosity=2).run(suite)
+
+# EOF

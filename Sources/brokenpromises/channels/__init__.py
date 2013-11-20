@@ -25,14 +25,7 @@
 #     You should have received a copy of the GNU General Public License
 #     along with Broken Promises.  If not, see <http://www.gnu.org/licenses/>.
 
-
 from   wwwclient import HTML
-import requests
-import requests_cache
-
-# Set up cache for requests
-requests_cache.install_cache('requests_cache', backend='sqlite', expire_after=864000)
-# requests_cache.install_cache('requests_cache', backend='memory', expire_after=864000)
 
 # -----------------------------------------------------------------------------
 #
@@ -83,7 +76,6 @@ class Channel:
 
 	def __init__(self):
 		self.HTML    = HTML
-		self.session = requests
 
 # -----------------------------------------------------------------------------
 #

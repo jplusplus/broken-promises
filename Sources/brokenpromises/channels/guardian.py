@@ -31,6 +31,7 @@ from brokenpromises.channels import Channel, channel
 import brokenpromises.utils  as utils
 import datetime
 import reporter
+import requests
 
 debug, trace, info, warning, error, fatal = reporter.bind(__name__)
 
@@ -81,7 +82,7 @@ class TheGuardian(Channel):
 			"section"     : "-fashion,-music,-artanddesign,-film,-guardian-masterclasses",
 			"page-size"   : 50 # maximum
 		}
-		r = self.session.get(TheGuardian.URI, params=payload)
+		r = requests.get(TheGuardian.URI, params=payload)
 		if r.status_code != 200:
 			if r.json()['response']['message'] == "only one value allowed in q parameter":
 				# error known
@@ -92,7 +93,7 @@ class TheGuardian(Channel):
 		return r.json()
 
 	def scrape_body_article(self, url):
-		r = self.session.get(url)
+		r = requests.get(url)
 		paragraphs = self.HTML.tree(r.text).query('#article-body-blocks')
 		if not paragraphs:
 			paragraphs =  self.HTML.tree(r.text).query('#live-blog-blocks')

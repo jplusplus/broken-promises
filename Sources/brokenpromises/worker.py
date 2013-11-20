@@ -7,8 +7,8 @@
 # -----------------------------------------------------------------------------
 # License : GNU General Public License
 # -----------------------------------------------------------------------------
-# Creation : 12-Nov-2013
-# Last mod : 12-Nov-2013
+# Creation : 20-Nov-2013
+# Last mod : 20-Nov-2013
 # -----------------------------------------------------------------------------
 # This file is part of Broken Promises.
 # 
@@ -26,12 +26,38 @@
 #     along with Broken Promises.  If not, see <http://www.gnu.org/licenses/>.
 
 import os
+# import brokenpromises.operations
+# from brokenpromises.operations import CollectArticles
 
-BP_CHANNEL_GUARDIAN_API_KEY = os.environ['BP_CHANNEL_GUARDIAN_API_KEY']
-BP_CHANNEL_NYTIMES_API_KEY  = os.environ['BP_CHANNEL_NYTIMES_API_KEY']
+class RedisWorker(object):
 
-# set cache for http requests
-import requests_cache
-requests_cache.install_cache('requests_cache', backend='sqlite', expire_after=864000)
+	def __init__(self):
+		import rq
+		import redis
+		conn       = redis.from_url(os.getenv('REDISTOGO_URL', 'redis://localhost:6379'))
+		self.queue = rq.Queue(connection=conn)
+
+	def run(self, job, *arg, **kwargs):
+		return self.queue.enqueue(job.run, *arg, **kwargs)
+
+class SimpleWorker(object):
+
+	def __init__(self):
+		pass
+
+	def run(self, job, *arg, **kwargs):
+		return job.run(*arg, **kwargs)
+
+Worker = RedisWorker
+
+if __name__ == "__main__":
+	from brokenpromises.operations import CollectArticles
+	channels = (
+		# "brokenpromises.channels.nytimes",
+		"brokenpromises.channels.guardian",
+	)
+	collector = CollectArticles(channels, "2014", "1")
+	worker    = RedisWorker()
+	job       = worker.run(collector)
 
 # EOF

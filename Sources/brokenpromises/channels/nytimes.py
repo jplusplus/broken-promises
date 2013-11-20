@@ -31,6 +31,7 @@ from brokenpromises.channels import Channel, channel
 import brokenpromises.utils  as utils
 import datetime
 import reporter
+import requests
 
 debug, trace, info, warning, error, fatal = reporter.bind(__name__)
 
@@ -80,14 +81,14 @@ class NewYorkTimes(Channel):
 			"api-key" : NewYorkTimes.API_KEY,
 			"fq"      : "body:\"%s\"" % keyword
 		}
-		r = self.session.get(NewYorkTimes.URI, params=payload)
+		r = requests.get(NewYorkTimes.URI, params=payload)
 		if r.status_code != 200:
 			error("Nytimes returns an error for %s:\n %s\n%s" % (NewYorkTimes.URI, r.json(), payload))
 			return None
 		return r.json()
 
 	def scrape_body_article(self, url):
-		r = self.session.get(url)
+		r = requests.get(url)
 		paragraphs = self.HTML.parse(r.text).query('.articleBody')
 		body = " ".join(map(lambda _:_.text(), paragraphs))
 		return body
