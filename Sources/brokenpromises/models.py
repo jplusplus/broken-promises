@@ -60,4 +60,25 @@ class Article:
 	def __str__(self):
 		return self.__unicode__()
 
+# -----------------------------------------------------------------------------
+#
+#    REPORT
+#
+# -----------------------------------------------------------------------------
+class Report:
+
+	def __init__(self, collector=None, caller=None, date=None, errors=[], meta={}):
+		self.date      = date
+		self.collector = collector
+		self.errors    = errors
+		self.caller    = caller
+		self.meta      = meta
+
+	def __unicode__(self):
+		return u"Report %s (%s)" % (self.collector, self.date)
+	def __repr__(self):
+		return self.__unicode__()
+	def __str__(self):
+		return self.__unicode__()
+
 # EOF

@@ -31,7 +31,8 @@ import requests
 import requests_cache
 
 # Set up cache for requests
-requests_cache.install_cache('requests_cache', backend='memory', expire_after=864000)
+requests_cache.install_cache('requests_cache', backend='sqlite', expire_after=864000)
+# requests_cache.install_cache('requests_cache', backend='memory', expire_after=864000)
 
 # -----------------------------------------------------------------------------
 #

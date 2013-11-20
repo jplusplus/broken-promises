@@ -33,6 +33,7 @@ import dateparser
 import datetime
 import reporter
 from   wwwclient import HTML
+from brokenpromises import Report
 
 debug, trace, info, warning, error, fatal = reporter.bind(__name__)
 
@@ -40,9 +41,6 @@ class Collector(object):
 
 	def __init__(self):
 		self.report = None
-
-	def get_report(self):
-		return self.report
 
 	@classmethod
 	def retrieve_referenced_dates(cls, text):
@@ -72,6 +70,15 @@ class Collector(object):
 				break
 			sentence = None
 		return sentence
+
+	def set_report(self, **kwargs):
+		self.report           = Report()
+		self.report.date      = datetime.datetime.now()
+		self.report.collector = "%s.%s" % (self.__class__.__module__, self.__class__.__name__)
+		self.report.meta      = kwargs
+
+	def get_report(self):
+		return self.report
 
 	def pre_filter(self, results):
 		""" Excecuted before the dates parsing """
@@ -108,6 +115,7 @@ class CollectArticles(Collector):
 
 	def __init__(self, channels, year, month=None, day=None):
 		super(CollectArticles, self).__init__()
+		self.channels_active = channels
 		self.channels = [Channel() for Channel in brokenpromises.channels.perform_channels_import(channels)]
 		self.date     = (year, month, day)
 
@@ -123,8 +131,20 @@ class CollectArticles(Collector):
 			result.ref_dates = self.retrieve_referenced_dates(result.body)
 		# post-filters
 		articles = self.post_filter(articles)
+		# reporting
+		self.set_report(
+			count         = len(articles),
+			channels      = self.channels_active,
+			date_searched = self.date,
+			urls_found    = [_.url for _ in articles]
+		)
 		return articles
 
+# -----------------------------------------------------------------------------
+#
+#    RefreshArticles : reparse given articles
+#
+# -----------------------------------------------------------------------------
 class RefreshArticles(Collector):
 
 	def __init__(self, articles, scrape=False):
@@ -139,12 +159,71 @@ class RefreshArticles(Collector):
 		# parsing date
 		for article in articles:
 			if self.scrape:
-				Channel      = brokenpromises.channels.perform_channels_import(article.channel)
-				article.body = Channel().scrape_body_article(article.url)
+				Channel       = brokenpromises.channels.perform_channels_import(article.channel)
+				article.body  = Channel().scrape_body_article(article.url)
 			article.ref_dates = self.retrieve_referenced_dates(article.body)
 		# post-filters
 		articles = self.post_filter(articles)
 		return articles
+
+# -----------------------------------------------------------------------------
+#
+#    Worker
+#
+# -----------------------------------------------------------------------------
+class RedisWorker(object):
+
+	def __init__(self):
+		import rq
+		import redis
+		conn       = redis.from_url(os.getenv('REDISTOGO_URL', 'redis://localhost:6379'))
+		self.queue = rq.Queue(connection=conn)
+
+	def run(self, job, *arg, **kwargs):
+		job = self.queue.enqueue(job.run, *arg, **kwargs)
+
+class SimpleWorker(object):
+
+	def __init__(self):
+		pass
+
+	def run(self, job, *arg, **kwargs):
+		return job.run(*arg, **kwargs)
+
+Worker = SimpleWorker()
+# -----------------------------------------------------------------------------
+#
+#    Utils
+#
+# -----------------------------------------------------------------------------
+def collect_and_save(title, date, mongo_uri):
+	from pymongo import MongoClient
+	from urlparse import urlparse
+	channels      = brokenpromises.channels.get_available_channels()
+	collector     = CollectArticles(channels, *date)
+	results       = collector.run()
+	report        = collector.get_report()
+	report.caller = title
+	# save articles
+	mongodb_uri   = mongo_uri
+	client        = MongoClient(mongodb_uri)
+	db            = client[urlparse(mongodb_uri).path.split("/")[-1]]
+	articles_col  = db['articles']
+	reports_col   = db['reports']
+	inserted = []
+	updated  = []
+	for article in results:
+		previous = articles_col.find_one({"url" : article.url})
+		if not previous:
+			articles_col.insert(article.__dict__)
+			inserted.append(article._id)
+		else:
+			articles_col.update({'_id':previous['_id']}, dict(previous.items() + article.__dict__.items()))
+			updated.append(previous['_id'])
+	# save report
+	report.meta['inserted'] = inserted
+	report.meta['updated']  = updated
+	reports_col.insert(report.__dict__)
 
 # -----------------------------------------------------------------------------
 #
@@ -170,6 +249,10 @@ class TestOperations(unittest.TestCase):
 		assert len(results) > 0
 		for result in results:
 			assert result.ref_dates, "%s : %s" % (result, result.url)
+		assert collector.get_report()
+		assert collector.get_report().collector               == "brokenpromises.operations.CollectArticles"
+		assert collector.get_report().meta['count']           == len(results)
+		assert len(collector.get_report().meta['urls_found']) == len(results)
 
 	def test_retrieve_referenced_dates(self):
 		dates = (

@@ -25,7 +25,7 @@
 #     You should have received a copy of the GNU General Public License
 #     along with Broken Promises.  If not, see <http://www.gnu.org/licenses/>.
 
-from models import Article
+from models import Article, Report
 import os
 import importlib
 
