@@ -25,16 +25,14 @@
 #     You should have received a copy of the GNU General Public License
 #     along with Broken Promises.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
-# import brokenpromises.operations
-# from brokenpromises.operations import CollectArticles
+from brokenpromises import settings
 
 class RedisWorker(object):
 
 	def __init__(self):
 		import rq
 		import redis
-		conn       = redis.from_url(os.getenv('REDISTOGO_URL', 'redis://localhost:6379'))
+		conn       = redis.from_url(settings.REDIS_URL)
 		self.queue = rq.Queue(connection=conn)
 
 	def run(self, job, *arg, **kwargs):
