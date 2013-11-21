@@ -12,6 +12,6 @@ install:
 	. `pwd`/.env ; pip install -r requirements.txt
 
 test:
-	. `pwd`/.env ; python $(TEST) ; /usr/bin/test "$$?" -eq 0
+	. `pwd`/.env ; python -m unittest discover -s "brokenpromises" -p '*.py' -v
 
 # EOF
