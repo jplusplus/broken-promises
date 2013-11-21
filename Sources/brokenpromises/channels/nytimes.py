@@ -90,7 +90,7 @@ class NewYorkTimes(Channel):
 	def scrape_body_article(self, url):
 		r = requests.get(url)
 		paragraphs = self.HTML.parse(r.text).query('.articleBody')
-		body = " ".join(map(lambda _:_.text(), paragraphs))
+		body = u" ".join(map(lambda _:_.text(), paragraphs))
 		return body
 
 # -----------------------------------------------------------------------------
