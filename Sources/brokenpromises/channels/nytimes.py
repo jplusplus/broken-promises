@@ -126,9 +126,9 @@ class TestNewYorkTimes(unittest.TestCase):
 		assert type(body) is unicode, type(body)
 		assert body != u"", body
 		# start of the article
-		assert "You hear that word a" in body
+		assert u"You hear that word a" in body
 		# end of the article
-		assert "It’s hard to get answers." in body
+		assert u"hard to get answers." in body
 
 if __name__ == "__main__":
 	# unittest.main()
