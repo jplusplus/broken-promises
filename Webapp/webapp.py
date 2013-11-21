@@ -30,6 +30,7 @@ from flask import Flask, render_template, request, send_file, \
 from flask.ext.assets import Environment
 from eve import Eve
 import os
+import json
 
 class CustomFlask(Eve):
 	jinja_options = Flask.jinja_options.copy()
@@ -39,8 +40,7 @@ class CustomFlask(Eve):
 		variable_start_string = '[[',
 		variable_end_string   = ']]',
 		comment_start_string  = '[#',
-		comment_end_string    = '#]',
-	))
+		comment_end_string    = '#]'))
 
 app = CustomFlask(__name__, 
 	settings = os.path.join(os.path.abspath(os.path.dirname(__file__)), "settings.py")
@@ -55,6 +55,10 @@ assets = Environment(app)
 def index():
 	response = make_response(render_template('home.html'))
 	return response
+
+@app.route("/register_collection", methods=['post'])
+def register_collection():
+	return json.dumps({"status": "ok"})
 
 # -----------------------------------------------------------------------------
 #
