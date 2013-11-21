@@ -174,40 +174,6 @@ class RefreshArticles(Collector):
 
 # -----------------------------------------------------------------------------
 #
-#    Utils
-#
-# -----------------------------------------------------------------------------
-def collect_and_save(title, date, mongo_uri):
-	from pymongo import MongoClient
-	from urlparse import urlparse
-	channels      = brokenpromises.channels.get_available_channels()
-	collector     = CollectArticles(channels, *date)
-	results       = collector.run()
-	report        = collector.get_report()
-	report.caller = title
-	# save articles
-	mongodb_uri   = mongo_uri
-	client        = MongoClient(mongodb_uri)
-	db            = client[urlparse(mongodb_uri).path.split("/")[-1]]
-	articles_col  = db['articles']
-	reports_col   = db['reports']
-	inserted = []
-	updated  = []
-	for article in results:
-		previous = articles_col.find_one({"url" : article.url})
-		if not previous:
-			articles_col.insert(article.__dict__)
-			inserted.append(article._id)
-		else:
-			articles_col.update({'_id':previous['_id']}, dict(previous.items() + article.__dict__.items()))
-			updated.append(previous['_id'])
-	# save report
-	report.meta['inserted'] = inserted
-	report.meta['updated']  = updated
-	reports_col.insert(report.__dict__)
-
-# -----------------------------------------------------------------------------
-#
 # TESTS
 #
 # -----------------------------------------------------------------------------
