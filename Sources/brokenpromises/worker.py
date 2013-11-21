@@ -48,16 +48,6 @@ class SimpleWorker(object):
 	def run(self, job, *arg, **kwargs):
 		return job.run(*arg, **kwargs)
 
-Worker = RedisWorker
-
-if __name__ == "__main__":
-	from brokenpromises.operations import CollectArticles
-	channels = (
-		# "brokenpromises.channels.nytimes",
-		"brokenpromises.channels.guardian",
-	)
-	collector = CollectArticles(channels, "2014", "1")
-	worker    = RedisWorker()
-	job       = worker.run(collector)
+worker = RedisWorker()
 
 # EOF

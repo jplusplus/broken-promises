@@ -263,6 +263,13 @@ class TestOperations(unittest.TestCase):
 		assert collector.get_report().meta['count']           == len(results)
 		assert len(collector.get_report().meta['urls_found']) == len(results)
 
+	def test_get_articles_with_queue(self):
+		# need to explicitly import the runnable object
+		from brokenpromises.operations import CollectArticles
+		from brokenpromises.worker     import worker
+		collector = CollectArticles(("brokenpromises.channels.guardian",), "2014", 1, use_storage=False)
+		worker.run(collector)
+
 	def test_retrieve_referenced_dates(self):
 		dates = (
 			("10 October 2013"       , (2013, 10, 10)),

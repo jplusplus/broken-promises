@@ -91,11 +91,14 @@ def perform_channels_import(val):
 	response = None
 	if type(val) in (tuple, list):
 		response = tuple(__import_channels_from_string(item) for item in val)
-	elif type(val) in (unicode, str):
-		response = __import_channels_from_string(val)
+		return response
 	else:
-		response = val
-	return response
+		raise Exception("need to be a list, not a %s" % (type(val)))
+	# elif type(val) in (unicode, str):
+	# 	response = __import_channels_from_string(val)
+	# else:
+	# 	response = val
+	# return response
 
 def __import_channels_from_string(val):
 	importlib.import_module(val)
