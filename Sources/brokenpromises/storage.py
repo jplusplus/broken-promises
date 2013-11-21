@@ -27,7 +27,7 @@
 
 from pymongo import MongoClient
 from urlparse import urlparse
-from brokenpromises import settings, Article
+from brokenpromises import settings, Article, Report
 
 CODE_ERROR  = 0
 CODE_INSERT = 1
@@ -51,6 +51,11 @@ class Storage(object):
 	def get_collection(self, collection):
 		return self.get_database()[collection]
 
+	# -----------------------------------------------------------------------------
+	#
+	#    Articles
+	#
+	# -----------------------------------------------------------------------------
 	def save_article(self, article):
 		"""
 		save or update an article using its url.
@@ -70,6 +75,16 @@ class Storage(object):
 			return (Article(**article_merged), CODE_UPDATE)
 		return (article, CODE_ERROR)
 
+	def get_articles(self, date):
+		articles_collection = self.get_collection(Storage.COLLECTION_ARTICLES)
+		articles = articles_collection.find({"ref_dates.date": date})
+		return [Article(**article) for article in articles]
+
+	# -----------------------------------------------------------------------------
+	#
+	#    Repports
+	#
+	# -----------------------------------------------------------------------------
 	def save_report(self, report):
 		report_collection = self.get_collection(Storage.COLLECTION_REPORTS)
 		if type(report) != dict:
@@ -77,9 +92,17 @@ class Storage(object):
 		report_collection.insert(report)
 		return CODE_INSERT
 
-	def get_report(self, date):
+	def get_reports(self, name=None, searched_date=None, status=None, channels=None):
+		# TODO: handle channels
 		report_collection = self.get_collection(Storage.COLLECTION_REPORTS)
-		return report_collection.find({"date":date})
+		search = {}
+		if searched_date:
+			search["meta.searched_date"] = searched_date
+		if name:
+			search["name"] = name
+		if status:
+			search["meta.status"] = status
+		return [Report(**report) for report in report_collection.find(search)]
 
 # -----------------------------------------------------------------------------
 #
@@ -121,14 +144,24 @@ class TestStorage(unittest.TestCase):
 		res, code = self.storage.save_article(a)
 		assert code in (CODE_UPDATE, CODE_INSERT)
 		assert self.storage.get_collection(Storage.COLLECTION_ARTICLES).count() > 0
-		assert res.__class__ is Article, type(res)
+		assert type(res) is Article, type(res)
 		assert res._id
 		# update
 		res, code = self.storage.save_article(a)
 		assert code in (CODE_UPDATE, CODE_INSERT)
 		assert self.storage.get_collection(Storage.COLLECTION_ARTICLES).count() > 0
-		assert res.__class__ is Article, type(res)
+		assert type(res) is Article, type(res)
 		assert res._id
+
+	def test_get_articles(self):
+		from brokenpromises import Article
+		date = (2011, 11, 2)
+		a = Article(url="test")
+		a.add_ref_date(date)
+		self.storage.save_article(a)
+		res = self.storage.get_articles(date)
+		assert type(res[0]) is Article, type(res)
+		assert len(res) == 1
 
 	def test_save_report(self):
 		from brokenpromises import Report
@@ -137,15 +170,16 @@ class TestStorage(unittest.TestCase):
 		assert res in (CODE_UPDATE, CODE_INSERT)
 		assert self.storage.get_collection(Storage.COLLECTION_REPORTS).count() > 0
 
-	def test_get_report(self):
+	def test_get_reports(self):
 		from brokenpromises import Report
 		r   = Report()
-		r.date = (2014, 10, None)
+		r.meta['searched_date'] = (2014, 10, None)
 		self.storage.save_report(r)
-		res_ok = self.storage.get_report(date=(2014, 10, None))
-		res_ko = self.storage.get_report(date=(2014, 10, 11))
-		assert res_ok.count() == 1, res_ok.count()
-		assert res_ko.count() == 0, res_ko.count()
+		res_ok = self.storage.get_reports(searched_date=(2014, 10, None))
+		res_ko = self.storage.get_reports(searched_date=(2014, 10, 11))
+		assert len(res_ok) == 1, len(res_ok)
+		assert len(res_ko) == 0, len(res_ko)
+		assert type(res_ok[0]) is Report
 
 if __name__ == "__main__":
 	# unittest.main()

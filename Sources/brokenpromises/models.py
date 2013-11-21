@@ -32,7 +32,7 @@ import datetime
 #    Article
 #
 # -----------------------------------------------------------------------------
-class Article:
+class Article(object):
 
 	def __init__(self, channel=None, title=None, url=None, source=None, body=None, 
 				 pub_date=None, ref_dates=[], images=[], headline=None, created=None, 
@@ -57,6 +57,10 @@ class Article:
 			if not hasattr(self, _k):
 				setattr(self, _k, _v)
 
+	def add_ref_date(self, date, **kwargs):
+		kwargs['date'] = date
+		self.ref_dates.append(kwargs)
+
 	def __unicode__(self):
 		return u"\"%s - %s...\"" % (self.source, self.title and self.title[:20] or "untitled")
 	def __repr__(self):
@@ -69,14 +73,18 @@ class Article:
 #    REPORT
 #
 # -----------------------------------------------------------------------------
-class Report:
+class Report(object):
 
-	def __init__(self, collector=None, caller=None, date=None, errors=[], meta={}):
+	def __init__(self, collector=None, caller=None, date=None, errors=[], meta={}, *args, **kwargs):
 		self.date      = date
 		self.collector = collector
 		self.errors    = errors
 		self.caller    = caller
 		self.meta      = meta
+		# set extra fields, like _id from mongodb
+		for _k, _v in kwargs.items():
+			if not hasattr(self, _k):
+				setattr(self, _k, _v)
 
 	def __unicode__(self):
 		return u"Report %s (%s)" % (self.collector, self.date)

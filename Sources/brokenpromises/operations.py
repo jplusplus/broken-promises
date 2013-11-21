@@ -75,6 +75,7 @@ class Collector(object):
 	def set_report(self, **kwargs):
 		self.report           = Report()
 		self.report.date      = datetime.datetime.now()
+		self.report.name      = "collector"
 		self.report.collector = "%s.%s" % (self.__class__.__module__, self.__class__.__name__)
 		self.report.meta      = kwargs
 
@@ -114,15 +115,46 @@ class Collector(object):
 # -----------------------------------------------------------------------------
 class CollectArticles(Collector):
 
-	def __init__(self, channels, year, month=None, day=None, report_extra={}, use_storage=False):
+	CACHE_FOR_COLLECT = 2 # in days
+
+	def __init__(self, channels, year, month=None, day=None, report_extra={}, use_storage=False, force_collect=False):
+		"""
+		force_collect : if use_storage is enable, force the collect even if there is already a report for this searched date
+		"""
 		super(CollectArticles, self).__init__()
 		self.use_storage = use_storage
 		self.channels = [Channel() for Channel in brokenpromises.channels.perform_channels_import(channels)]
-		self.date     = (year, month, day)
+		self.date = (year and int(year) or None, month and int(month) or None, day and int(day) or None)
 		if self.use_storage:
 			self.storage = Storage()
+		self.force_collect = force_collect
 
 	def run(self):
+		if self.use_storage and not self.force_collect:
+			# check for previous report about this date and collectors
+			previous_reports = self.storage.get_reports(
+				name          = "collector",
+				searched_date = self.date,
+				status        = "done",
+				channels      = [c.__module__ for c in self.channels])
+			for report in previous_reports:
+				# previous report made less than 2 days
+				if datetime.datetime.now() < report.date + datetime.timedelta(days=CollectArticles.CACHE_FOR_COLLECT):
+					# retrieve articles from storage
+					articles = self.storage.get_articles(self.date)
+					# save a report
+					self.set_report(
+						status         = "escaped",
+						related_report = report._id,
+						description    = "escaped because of report #%s" % (report._id),
+						current_cache  = CollectArticles.CACHE_FOR_COLLECT,
+						searched_date  = self.date
+					)
+					print "savee report"
+					self.storage.save_report(self.get_report())
+					# return articles and skip a new collect
+					return articles
+
 		articles = []
 		# retrieve articles from channels
 		for channel in self.channels:
@@ -136,10 +168,12 @@ class CollectArticles(Collector):
 		articles = self.post_filter(articles)
 		# reporting
 		self.set_report(
-			count         = len(articles),
-			channels      = [c.__module__ for c in self.channels],
-			date_searched = self.date,
-			urls_found    = [_.url for _ in articles]
+			status         = "done",
+			count          = len(articles),
+			channels       = [c.__module__ for c in self.channels],
+			searched_date  = self.date,
+			urls_found     = [_.url for _ in articles],
+			forced_collect = self.force_collect
 		)
 		if self.use_storage:
 			articles = [article for article, code in self.storage.save_article(articles)]
@@ -179,6 +213,9 @@ class RefreshArticles(Collector):
 # -----------------------------------------------------------------------------
 import unittest
 import settings
+# load the module for test context (usefull for rq and report creation)
+from brokenpromises.operations import CollectArticles
+
 class TestOperations(unittest.TestCase):
 	'''Test Class'''
 
@@ -201,12 +238,14 @@ class TestOperations(unittest.TestCase):
 		for result in results:
 			assert result.ref_dates, "%s : %s" % (result, result.url)
 		assert collector.get_report()
-		assert collector.get_report().collector               == "brokenpromises.operations.CollectArticles"
+		assert collector.get_report().collector               == "brokenpromises.operations.CollectArticles", collector.get_report().collector
 		assert collector.get_report().meta['count']           == len(results)
 		assert len(collector.get_report().meta['urls_found']) == len(results)
 
 	def test_get_articles_with_storage(self):
-		collector = CollectArticles(("brokenpromises.channels.nytimes",), "2014", 1, use_storage=True)
+		from brokenpromises import Article
+		searched_date = (2014, 1, None)
+		collector = CollectArticles(("brokenpromises.channels.nytimes",), *searched_date, use_storage=True)
 		# replace storage with custom storage (testing db)
 		collector.storage = self.testing_storage
 		results           = collector.run()
@@ -219,6 +258,13 @@ class TestOperations(unittest.TestCase):
 		assert collector.get_report().collector               == "brokenpromises.operations.CollectArticles"
 		assert collector.get_report().meta['count']           == len(results)
 		assert len(collector.get_report().meta['urls_found']) == len(results)
+		assert len(self.testing_storage.get_reports(name="collector", searched_date=searched_date, status="done")) == 1, self.testing_storage.get_reports(searched_date)
+		results = collector.run()
+		assert len(results) > 0, results
+		assert type(results[0]) is Article, type(results[0])
+		assert len(self.testing_storage.get_reports(searched_date=searched_date)) == 2
+		assert len(self.testing_storage.get_reports(name="collector", searched_date=searched_date)) == 2
+		assert len(self.testing_storage.get_reports(name="collector", searched_date=searched_date, status="escaped")) == 1
 
 	def test_get_articles_with_queue(self):
 		# need to explicitly import the runnable object
