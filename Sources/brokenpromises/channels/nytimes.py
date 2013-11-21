@@ -121,7 +121,7 @@ class TestNewYorkTimes(unittest.TestCase):
 	def test_scrape_body_article(self):
 		body = self.obj.scrape_body_article("http://www.nytimes.com/aponline/2013/11/05/us/ap-us-school-to-prison-pipeline.html")
 		assert type(body) is unicode, type(body)
-		assert body != ""
+		assert body != u""
 		# start of the article
 		assert "One of the nation's largest school districts" in body
 		# end of the article
