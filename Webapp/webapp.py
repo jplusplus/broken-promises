@@ -28,6 +28,7 @@
 from flask import Flask, render_template, request, send_file, \
 	send_from_directory, Response, abort, session, redirect, url_for, make_response
 from flask.ext.assets import Environment
+from rq_dashboard import RQDashboard
 from eve import Eve
 import os
 import json
@@ -45,6 +46,8 @@ class CustomFlask(Eve):
 app = CustomFlask(__name__, 
 	settings = os.path.join(os.path.abspath(os.path.dirname(__file__)), "settings.py")
 )
+RQDashboard(app)
+
 assets = Environment(app)
 # -----------------------------------------------------------------------------
 #
