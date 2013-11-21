@@ -12,6 +12,6 @@ install:
 	. `pwd`/.env ; pip install -r requirements.txt
 
 test:
-	. `pwd`/.env ; python $(TEST)
+	. `pwd`/.env ; python $(TEST) ; /usr/bin/test "$$?" -eq 1
 
 # EOF
