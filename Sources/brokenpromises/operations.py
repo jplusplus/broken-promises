@@ -115,19 +115,18 @@ class Collector(object):
 # -----------------------------------------------------------------------------
 class CollectArticles(Collector):
 
-	CACHE_FOR_COLLECT = 2 # in days
+	CACHE_FOR_COLLECT = 31 # in days, if use_storage is True with force_collect as False
 
 	def __init__(self, channels, year, month=None, day=None, report_extra={}, use_storage=False, force_collect=False):
 		"""
 		force_collect : if use_storage is enable, force the collect even if there is already a report for this searched date
 		"""
 		super(CollectArticles, self).__init__()
-		self.use_storage = use_storage
-		self.channels = [Channel() for Channel in brokenpromises.channels.perform_channels_import(channels)]
-		self.date = (year and int(year) or None, month and int(month) or None, day and int(day) or None)
-		if self.use_storage:
-			self.storage = Storage()
+		self.use_storage   = use_storage
+		self.channels      = [Channel() for Channel in brokenpromises.channels.perform_channels_import(channels)]
+		self.date          = (year and int(year) or None, month and int(month) or None, day and int(day) or None)
 		self.force_collect = force_collect
+		self.storage       = self.use_storage and Storage() or None
 
 	def run(self):
 		if self.use_storage and not self.force_collect:
@@ -175,6 +174,7 @@ class CollectArticles(Collector):
 			urls_found     = [_.url for _ in articles],
 			forced_collect = self.force_collect
 		)
+		# save articles and report if storage is enable
 		if self.use_storage:
 			articles = [article for article, code in self.storage.save_article(articles)]
 			self.storage.save_report(self.get_report())
