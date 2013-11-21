@@ -114,7 +114,7 @@ class Collector(object):
 # -----------------------------------------------------------------------------
 class CollectArticles(Collector):
 
-	def __init__(self, channels, year, month=None, day=None, use_storage=False):
+	def __init__(self, channels, year, month=None, day=None, report_extra={}, use_storage=False):
 		super(CollectArticles, self).__init__()
 		self.use_storage = use_storage
 		self.channels = [Channel() for Channel in brokenpromises.channels.perform_channels_import(channels)]
@@ -142,8 +142,8 @@ class CollectArticles(Collector):
 			urls_found    = [_.url for _ in articles]
 		)
 		if self.use_storage:
-			res = self.storage.save_article(articles)
-			articles = [article for article, code in res]
+			articles = [article for article, code in self.storage.save_article(articles)]
+			self.storage.save_report(self.get_report())
 		return articles
 
 # -----------------------------------------------------------------------------
@@ -187,18 +187,13 @@ class TestOperations(unittest.TestCase):
 		original_db        = original_mongo_uri.split("/")[-1]
 		self.test_db       = "test" + original_db
 		test_uri           = "/".join(original_mongo_uri.split("/")[0:-1]) + "/" + self.test_db
-		self.storage       = Storage(uri=test_uri)
+		self.testing_storage = Storage(uri=test_uri)
 
 	def tearDown(self):
 		Storage().get_connection().drop_database(self.test_db)
 
 	def test_get_articles(self):
-		channels = (
-			# "brokenpromises.channels.nytimes",
-			"brokenpromises.channels.guardian",
-		)
-
-		collector = CollectArticles(channels, "2014", "1")
+		collector = CollectArticles(("brokenpromises.channels.guardian",), "2014", "1")
 		results   = collector.run()
 		print 
 		print "results:", len(results)
@@ -211,14 +206,10 @@ class TestOperations(unittest.TestCase):
 		assert len(collector.get_report().meta['urls_found']) == len(results)
 
 	def test_get_articles_with_storage(self):
-		channels = (
-			# "brokenpromises.channels.nytimes",
-			"brokenpromises.channels.guardian",
-		)
-		collector = CollectArticles(channels, "2014", 1, use_storage=True)
-		# custom storage (testing db)
-		collector.storage = self.storage
-		results   = collector.run()
+		collector = CollectArticles(("brokenpromises.channels.nytimes",), "2014", 1, use_storage=True)
+		# replace storage with custom storage (testing db)
+		collector.storage = self.testing_storage
+		results           = collector.run()
 		print 
 		print "results:", len(results)
 		assert len(results) > 0
