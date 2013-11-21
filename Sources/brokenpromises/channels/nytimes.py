@@ -35,6 +35,9 @@ import requests
 
 debug, trace, info, warning, error, fatal = reporter.bind(__name__)
 
+# TODO
+#   [ ] handle pagination
+
 @channel("The New-York Times")
 class NewYorkTimes(Channel):
 	"""
@@ -119,13 +122,13 @@ class TestNewYorkTimes(unittest.TestCase):
 			# print article.url
 
 	def test_scrape_body_article(self):
-		body = self.obj.scrape_body_article("http://www.nytimes.com/aponline/2013/11/05/us/ap-us-school-to-prison-pipeline.html")
+		body = self.obj.scrape_body_article("http://www.nytimes.com/2013/11/20/your-money/how-doctors-die.html?src=me&ref=general")
 		assert type(body) is unicode, type(body)
 		assert body != u"", body
 		# start of the article
-		assert "One of the nation's largest school districts" in body
+		assert "You hear that word a" in body
 		# end of the article
-		assert "infractions like flatulence or vulgar language." in body
+		assert "It’s hard to get answers." in body
 
 if __name__ == "__main__":
 	# unittest.main()
