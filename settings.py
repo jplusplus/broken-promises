@@ -30,7 +30,7 @@ import os
 BP_CHANNEL_GUARDIAN_API_KEY = os.environ['BP_CHANNEL_GUARDIAN_API_KEY']
 BP_CHANNEL_NYTIMES_API_KEY  = os.environ['BP_CHANNEL_NYTIMES_API_KEY']
 
-MONGODB_URI = os.getenv("MONGODB_URI", "mongodb://localhost/broken-promises")
+MONGODB_URI = os.getenv("MONGOLAB_URI", "mongodb://localhost/broken-promises")
 
 REDIS_URL = os.getenv("REDISCLOUD_URL", "redis://localhost:6379")
 
