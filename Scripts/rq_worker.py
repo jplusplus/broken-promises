@@ -29,6 +29,12 @@ import os
 import redis
 from rq import Worker, Queue, Connection
 
+__doc__ = """
+
+	Run the job runner
+
+"""
+
 listen = ['high', 'default', 'low']
 conn   = redis.from_url(os.getenv('REDISCLOUD_URL', 'redis://localhost:6379'))
 

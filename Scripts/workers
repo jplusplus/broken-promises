@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+# Run rw worker in background and rq_scheduler after
+python Scripts/rq_worker.py &
+rqscheduler -i 5

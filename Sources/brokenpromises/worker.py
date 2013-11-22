@@ -32,8 +32,8 @@ class RedisWorker(object):
 	def __init__(self):
 		import rq
 		import redis
-		conn       = redis.from_url(settings.REDIS_URL)
-		self.queue = rq.Queue(connection=conn)
+		self.conn  = redis.from_url(settings.REDIS_URL)
+		self.queue = rq.Queue(connection=self.conn)
 
 	def run(self, job, *arg, **kwargs):
 		return self.queue.enqueue(job.run, *arg, **kwargs)
