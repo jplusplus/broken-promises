@@ -75,14 +75,20 @@ class Storage(object):
 			return (Article(**article_merged), CODE_UPDATE)
 		return (article, CODE_ERROR)
 
-	def get_articles(self, date):
+	def _get_articles(self, date):
 		articles_collection = self.get_collection(Storage.COLLECTION_ARTICLES)
 		articles = articles_collection.find({"ref_dates.date": date})
-		return [Article(**article) for article in articles]
+		return articles
+
+	def get_articles(self, date):
+		return [Article(**article) for article in self._get_articles(date)]
+
+	def count_articles(self, date):
+		return self._get_articles(date).count()
 
 	# -----------------------------------------------------------------------------
 	#
-	#    Repports
+	#    Reports
 	#
 	# -----------------------------------------------------------------------------
 	def save_report(self, report):
@@ -102,7 +108,7 @@ class Storage(object):
 			search["name"] = name
 		if status:
 			search["meta.status"] = status
-		return [Report(**report) for report in report_collection.find(search)]
+		return [Report(**report) for report in report_collection.find(search).sort('date', 1)]
 
 # -----------------------------------------------------------------------------
 #
