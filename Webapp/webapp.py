@@ -34,7 +34,10 @@ import os
 import json
 import datetime
 
-from brokenpromises.storage import Storage
+from brokenpromises.storage    import Storage
+from brokenpromises.channels   import get_available_channels
+from brokenpromises.operations import CollectArticles
+from brokenpromises.worker     import worker
 
 STORAGE = Storage()
 
@@ -101,6 +104,20 @@ def count_for_date(year, month=None, day=None):
 		"status"        : "ok",
 		"searched_date" : date,
 		"count"         : articles_count
+	})
+	return response
+
+@app.route("/search_date/<year>")
+@app.route("/search_date/<year>/<month>")
+@app.route("/search_date/<year>/<month>/<day>")
+def search_date(year, month=None, day=None):
+	date      = (int(year), month and int(month) or None, day and int(day) or None)
+	collector = CollectArticles(get_available_channels(), *date, use_storage=True)
+	job       = worker.run(collector)
+	response  = json.dumps({
+		"status"        : "ok",
+		"searched_date" : date,
+		"ref_job"       : job.id
 	})
 	return response
 
