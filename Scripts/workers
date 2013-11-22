@@ -12,5 +12,5 @@
 # Run rw worker in background and rq_scheduler after
 python Scripts/rq_worker.py &
 echo "Launching rqscheduler"
-rqscheduler -i 5
+python Scripts/rq_scheduler_worker.py
 # EOF
