@@ -149,7 +149,6 @@ class CollectArticles(Collector):
 						current_cache  = CollectArticles.CACHE_FOR_COLLECT,
 						searched_date  = self.date
 					)
-					print "savee report"
 					self.storage.save_report(self.get_report())
 					# return articles and skip a new collect
 					return articles
@@ -185,26 +184,26 @@ class CollectArticles(Collector):
 #    RefreshArticles : reparse given articles
 #
 # -----------------------------------------------------------------------------
-class RefreshArticles(Collector):
+# class RefreshArticles(Collector):
 
-	def __init__(self, articles, scrape=False):
-		super(RefreshArticles, self).__init__()
-		self.articles = articles
-		self.scrape   = scrape
+# 	def __init__(self, articles, scrape=False):
+# 		super(RefreshArticles, self).__init__()
+# 		self.articles = articles
+# 		self.scrape   = scrape
 
-	def run(self):
-		articles = self.articles
-		# pre-filters
-		self.pre_filter(articles)
-		# parsing date
-		for article in articles:
-			if self.scrape:
-				Channel       = brokenpromises.channels.perform_channels_import(article.channel)
-				article.body  = Channel().scrape_body_article(article.url)
-			article.ref_dates = self.retrieve_referenced_dates(article.body)
-		# post-filters
-		articles = self.post_filter(articles)
-		return articles
+# 	def run(self):
+# 		articles = self.articles
+# 		# pre-filters
+# 		self.pre_filter(articles)
+# 		# parsing date
+# 		for article in articles:
+# 			if self.scrape:
+# 				Channel       = brokenpromises.channels.perform_channels_import(article.channel)
+# 				article.body  = Channel().scrape_body_article(article.url)
+# 			article.ref_dates = self.retrieve_referenced_dates(article.body)
+# 		# post-filters
+# 		articles = self.post_filter(articles)
+# 		return articles
 
 # -----------------------------------------------------------------------------
 #
