@@ -26,17 +26,42 @@
 #     along with Broken Promises.  If not, see <http://www.gnu.org/licenses/>.
 
 from brokenpromises import settings
+import datetime
 
 class RedisWorker(object):
 
 	def __init__(self):
 		import rq
 		import redis
-		self.conn  = redis.from_url(settings.REDIS_URL)
-		self.queue = rq.Queue(connection=self.conn)
+		from   rq_scheduler import Scheduler
+		self.conn      = redis.from_url(settings.REDIS_URL)
+		self.queue     = rq.Queue(connection=self.conn)
+		rq.use_connection()  # Use RQ's default Redis connection
+		self.scheduler = Scheduler()
 
 	def run(self, job, *arg, **kwargs):
 		return self.queue.enqueue(job.run, *arg, **kwargs)
+
+	def schedule_with_interval(self, interval_s, job, *arg, **kwargs):
+		date = datetime.datetime.now()
+		res  = self.scheduler.schedule(
+			scheduled_time = date,           # Time for first execution
+			func           = job.run,        # Function to be queued
+			args           = arg,            # Arguments passed into function when executed
+			kwargs         = kwargs,         # Keyword arguments passed into function when executed
+			interval       = interval_s,     # Time before the function is called again, in seconds
+			repeat         = None            # Repeat this number of times (None means repeat forever)
+		)
+		return res
+
+	def schedule(self, date, job, *arg, **kwargs):
+		res = None
+		if type(date) is datetime.timedelta:
+			res = self.scheduler.enqueue_in(date, job.run, *arg, **kwargs)
+
+		elif type(date) is datetime.datetime:
+			res = self.scheduler.enqueue_at(date, job.run, *arg, **kwargs)
+		return res
 
 class SimpleWorker(object):
 
@@ -45,6 +70,12 @@ class SimpleWorker(object):
 
 	def run(self, job, *arg, **kwargs):
 		return job.run(*arg, **kwargs)
+
+	def schedule_with_interval(self, interval, job, *arg, **kwargs):
+		pass
+
+	def schedule(self, date, job, *arg, **kwargs):
+		pass
 
 worker = RedisWorker()
 
