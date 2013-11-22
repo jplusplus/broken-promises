@@ -28,17 +28,20 @@
 import brokenpromises.channels
 import sys
 
+def get_channel(_id):
+	return brokenpromises.channels.Catalogue.CHANNELS[_id]['class']()
+
 if __name__ == "__main__":
 	url = sys.argv[1]
 	available_channels = brokenpromises.channels.get_available_channels()
 	brokenpromises.channels.perform_channels_import(available_channels)
 	channel = None
 	if "nytimes.com" in url:
-		channel = brokenpromises.channels.Catalogue.CHANNELS['nytimes']['class']
+		channel = get_channel('nytimes')
 	elif "theguardian.com" in url:
-		channel = brokenpromises.channels.Catalogue.CHANNELS['guardian']['class']
+		channel = get_channel('guardian')
 	if channel:
-		body = channel().scrape_body_article(url)
+		body = channel.scrape_body_article(url)
 		print body.encode('utf-8')
 
 # EOF
