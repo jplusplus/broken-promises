@@ -128,7 +128,16 @@ class CollectArticles(Collector):
 		self.force_collect = force_collect
 		self.storage       = self.use_storage and Storage() or None
 
-	def run(self):
+	def get_params(self):
+		"""
+		used to represent the collector
+		"""
+		params = self.__dict__.copy()
+		if params.get("channels"):
+			params['channels'] = [c.__module__ for c in self.channels]
+		return params
+
+	def run(self, **kwargs):
 		if self.use_storage and not self.force_collect:
 			# check for previous report about this date and collectors
 			previous_reports = self.storage.get_reports(

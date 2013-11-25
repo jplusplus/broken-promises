@@ -39,14 +39,20 @@ class RedisWorker(object):
 		rq.use_connection()  # Use RQ's default Redis connection
 		self.scheduler = Scheduler()
 
-	def run(self, job, *arg, **kwargs):
-		return self.queue.enqueue(job.run, *arg, **kwargs)
+	def run(self, collector, **kwargs):
+		class_name       = "%s.%s" % (collector.__class__.__module__, collector.__class__.__name__)
+		collector_params = collector.get_params()
+		return self.queue.enqueue(collector.run, collector=class_name, params=collector_params, **kwargs)
 
-	def schedule_with_interval(self, interval_s, job, *arg, **kwargs):
-		date = datetime.datetime.now()
+	def schedule_with_interval(self, interval_s, collector, *arg, **kwargs):
+		date   = datetime.datetime.now()
+		kwargs = kwargs + {
+			"collector" : "%s.%s" % (collector.__class__.__module__, collector.__class__.__name__),
+			"params"    : collector.get_params()
+		}
 		res  = self.scheduler.schedule(
 			scheduled_time = date,           # Time for first execution
-			func           = job.run,        # Function to be queued
+			func           = collector.run,  # Function to be queued
 			args           = arg,            # Arguments passed into function when executed
 			kwargs         = kwargs,         # Keyword arguments passed into function when executed
 			interval       = interval_s,     # Time before the function is called again, in seconds
@@ -54,13 +60,17 @@ class RedisWorker(object):
 		)
 		return res
 
-	def schedule(self, date, job, *arg, **kwargs):
-		res = None
+	def schedule(self, date, collector, *arg, **kwargs):
+		res    = None
+		kwargs = kwargs + {
+			"collector" : "%s.%s" % (collector.__class__.__module__, collector.__class__.__name__),
+			"params"    : collector.get_params()
+		}
 		if type(date) is datetime.timedelta:
-			res = self.scheduler.enqueue_in(date, job.run, *arg, **kwargs)
+			res = self.scheduler.enqueue_in(date, collector.run, *arg, **kwargs)
 
 		elif type(date) is datetime.datetime:
-			res = self.scheduler.enqueue_at(date, job.run, *arg, **kwargs)
+			res = self.scheduler.enqueue_at(date, collector.run, *arg, **kwargs)
 		return res
 
 class SimpleWorker(object):
