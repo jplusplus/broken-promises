@@ -26,7 +26,7 @@
 #     along with Broken Promises.  If not, see <http://www.gnu.org/licenses/>.
 
 from flask            import Flask, render_template, request, send_file, \
-	send_from_directory, Response, abort, session, redirect, url_for, make_response
+	send_from_directory, Response, abort, session, redirect, url_for, make_response, json
 from flask.ext.assets import Environment
 from rq_dashboard     import RQDashboard
 
@@ -36,7 +36,6 @@ from brokenpromises.operations import CollectArticles
 from brokenpromises.worker     import worker
 
 import os
-import json
 import datetime
 
 STORAGE = Storage()
@@ -69,7 +68,8 @@ def index():
 
 @app.route("/register_collection", methods=['post'])
 def register_collection():
-	return json.dumps({"status": "ok"})
+	response = json.dumps({"status": "ok"})
+	return Response(response,  mimetype='application/json')
 
 @app.route("/last_scrape/<year>")
 @app.route("/last_scrape/<year>/<month>")
@@ -91,7 +91,7 @@ def last_scrape(year, month=None, day=None):
 			"status"        : "no_result",
 			"searched_date" : date
 		})
-	return response
+	return Response(response,  mimetype='application/json')
 
 @app.route("/count/<year>")
 @app.route("/count/<year>/<month>")
@@ -104,7 +104,7 @@ def count_for_date(year, month=None, day=None):
 		"searched_date" : date,
 		"count"         : articles_count
 	})
-	return response
+	return Response(response,  mimetype='application/json')
 
 @app.route("/search_date/<year>")
 @app.route("/search_date/<year>/<month>")
@@ -118,7 +118,7 @@ def search_date(year, month=None, day=None):
 		"searched_date" : date,
 		"ref_job"       : job.id
 	})
-	return response
+	return Response(response,  mimetype='application/json')
 
 @app.route("/articles")
 @app.route("/articles/<year>")
@@ -132,8 +132,13 @@ def articles(year=None, month=None, day=None):
 		"count"    : len(articles),
 		"articles" : [_.__dict__ for _ in articles],
 	}, default=dthandler)
-	return response
+	return Response(response,  mimetype='application/json')
 
+# -----------------------------------------------------------------------------
+#
+#    FILTERS
+#
+# -----------------------------------------------------------------------------
 @app.after_request
 def after_request(response):
 	response.headers.add('Access-Control-Allow-Origin', '*')
