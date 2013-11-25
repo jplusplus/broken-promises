@@ -25,23 +25,23 @@
 #     You should have received a copy of the GNU General Public License
 #     along with Broken Promises.  If not, see <http://www.gnu.org/licenses/>.
 
-from flask import Flask, render_template, request, send_file, \
+from flask            import Flask, render_template, request, send_file, \
 	send_from_directory, Response, abort, session, redirect, url_for, make_response
 from flask.ext.assets import Environment
-from rq_dashboard import RQDashboard
-from eve import Eve
-import os
-import json
-import datetime
+from rq_dashboard     import RQDashboard
 
 from brokenpromises.storage    import Storage
 from brokenpromises.channels   import get_available_channels
 from brokenpromises.operations import CollectArticles
 from brokenpromises.worker     import worker
 
+import os
+import json
+import datetime
+
 STORAGE = Storage()
 
-class CustomFlask(Eve):
+class CustomFlask(Flask):
 	jinja_options = Flask.jinja_options.copy()
 	jinja_options.update(dict(
 		block_start_string    = '[%',
@@ -51,9 +51,8 @@ class CustomFlask(Eve):
 		comment_start_string  = '[#',
 		comment_end_string    = '#]'))
 
-app = CustomFlask(__name__, 
-	settings = os.path.join(os.path.abspath(os.path.dirname(__file__)), "webapp_settings.py")
-)
+app = CustomFlask(__name__)
+app.config.from_envvar("WEBAPP_SETTINGS")
 RQDashboard(app)
 
 assets = Environment(app)
@@ -121,13 +120,25 @@ def search_date(year, month=None, day=None):
 	})
 	return response
 
+@app.route("/articles/<year>")
+@app.route("/articles/<year>/<month>")
+@app.route("/articles/<year>/<month>/<day>")
+def articles(year, month=None, day=None):
+	date      = (int(year), month and int(month) or None, day and int(day) or None)
+	articles  = STORAGE.get_articles(date)
+	response  = json.dumps({
+		"status"   : "ok",
+		"count"    : len(articles),
+		"articles" : [_.__dict__ for _ in articles],
+	}, default=dthandler)
+	return response
+
 # -----------------------------------------------------------------------------
 #
 # Main
 #
 # -----------------------------------------------------------------------------
 if __name__ == '__main__':
-	import os
 	app.run(
 		extra_files=[os.path.join(os.path.dirname(__file__), "webapp_settings.py")]
 	)
