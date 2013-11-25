@@ -36,6 +36,7 @@ REDIS_URL = os.getenv("REDISCLOUD_URL", "redis://localhost:6379")
 
 # set cache for http requests
 import requests_cache
-requests_cache.install_cache('requests_cache', backend='sqlite', expire_after=864000)
+from pymongo import MongoClient
+requests_cache.install_cache('requests_cache', backend='mongodb', connection=MongoClient(MONGODB_URI), expire_after=345600)
 
 # EOF
