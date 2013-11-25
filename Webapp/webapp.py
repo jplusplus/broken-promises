@@ -106,9 +106,9 @@ def count_for_date(year, month=None, day=None):
 	})
 	return Response(response,  mimetype='application/json')
 
-@app.route("/search_date/<email>/<year>")
-@app.route("/search_date/<email>/<year>/<month>")
-@app.route("/search_date/<email>/<year>/<month>/<day>")
+@app.route("/search_date/<email>/<year>"              , methods=['post'])
+@app.route("/search_date/<email>/<year>/<month>"      , methods=['post'])
+@app.route("/search_date/<email>/<year>/<month>/<day>", methods=['post'])
 def search_date(email, year, month=None, day=None):
 	date      = (int(year), month and int(month) or None, day and int(day) or None)
 	collector = CollectArticlesAndSendEmail(get_available_channels(), *date, use_storage=True, email=email)
