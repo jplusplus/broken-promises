@@ -62,7 +62,12 @@ class Article(object):
 		self.ref_dates.append(kwargs)
 
 	def __unicode__(self):
-		return u"\"%s - %s...\"" % (self.source, self.title and self.title[:20] or "untitled")
+		return u"\"%s - %s\"" % (
+			self.source,
+			hasattr(self, '_id') and "id: " + self._id             \
+			or self.url          and "http://..." + self.url[-30:] \
+			or "untitled"
+		)
 	def __repr__(self):
 		return self.__unicode__()
 	def __str__(self):
