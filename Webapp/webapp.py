@@ -66,11 +66,6 @@ def index():
 	response = make_response(render_template('home.html'))
 	return response
 
-@app.route("/register_collection", methods=['post'])
-def register_collection():
-	response = json.dumps({"status": "ok"})
-	return Response(response,  mimetype='application/json')
-
 @app.route("/last_scrape/<year>")
 @app.route("/last_scrape/<year>/<month>")
 @app.route("/last_scrape/<year>/<month>/<day>")
