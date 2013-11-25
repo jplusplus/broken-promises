@@ -120,11 +120,12 @@ def search_date(year, month=None, day=None):
 	})
 	return response
 
+@app.route("/articles")
 @app.route("/articles/<year>")
 @app.route("/articles/<year>/<month>")
 @app.route("/articles/<year>/<month>/<day>")
-def articles(year, month=None, day=None):
-	date      = (int(year), month and int(month) or None, day and int(day) or None)
+def articles(year=None, month=None, day=None):
+	date      = (year and int(year) or None, month and int(month) or None, day and int(day) or None)
 	articles  = STORAGE.get_articles(date)
 	response  = json.dumps({
 		"status"   : "ok",

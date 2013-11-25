@@ -16,9 +16,9 @@ angular.module('brokenPromisesApp')
 		$scope.active = -1
 
 		Restangular
-			.all('articles?ts=' + new Date().getTime())
+			.all('articles')
 			.getList().then (articles) =>
-				$scope.articles = articles._items
+				$scope.articles = articles.articles
 
 		$scope.setArticle = (a) ->
 			if $scope.active_article == a
@@ -37,3 +37,5 @@ angular.module('brokenPromisesApp')
 				article.put()
 			)
 	)
+
+# EOF
