@@ -75,15 +75,18 @@ class Storage(object):
 			return (Article(**article_merged), CODE_UPDATE)
 		return (article, CODE_ERROR)
 
-	def _get_articles(self, date):
+	def _get_articles(self, date=None):
 		articles_collection = self.get_collection(Storage.COLLECTION_ARTICLES)
-		articles = articles_collection.find({"ref_dates.date": date})
+		if not date or date == (None, None, None):
+			articles = articles_collection.find()
+		else:
+			articles = articles_collection.find({"ref_dates.date": date})
 		return articles
 
-	def get_articles(self, date):
+	def get_articles(self, date=None):
 		return [Article(**article) for article in self._get_articles(date)]
 
-	def count_articles(self, date):
+	def count_articles(self, date=None):
 		return self._get_articles(date).count()
 
 	# -----------------------------------------------------------------------------
