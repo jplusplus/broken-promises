@@ -7,8 +7,8 @@
 # -----------------------------------------------------------------------------
 # License : GNU General Public License
 # -----------------------------------------------------------------------------
-# Creation : 12-Nov-2013
-# Last mod : 12-Nov-2013
+# Creation : 25-Sep-2013
+# Last mod : 25-Sep-2013
 # -----------------------------------------------------------------------------
 # This file is part of Broken Promises.
 # 
@@ -25,20 +25,42 @@
 #     You should have received a copy of the GNU General Public License
 #     along with Broken Promises.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
+import mandrill
+from brokenpromises import settings
 
-BP_CHANNEL_GUARDIAN_API_KEY = os.environ['BP_CHANNEL_GUARDIAN_API_KEY']
-BP_CHANNEL_NYTIMES_API_KEY  = os.environ['BP_CHANNEL_NYTIMES_API_KEY']
+mandrill_client = mandrill.Mandrill(settings.MANDRILL_APIKEY)
 
-MONGODB_URI     = os.getenv("MONGOLAB_URI", "mongodb://localhost/broken-promises")
+def send_email(to, subject="", body="", send_from=None):
+	send_from = send_from or "noreply@brokenpromises.org"
+	if type(to) in (str, unicode):
+		to = [{"email":to}]
+	else:
+		to = [{"email":_} for _ in to]
+	message = {
+	'from_email' : send_from,
+	'from_name'  : 'Broken-Promises',
+	'to'         : to,
+	'subject'    : subject,
+	'html'       : body,
+	}
+	mandrill_client.messages.send(message=message, async=True)
+	pass
 
-REDIS_URL       = os.getenv("REDISCLOUD_URL", "redis://localhost:6379")
+# -----------------------------------------------------------------------------
+#
+# TESTS
+#
+# -----------------------------------------------------------------------------
+import unittest
 
-MANDRILL_APIKEY = os.getenv("MANDRILL_APIKEY", 'pshoNLcX1BM7jNCHgJsFCA') # or test api key
+class TestMailer(unittest.TestCase):
+	'''Test Class'''
 
-# set cache for http requests
-import requests_cache
-from pymongo import MongoClient
-requests_cache.install_cache(MONGODB_URI.split("/")[-1], backend='mongodb', connection=MongoClient(MONGODB_URI), expire_after=345600)
+	def test_send_mail(self):
+		send_email("ed.ou4rd@gmail.com", "coucou", "ça roule?", "edou4rd@gmail.com")
 
+if __name__ == "__main__":
+	# unittest.main()
+	suite = unittest.TestLoader().loadTestsFromTestCase(TestMailer)
+	unittest.TextTestRunner(verbosity=2).run(suite)
 # EOF

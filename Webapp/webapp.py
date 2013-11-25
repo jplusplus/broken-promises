@@ -32,7 +32,7 @@ from rq_dashboard     import RQDashboard
 
 from brokenpromises.storage    import Storage
 from brokenpromises.channels   import get_available_channels
-from brokenpromises.operations import CollectArticles
+from brokenpromises.operations import CollectArticlesAndSendEmail
 from brokenpromises.worker     import worker
 
 import os
@@ -106,12 +106,12 @@ def count_for_date(year, month=None, day=None):
 	})
 	return Response(response,  mimetype='application/json')
 
-@app.route("/search_date/<year>")
-@app.route("/search_date/<year>/<month>")
-@app.route("/search_date/<year>/<month>/<day>")
-def search_date(year, month=None, day=None):
+@app.route("/search_date/<email>/<year>")
+@app.route("/search_date/<email>/<year>/<month>")
+@app.route("/search_date/<email>/<year>/<month>/<day>")
+def search_date(email, year, month=None, day=None):
 	date      = (int(year), month and int(month) or None, day and int(day) or None)
-	collector = CollectArticles(get_available_channels(), *date, use_storage=True)
+	collector = CollectArticlesAndSendEmail(get_available_channels(), *date, use_storage=True, email=email)
 	job       = worker.run(collector)
 	response  = json.dumps({
 		"status"        : "ok",

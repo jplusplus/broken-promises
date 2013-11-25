@@ -64,7 +64,7 @@ class Article(object):
 	def __unicode__(self):
 		return u"\"%s - %s\"" % (
 			self.source,
-			hasattr(self, '_id') and "id: " + self._id             \
+			hasattr(self, '_id') and "id: " + str(self._id)        \
 			or self.url          and "http://..." + self.url[-30:] \
 			or "untitled"
 		)

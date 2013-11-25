@@ -8,7 +8,7 @@
 # License : GNU General Public License
 # -----------------------------------------------------------------------------
 # Creation : 05-Nov-2013
-# Last mod : 08-Nov-2013
+# Last mod : 25-Sep-2013
 # -----------------------------------------------------------------------------
 # This file is part of Broken Promises.
 # 
@@ -82,6 +82,15 @@ class Collector(object):
 	def get_report(self):
 		return self.report
 
+	def get_params(self):
+		"""
+		used to represent the collector
+		"""
+		params = self.__dict__.copy()
+		if params.get("channels"):
+			params['channels'] = [c.__module__ for c in self.channels]
+		return params
+
 	def pre_filter(self, results):
 		""" Excecuted before the dates parsing """
 		# articles with no body
@@ -127,15 +136,6 @@ class CollectArticles(Collector):
 		self.date          = (year and int(year) or None, month and int(month) or None, day and int(day) or None)
 		self.force_collect = force_collect
 		self.storage       = self.use_storage and Storage() or None
-
-	def get_params(self):
-		"""
-		used to represent the collector
-		"""
-		params = self.__dict__.copy()
-		if params.get("channels"):
-			params['channels'] = [c.__module__ for c in self.channels]
-		return params
 
 	def run(self, **kwargs):
 		if self.use_storage and not self.force_collect:
@@ -187,6 +187,29 @@ class CollectArticles(Collector):
 			articles = [article for article, code in self.storage.save_article(articles)]
 			self.storage.save_report(self.get_report())
 		return articles
+
+# -----------------------------------------------------------------------------
+#
+#    Collect Articles and send an email
+#
+# -----------------------------------------------------------------------------
+from mailer import send_email
+class CollectArticlesAndSendEmail(CollectArticles):
+
+	def __init__(self, channels, year, month=None, day=None, report_extra={}, use_storage=False, force_collect=False, email=None):
+		self.email = email
+		super(CollectArticlesAndSendEmail, self).__init__(
+			channels=channels, year=year, month=month, day=day, report_extra=report_extra,
+			use_storage=use_storage, force_collect=force_collect)
+
+	def run(self, **kwargs):
+		response = super(CollectArticlesAndSendEmail, self).run(**kwargs)
+		link = "http://localhost:5000/...."
+		send_email(self.email,
+			subject = "Your request is served!",
+			body    = "Take a look to {link}".format(link=link)
+		)
+		return response
 
 # -----------------------------------------------------------------------------
 #
