@@ -43,11 +43,12 @@ class Collector(object):
 		self.report = None
 
 	@classmethod
-	def retrieve_referenced_dates(cls, text, filters=None):
+	def retrieve_referenced_dates(cls, text, filters_on_text=None):
 		references = []
 		# filters
-		if filters:
-			text = filters(text)
+		# remove all tags
+		if filters_on_text:
+			text = filters_on_text(text)
 		# search and add dates to `refrences`
 		for date_obj, date_row, date_position in dateparser.find_dates(text):
 			reference = {
@@ -169,7 +170,7 @@ class CollectArticles(Collector):
 		# search dates in the body articles
 		for result in articles:
 			filters = brokenpromises.channels.perform_channels_import((result.channel,))[0]().apply_filters
-			result.ref_dates = self.retrieve_referenced_dates(result.body, filters=filters)
+			result.ref_dates = self.retrieve_referenced_dates(result.body, filters_on_text=filters)
 		# post-filters
 		articles = self.post_filter(articles)
 		# reporting
