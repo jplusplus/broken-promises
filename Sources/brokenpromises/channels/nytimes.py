@@ -87,7 +87,7 @@ class NewYorkTimes(Channel):
 		}
 		r = requests.get(NewYorkTimes.URI, params=payload)
 		if r.status_code != 200:
-			error("Nytimes returns an error for %s:\n %s\n%s" % (NewYorkTimes.URI, r.json(), payload))
+			error("Nytimes returns an error for %s:\n %s\n%s" % (NewYorkTimes.URI, r.text, payload))
 			return None
 		return r.json()
 

@@ -90,7 +90,7 @@ class TheGuardian(Channel):
 				# error known
 				return None
 			else:
-				error("Guardian returns an error for %s:\n %s\n%s" % (TheGuardian.URI, r.json(), payload))
+				error("Guardian returns an error for %s:\n %s\n%s" % (TheGuardian.URI, r.text, payload))
 				return None
 		return r.json()
 
