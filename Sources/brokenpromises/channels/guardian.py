@@ -107,7 +107,7 @@ class TheGuardian(Channel):
 
 	def scrape_body_article(self, url, filter_=False):
 		r       = requests.get(url)
-		soup    = BeautifulSoup(r.text)
+		soup    = BeautifulSoup(r.text, 'html5lib')
 		article = soup.find(id='article-body-blocks') or soup.find(id='live-blog-blocks')
 		if filter_:
 			article = self.apply_filters(unicode(article))
