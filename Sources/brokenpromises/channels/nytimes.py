@@ -32,6 +32,7 @@ import brokenpromises.utils  as utils
 import datetime
 import reporter
 import requests
+from bs4 import BeautifulSoup
 
 debug, trace, info, warning, error, fatal = reporter.bind(__name__)
 
@@ -90,11 +91,14 @@ class NewYorkTimes(Channel):
 			return None
 		return r.json()
 
-	def scrape_body_article(self, url):
-		r = requests.get(url)
-		paragraphs = self.HTML.parse(r.text).query('.articleBody')
-		body = u" ".join(map(lambda _:_.text(), paragraphs))
-		return body
+	def scrape_body_article(self, url, filter_=False):
+		r       = requests.get(url)
+		soup    = BeautifulSoup(r.text)
+		article = soup.find_all(class_='articleBody')
+		article = u"".join([str(a).decode("utf-8", 'ignore') for a in article])
+		if filter_:
+			article = self.apply_filters(article)
+		return unicode(article)
 
 # -----------------------------------------------------------------------------
 #

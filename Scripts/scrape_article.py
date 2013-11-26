@@ -26,13 +26,19 @@
 #     along with Broken Promises.  If not, see <http://www.gnu.org/licenses/>.
 
 import brokenpromises.channels
-import sys
+import argparse
 
 def get_channel(_id):
 	return brokenpromises.channels.Catalogue.CHANNELS[_id]['class']()
 
 if __name__ == "__main__":
-	url = sys.argv[1]
+	parser = argparse.ArgumentParser(description='')
+	parser.add_argument('url', type=str, help='url to scrap')
+	parser.add_argument('--with-filters', dest='filters', action='store_true',
+		default=False, help='Apply filters to remove unwanted dates')
+
+	args = parser.parse_args()
+	url = args.url
 	available_channels = brokenpromises.channels.get_available_channels()
 	brokenpromises.channels.perform_channels_import(available_channels)
 	channel = None
@@ -41,7 +47,7 @@ if __name__ == "__main__":
 	elif "theguardian.com" in url:
 		channel = get_channel('guardian')
 	if channel:
-		body = channel.scrape_body_article(url)
-		print body.encode('utf-8')
+		body = channel.scrape_body_article(url, filter_=args.filters)
+		print body.encode('utf-8', 'ignore')
 
 # EOF

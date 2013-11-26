@@ -25,8 +25,6 @@
 #     You should have received a copy of the GNU General Public License
 #     along with Broken Promises.  If not, see <http://www.gnu.org/licenses/>.
 
-from   wwwclient import HTML
-
 # -----------------------------------------------------------------------------
 #
 # DECORATORS
@@ -70,12 +68,18 @@ class Catalogue:
 #  [ ] set an environment shared by all jobs in this module.
 #  [ ] handle error from scrapping, api, http requests
 #  [ ] logging
-class Channel:
+class Channel(object):
 	"""A data channel is a class that allows to retrieve information from
 	a given channel (ie. The Guardian, New York Times, RSS, etc...)."""
 
 	def __init__(self):
-		self.HTML    = HTML
+		pass
+
+	def apply_filters(self, body):
+		return unicode(body)
+
+	def scrape_body_article(self, url, filter_=False):
+		raise Exception("need to be implemented")
 
 # -----------------------------------------------------------------------------
 #

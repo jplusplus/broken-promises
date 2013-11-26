@@ -32,6 +32,8 @@ import brokenpromises.utils  as utils
 import datetime
 import reporter
 import requests
+import re
+from bs4 import BeautifulSoup
 
 debug, trace, info, warning, error, fatal = reporter.bind(__name__)
 
@@ -92,26 +94,24 @@ class TheGuardian(Channel):
 				return None
 		return r.json()
 
-	def scrape_body_article(self, url):
-		r = requests.get(url)
-		paragraphs = self.HTML.tree(r.text).query('#article-body-blocks')
-		if not paragraphs:
-			paragraphs =  self.HTML.tree(r.text).query('#live-blog-blocks')
-		# return None if nothing found
-		if not paragraphs:
-			warning("there is no paragraph found for article %s" % (url))
-			return None
-		paragraphs = paragraphs[0]
-		# fitlers
-		# remove comments (need to be first)
-		paragraphs = paragraphs.filter(reject=lambda _: _.hasClass("element-comment"), recursive=True)
-		# TODO: remove all the blockquotes (for tweet). Should preserve a date inside the quote.
-		paragraphs = paragraphs.filter(reject=lambda _: _.hasName("blockquote"), recursive=True)
-		paragraphs = filter(lambda  _: _.name() != "script"              , paragraphs)
-		paragraphs = filter(lambda  _: "was amended on"  not in _.text() , paragraphs)
-		paragraphs = filter(lambda  _: "was changed on"  not in _.text() , paragraphs)
-		paragraphs = filter(lambda  _: "was edited on"   not in _.text() , paragraphs)
-		return "".join(map(lambda _:_.html() ,paragraphs))
+	def apply_filters(self, body):
+		body = BeautifulSoup(body)
+		# remove comments
+		map(lambda _:_.decompose(), body.find_all(class_="element-comment"))
+		# remove all the blockquotes (for tweet).
+		# TODO: Should preserve a date inside the quote.
+		map(lambda _:_.decompose(), body.find_all("blockquote"))
+		map(lambda _:_.decompose(), body.find_all("script"))
+		map(lambda _:_.extract(), body.find_all(text=re.compile("was (changed|amended|edited) on")))
+		return unicode(body)
+
+	def scrape_body_article(self, url, filter_=False):
+		r       = requests.get(url)
+		soup    = BeautifulSoup(r.text)
+		article = soup.find(id='article-body-blocks') or soup.find(id='live-blog-blocks')
+		if filter_:
+			article = self.apply_filters(unicode(article))
+		return unicode(article)
 
 # -----------------------------------------------------------------------------
 #
@@ -138,10 +138,11 @@ class TestTheGuardian(unittest.TestCase):
 			assert article.body is not None, article
 			# print article.url
 
-	def test_filter_article(self):
+	def test_apply_filters(self):
 		contains = """This article was amended on 3 November 2013""" # and should be filtered
 		url      = "http://www.theguardian.com/politics/2013/nov/03/gerry-adams-jean-mcconville"
 		body     = self.obj.scrape_body_article(url)
+		body     = self.obj.apply_filters(body)
 		assert contains not in body
 if __name__ == "__main__":
 	# unittest.main()

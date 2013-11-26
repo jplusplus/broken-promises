@@ -33,7 +33,6 @@ import os
 import dateparser
 import datetime
 import reporter
-from   wwwclient import HTML
 from brokenpromises import Report
 
 debug, trace, info, warning, error, fatal = reporter.bind(__name__)
@@ -44,12 +43,11 @@ class Collector(object):
 		self.report = None
 
 	@classmethod
-	def retrieve_referenced_dates(cls, text):
+	def retrieve_referenced_dates(cls, text, filters=None):
 		references = []
-		# filters tags if it's html
-		text = HTML.parse(text)
-		text = filter(lambda _: _.name() != "img", text)
-		text = "".join(map(lambda _:_.html() ,text))
+		# filters
+		if filters:
+			text = filters(text)
 		# search and add dates to `refrences`
 		for date_obj, date_row, date_position in dateparser.find_dates(text):
 			reference = {
@@ -170,7 +168,8 @@ class CollectArticles(Collector):
 		articles = self.pre_filter(articles)
 		# search dates in the body articles
 		for result in articles:
-			result.ref_dates = self.retrieve_referenced_dates(result.body)
+			filters = brokenpromises.channels.perform_channels_import((result.channel,))[0]().apply_filters
+			result.ref_dates = self.retrieve_referenced_dates(result.body, filters=filters)
 		# post-filters
 		articles = self.post_filter(articles)
 		# reporting
