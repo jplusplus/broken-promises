@@ -33,6 +33,7 @@ import datetime
 import reporter
 import requests
 import re
+import time
 from bs4 import BeautifulSoup
 
 debug, trace, info, warning, error, fatal = reporter.bind(__name__)
@@ -68,6 +69,7 @@ class TheGuardian(Channel):
 					# a.images   = TODO
 					# scrape body from page
 					a.body     = self.scrape_body_article(a.url)
+					time.sleep(.11)
 					if a.body:
 						articles.append(a)
 					else:
