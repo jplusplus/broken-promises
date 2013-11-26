@@ -97,6 +97,7 @@ class TheGuardian(Channel):
 		return r.json()
 
 	def apply_filters(self, body):
+		body = super(TheGuardian, self).apply_filters(body)
 		body = BeautifulSoup(body)
 		# remove comments
 		map(lambda _:_.decompose(), body.find_all(class_="element-comment"))

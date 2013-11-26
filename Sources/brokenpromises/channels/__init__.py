@@ -68,6 +68,9 @@ class Catalogue:
 #  [ ] set an environment shared by all jobs in this module.
 #  [ ] handle error from scrapping, api, http requests
 #  [ ] logging
+
+from bs4 import BeautifulSoup
+
 class Channel(object):
 	"""A data channel is a class that allows to retrieve information from
 	a given channel (ie. The Guardian, New York Times, RSS, etc...)."""
@@ -76,6 +79,8 @@ class Channel(object):
 		pass
 
 	def apply_filters(self, body):
+		body = BeautifulSoup(body)
+		body = "".join(body.find_all(text=True))
 		return unicode(body)
 
 	def scrape_body_article(self, url, filter_=False):
