@@ -46,8 +46,8 @@ oparser.add_option("-c", "--channels", action="store", dest="channels_list",
 	help = "channels list comma separated", default=None)
 # oparser.add_option("-m", "--mongodb", action="store", dest="mongodb_uri",
 # 	help = "uri to mongodb instance to persist results", default=None)
-# oparser.add_option("-d", "--drop", action="store_true", dest="mongodb_drop",
-# 	help = "drop the previous articles from database before", default=False)
+oparser.add_option("-d", "--drop", action="store_true", dest="mongodb_drop",
+	help = "drop the previous articles from database before", default=False)
 oparser.add_option("-o", "--output", action="store", dest="output_file",
 	help = "Specify  a file to write the export to. If you do not specify a file name, the program writes data to standard output (e.g. stdout)", default=None)
 
@@ -66,7 +66,13 @@ if options.channels_file:
 if options.channels_list:
 	channels = options.channels_list.split(",")
 
-results = CollectArticles(channels, *args, use_storage=True).run()
+collector = CollectArticles(channels, *args, use_storage=True)
+
+if options.mongodb_drop:
+	collector.storage.get_database().drop_collection("articles")
+	collector.storage.get_database().drop_collection("reports")
+
+results = collector.run()
 
 # OUTPUT
 print dumps([_.__dict__ for _ in results]).encode('utf-8')
