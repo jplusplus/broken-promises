@@ -28,7 +28,7 @@
 					<div class="title">{{article.title}}</div>
 					<div class="snippet" ng-bind-html = "article.ref_dates[0]['extract'] | snippet:article.ref_dates|unique"></div>
 					<div class="body"
-						ng-bind-html = "article.body | nl2br | snippet:article.ref_dates"
+						ng-bind-html = "article.body | snippet:article.ref_dates"
 						ng-if        = "active > 0 && active_article.$$hashKey == article.$$hashKey"
 						scroll-to    = "300">
 					</div>
