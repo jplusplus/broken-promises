@@ -173,9 +173,18 @@ class CollectArticles(Collector):
 		# post-filters
 		articles = self.post_filter(articles)
 		# reporting
+		def filter_articles_by_ref_dates(articles, date):
+			results = []
+			for article in articles:
+				if article.ref_dates:
+					ref_dates = [r['date'] for r in article.ref_dates]
+					if date in ref_dates:
+						results.append(article)
+						continue
+			return results
 		self.set_report(
 			status         = "done",
-			count          = len(articles),
+			count          = len(filter_articles_by_ref_dates(articles, self.date)),
 			channels       = [c.__module__ for c in self.channels],
 			searched_date  = self.date,
 			urls_found     = [_.url for _ in articles],
@@ -269,7 +278,7 @@ class TestOperations(unittest.TestCase):
 			assert result.ref_dates, "%s : %s" % (result, result.url)
 		assert collector.get_report()
 		assert collector.get_report().collector               == "brokenpromises.operations.CollectArticles", collector.get_report().collector
-		assert collector.get_report().meta['count']           == len(results)
+		assert collector.get_report().meta['count']           <= len(results)
 		assert len(collector.get_report().meta['urls_found']) == len(results)
 
 	def test_get_articles_with_storage(self):
@@ -286,7 +295,7 @@ class TestOperations(unittest.TestCase):
 			assert result.ref_dates, "%s : %s" % (result, result.url)
 		assert collector.get_report()
 		assert collector.get_report().collector               == "brokenpromises.operations.CollectArticles"
-		assert collector.get_report().meta['count']           == len(results)
+		assert collector.get_report().meta['count']           <= len(results)
 		assert len(collector.get_report().meta['urls_found']) == len(results)
 		assert len(self.testing_storage.get_reports(name="collector", searched_date=searched_date, status="done")) == 1, self.testing_storage.get_reports(searched_date)
 		results = collector.run()
