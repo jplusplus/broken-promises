@@ -8,7 +8,7 @@
 # License : GNU General Public License
 # -----------------------------------------------------------------------------
 # Creation : 28-Oct-2013
-# Last mod : 31-Oct-2013
+# Last mod : 27-Nov-2013
 # -----------------------------------------------------------------------------
 # This file is part of Broken Promises.
 # 
