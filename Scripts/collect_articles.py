@@ -44,8 +44,8 @@ oparser.add_option("-f", "--channelslistfile", action="store", dest="channels_fi
 	help = "Use this that as channels list to use", default=None)
 oparser.add_option("-c", "--channels", action="store", dest="channels_list",
 	help = "channels list comma separated", default=None)
-# oparser.add_option("-m", "--mongodb", action="store", dest="mongodb_uri",
-# 	help = "uri to mongodb instance to persist results", default=None)
+oparser.add_option("-s", "--storage", action="store_true", dest="storage",
+	help = "Save the result with the default storage", default=False)
 oparser.add_option("-d", "--drop", action="store_true", dest="mongodb_drop",
 	help = "drop the previous articles from database before", default=False)
 oparser.add_option("-o", "--output", action="store", dest="output_file",
@@ -66,7 +66,7 @@ if options.channels_file:
 if options.channels_list:
 	channels = options.channels_list.split(",")
 
-collector = CollectArticles(channels, *args, use_storage=True)
+collector = CollectArticles(channels, *args, use_storage=options.storage)
 
 if options.mongodb_drop:
 	collector.storage.get_database().drop_collection("articles")
