@@ -223,6 +223,41 @@ class CollectArticlesAndSendEmail(CollectArticles):
 
 # -----------------------------------------------------------------------------
 #
+#    Collectors Launcher
+#
+# -----------------------------------------------------------------------------
+class CollectNext7days(Collector):
+	
+	def run(self, **kwargs):
+		today = datetime.date.today()
+		for day in range(0, 7): # j+7
+			date = today + datetime.timedelta(days=day)
+			date = (date.year, date.month, date.day)
+			collector = CollectArticles(get_available_channels(), *date, use_storage=True)
+			worker.run(collector)
+
+class CollectNext2Months(Collector):
+	
+	def run(self, **kwargs):
+		today = datetime.date.today()
+		for month in range(0,2):
+			date      = [None, None, None]
+			date[0]   = today.year + (today.month + month) / 12
+			date[1]   = (today.month + month - 1) % 12 + 1
+			collector = CollectArticles(get_available_channels(), *date, use_storage=True)
+			worker.run(collector)
+
+class CollectNext2Years(Collector):
+	
+	def run(self, **kwargs):
+		today = datetime.date.today()
+		for year in range(0,2):
+			date      = [today.year + year, None, None]
+			collector = CollectArticles(get_available_channels(), *date, use_storage=True)
+			worker.run(collector)
+
+# -----------------------------------------------------------------------------
+#
 #    RefreshArticles : reparse given articles
 #
 # -----------------------------------------------------------------------------

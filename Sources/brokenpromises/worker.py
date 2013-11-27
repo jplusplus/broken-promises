@@ -44,12 +44,12 @@ class RedisWorker(object):
 		collector_params = collector.get_params()
 		return self.queue.enqueue(collector.run, collector=class_name, params=collector_params, **kwargs)
 
-	def schedule_with_interval(self, interval_s, collector, *arg, **kwargs):
-		date   = datetime.datetime.now()
-		kwargs = kwargs + {
+	def schedule_with_interval(self, date, interval_s, collector, *arg, **kwargs):
+		date   = date or datetime.datetime.now()
+		kwargs.update({
 			"collector" : "%s.%s" % (collector.__class__.__module__, collector.__class__.__name__),
 			"params"    : collector.get_params()
-		}
+		})
 		res  = self.scheduler.schedule(
 			scheduled_time = date,           # Time for first execution
 			func           = collector.run,  # Function to be queued
@@ -81,7 +81,7 @@ class SimpleWorker(object):
 	def run(self, job, *arg, **kwargs):
 		return job.run(*arg, **kwargs)
 
-	def schedule_with_interval(self, interval, job, *arg, **kwargs):
+	def schedule_with_interval(self, date, interval_s, job, *arg, **kwargs):
 		pass
 
 	def schedule(self, date, job, *arg, **kwargs):
