@@ -185,7 +185,8 @@ class CollectArticles(Collector):
 			return results
 		self.set_report(
 			status         = "done",
-			count          = len(filter_articles_by_ref_dates(articles, self.date)),
+			count          = len(articles),
+			related_articles = len(filter_articles_by_ref_dates(articles, self.date)),
 			channels       = [c.__module__ for c in self.channels],
 			searched_date  = self.date,
 			urls_found     = [_.url for _ in articles],
@@ -278,9 +279,10 @@ class TestOperations(unittest.TestCase):
 		for result in results:
 			assert result.ref_dates, "%s : %s" % (result, result.url)
 		assert collector.get_report()
-		assert collector.get_report().collector               == "brokenpromises.operations.CollectArticles", collector.get_report().collector
-		assert collector.get_report().meta['count']           <= len(results)
-		assert len(collector.get_report().meta['urls_found']) == len(results)
+		assert collector.get_report().collector                == "brokenpromises.operations.CollectArticles", collector.get_report().collector
+		assert collector.get_report().meta['count']            == len(results)
+		assert collector.get_report().meta['related_articles'] <= len(results)
+		assert len(collector.get_report().meta['urls_found'])  == len(results)
 
 	def test_get_articles_with_storage(self):
 		from brokenpromises import Article
@@ -295,9 +297,10 @@ class TestOperations(unittest.TestCase):
 		for result in results:
 			assert result.ref_dates, "%s : %s" % (result, result.url)
 		assert collector.get_report()
-		assert collector.get_report().collector               == "brokenpromises.operations.CollectArticles"
-		assert collector.get_report().meta['count']           <= len(results)
-		assert len(collector.get_report().meta['urls_found']) == len(results)
+		assert collector.get_report().collector                == "brokenpromises.operations.CollectArticles"
+		assert collector.get_report().meta['count']            == len(results)
+		assert collector.get_report().meta['related_articles'] <= len(results)
+		assert len(collector.get_report().meta['urls_found'])  == len(results)
 		assert len(self.testing_storage.get_reports(name="collector", searched_date=searched_date, status="done")) == 1, self.testing_storage.get_reports(searched_date)
 		results = collector.run()
 		assert len(results) > 0, results

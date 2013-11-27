@@ -59,7 +59,7 @@ class NewYorkTimes(Channel):
 		different_date_formats = utils.get_all_date_formats(year, month, day)
 		articles = []
 		for format in different_date_formats:
-			response = self.request_api(keyword=format)
+			response = self.request_api(keyword=format, end_date=utils.get_the_date_before(year, month, day))
 			if response:
 				for article in response['response']['docs']:
 					# escaping conditions
@@ -82,11 +82,13 @@ class NewYorkTimes(Channel):
 					articles.append(a)
 		return articles
 
-	def request_api(self, keyword):
+	def request_api(self, keyword, end_date=None):
 		payload  = {
 			"api-key" : NewYorkTimes.API_KEY,
-			"fq"      : "body:\"%s\"" % keyword
+			"fq"      : "body:\"%s\"" % keyword,
 		}
+		if end_date:
+			payload['end_date'] = end_date.strftime("%Y%m%d")
 		r = requests.get(NewYorkTimes.URI, params=payload)
 		if r.status_code != 200:
 			error("Nytimes returns an error for %s:\n %s\n%s" % (NewYorkTimes.URI, r.text, payload))

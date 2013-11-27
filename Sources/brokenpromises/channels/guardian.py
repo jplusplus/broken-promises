@@ -53,7 +53,7 @@ class TheGuardian(Channel):
 		different_date_formats = utils.get_all_date_formats(year, month, day)
 		articles = []
 		for format in different_date_formats:
-			response = self.request_api(keyword=format)
+			response = self.request_api(keyword=format, end_date=utils.get_the_date_before(year, month, day))
 			if response:
 				for article in response['response']['results']:
 					# escaping conditions
@@ -77,7 +77,7 @@ class TheGuardian(Channel):
 						pass
 		return articles
 
-	def request_api(self, keyword):
+	def request_api(self, keyword, end_date=None):
 		payload  = {
 			"api-key"     : TheGuardian.API_KEY,
 			"q"           : "\"%s\"" % (keyword),
@@ -86,6 +86,8 @@ class TheGuardian(Channel):
 			"section"     : "-fashion,-music,-artanddesign,-film,-guardian-masterclasses",
 			"page-size"   : 50 # maximum
 		}
+		if end_date:
+			payload['to-date'] = end_date.strftime("%Y-%m-%d")
 		r = requests.get(TheGuardian.URI, params=payload)
 		if r.status_code != 200:
 			if r.json()['response']['message'] == "only one value allowed in q parameter":
@@ -110,7 +112,7 @@ class TheGuardian(Channel):
 
 	def scrape_body_article(self, url, filter_=False):
 		r       = requests.get(url)
-		soup    = BeautifulSoup(r.text, 'html5lib')
+		soup    = BeautifulSoup(r.text, 'lxml')
 		article = soup.find(id='article-body-blocks') or soup.find(id='live-blog-blocks')
 		if filter_:
 			article = self.apply_filters(unicode(article))

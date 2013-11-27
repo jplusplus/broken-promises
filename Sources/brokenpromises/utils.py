@@ -61,6 +61,14 @@ def get_all_date_formats(year, month=None, day=None):
 		formats.append("%s" % year)
 	return formats
 
+def get_the_date_before(year, month=None, day=None):
+	if not month:
+		year -= 1
+	elif not day:
+		month = month > 1 and month - 1 or 12
+	date = datetime.date(year, month or 1, day or 1)
+	return date
+
 # -----------------------------------------------------------------------------
 #
 # TESTS

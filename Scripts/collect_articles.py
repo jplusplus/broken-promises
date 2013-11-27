@@ -48,6 +48,8 @@ oparser.add_option("-s", "--storage", action="store_true", dest="storage",
 	help = "Save the result with the default storage", default=False)
 oparser.add_option("-d", "--drop", action="store_true", dest="mongodb_drop",
 	help = "drop the previous articles from database before", default=False)
+oparser.add_option("--force", action="store_true", dest="force_collect",
+	help = "Force the scrap. If --storage is enable, the scrap could be escape b/c of a previous similar scrap", default=False)
 oparser.add_option("-o", "--output", action="store", dest="output_file",
 	help = "Specify  a file to write the export to. If you do not specify a file name, the program writes data to standard output (e.g. stdout)", default=None)
 
@@ -66,7 +68,7 @@ if options.channels_file:
 if options.channels_list:
 	channels = options.channels_list.split(",")
 
-collector = CollectArticles(channels, *args, use_storage=options.storage)
+collector = CollectArticles(channels, *args, use_storage=options.storage, force_collect=options.force_collect)
 
 if options.mongodb_drop:
 	collector.storage.get_database().drop_collection("articles")
