@@ -26,7 +26,9 @@
 #     along with Broken Promises.  If not, see <http://www.gnu.org/licenses/>.
 
 import brokenpromises.channels
+import dateparser
 import argparse
+import json
 
 def get_channel(_id):
 	return brokenpromises.channels.Catalogue.CHANNELS[_id]['class']()
@@ -34,8 +36,8 @@ def get_channel(_id):
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser(description='')
 	parser.add_argument('url', type=str, help='url to scrap')
-	parser.add_argument('--with-filters', dest='filters', action='store_true',
-		default=False, help='Apply filters to remove unwanted dates')
+	parser.add_argument('--with-filters', dest='filters', action='store_true', default=False, help='Apply filters to remove unwanted dates')
+	parser.add_argument('--dates', dest='dates', action='store_true', default=False, help='Return the date found in the article')
 
 	args = parser.parse_args()
 	url = args.url
@@ -47,7 +49,15 @@ if __name__ == "__main__":
 	elif "theguardian.com" in url:
 		channel = get_channel('guardian')
 	if channel:
+		if args.dates:
+			args.filters = True
 		body = channel.scrape_body_article(url, filter_=args.filters)
-		print body.encode('utf-8', 'ignore')
+		if args.dates:
+			dates = []
+			for date_obj, date_row, date_position in dateparser.find_dates(body):
+				dates.append(date_obj)
+			print json.dumps(dates)
+		else:
+			print body.encode('utf-8', 'ignore')
 
 # EOF
