@@ -53,9 +53,9 @@ import datetime
 from brokenpromises.worker     import worker
 from rq_scheduler              import Scheduler
 from brokenpromises.operations import CollectNext7days, CollectNext2Months, CollectNext2Years
-
-rq.use_connection()  # Use RQ's default Redis connection
-scheduler = Scheduler()
+import redis
+conn      = redis.from_url(settings.REDIS_URL)
+scheduler = Scheduler(connection=conn)
 scheduled_jobs = scheduler.get_jobs()
 # remove all jobs with interval
 for job in scheduled_jobs:
