@@ -32,10 +32,9 @@ Then visit [http://127.0.0.1:5000/ui/](http://127.0.0.1:5000/ui/)
 
 ## CLI
 
-### Usage
+In the `Scripts/` directory.
 
-	$ ./Scripts/collect_articles.py
-
+### Collect articles for a date
 
 ```
 Usage: 
@@ -45,20 +44,32 @@ Usage:
 
 Options:
   -h, --help            show this help message and exit
-  -C, --nocache         Prevents from using the cache
   -f CHANNELS_FILE, --channelslistfile=CHANNELS_FILE
                         Use this that as channels list to use
   -c CHANNELS_LIST, --channels=CHANNELS_LIST
                         channels list comma separated
-  -m MONGODB_URI, --mongodb=MONGODB_URI
-                        uri to mongodb instance to persist results
+  -s, --storage         Save the result with the default storage
   -d, --drop            drop the previous articles from database before
   -o OUTPUT_FILE, --output=OUTPUT_FILE
                         Specify  a file to write the export to. If you do not
                         specify a file name, the program writes data to
                         standard output (e.g. stdout)
+
 ```
 
+### Scrap a given page
+
+```
+usage: scrap_article.py [-h] [--with-filters] url
+
+positional arguments:
+  url             url to scrap
+
+optional arguments:
+  -h, --help      show this help message and exit
+  --with-filters  Apply filters to remove unwanted dates
+
+```
 ## Run tests
 
 	$ make test
