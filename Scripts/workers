@@ -9,7 +9,7 @@
 # Creation : 22-Nov-2013
 # Last mod : 22-Nov-2013
 # -----------------------------------------------------------------------------
-# Run rw worker in background and rq_scheduler after
+# Run rw_worker in background and rq_scheduler_worker after
 python Scripts/rq_worker.py &
 echo "Launching rqscheduler"
 python Scripts/rq_scheduler_worker.py

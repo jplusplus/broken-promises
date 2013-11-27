@@ -25,9 +25,9 @@
 #     You should have received a copy of the GNU General Public License
 #     along with Broken Promises.  If not, see <http://www.gnu.org/licenses/>.
 
+from   rq import Worker, Queue, Connection
 import os
 import redis
-from rq import Worker, Queue, Connection
 
 __doc__ = """
 

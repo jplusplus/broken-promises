@@ -25,11 +25,10 @@
 #     You should have received a copy of the GNU General Public License
 #     along with Broken Promises.  If not, see <http://www.gnu.org/licenses/>.
 
-
+from   brokenpromises.operations import CollectArticles
+from   bson.json_util            import dumps
 import optparse
-from brokenpromises.operations import CollectArticles
 import brokenpromises.channels
-from bson.json_util import dumps
 import sys
 import reporter
 

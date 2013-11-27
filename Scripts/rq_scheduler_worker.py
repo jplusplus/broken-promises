@@ -25,11 +25,9 @@
 #     You should have received a copy of the GNU General Public License
 #     along with Broken Promises.  If not, see <http://www.gnu.org/licenses/>.
 
-#!/usr/bin/env python
-
+from   rq_scheduler.scheduler import Scheduler
 import os
 import redis
-from rq_scheduler.scheduler import Scheduler
 
 def main():
 	conn      = redis.from_url(os.getenv('REDISCLOUD_URL', 'redis://localhost:6379'))

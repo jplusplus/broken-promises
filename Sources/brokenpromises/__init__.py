@@ -47,4 +47,7 @@ class Settings:
 
 settings = Settings()
 
+# launch scheduled jobs
+
+
 # EOF
