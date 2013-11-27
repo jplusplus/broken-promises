@@ -50,6 +50,8 @@ Options:
                         channels list comma separated
   -s, --storage         Save the result with the default storage
   -d, --drop            drop the previous articles from database before
+  --force               Force the scrap. If --storage is enable, the scrap
+                        could be escape b/c of a previous similar scrap
   -o OUTPUT_FILE, --output=OUTPUT_FILE
                         Specify  a file to write the export to. If you do not
                         specify a file name, the program writes data to
