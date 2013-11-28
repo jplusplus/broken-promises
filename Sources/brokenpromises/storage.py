@@ -105,7 +105,7 @@ class Storage(object):
 		# TODO: handle channels
 		report_collection = self.get_collection(Storage.COLLECTION_REPORTS)
 		search = {}
-		if searched_date:
+		if searched_date and searched_date != (None, None, None):
 			search["meta.searched_date"] = searched_date
 		if name:
 			search["name"] = name

@@ -129,6 +129,20 @@ def articles(year=None, month=None, day=None):
 	}, default=dthandler)
 	return Response(response,  mimetype='application/json')
 
+@app.route("/reports")
+@app.route("/reports/<year>")
+@app.route("/reports/<year>/<month>")
+@app.route("/reports/<year>/<month>/<day>")
+def reports(year=None, month=None, day=None):
+	date      = (year and int(year) or None, month and int(month) or None, day and int(day) or None)
+	reports   = STORAGE.get_reports(searched_date=date)
+	response  = json.dumps({
+		"status"   : "ok",
+		"count"    : len(reports),
+		"reports" : [_.__dict__ for _ in reports],
+	}, default=dthandler)
+	return Response(response,  mimetype='application/json')
+
 # -----------------------------------------------------------------------------
 #
 #    FILTERS
