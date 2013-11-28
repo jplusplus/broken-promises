@@ -90,7 +90,7 @@ class TheGuardian(Channel):
 			payload['to-date'] = end_date.strftime("%Y-%m-%d")
 		r = requests.get(TheGuardian.URI, params=payload)
 		if r.status_code != 200:
-			if r.json()['response']['message'] == "only one value allowed in q parameter":
+			if r.text and r.json()['response']['message'] == "only one value allowed in q parameter":
 				# error known
 				return None
 			else:
