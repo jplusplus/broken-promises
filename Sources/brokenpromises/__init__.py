@@ -48,7 +48,6 @@ class Settings:
 settings = Settings()
 
 # launch scheduled jobs
-import rq
 import datetime
 from brokenpromises.worker     import worker
 from rq_scheduler              import Scheduler

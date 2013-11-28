@@ -36,8 +36,7 @@ class RedisWorker(object):
 		from   rq_scheduler import Scheduler
 		self.conn      = redis.from_url(settings.REDIS_URL)
 		self.queue     = rq.Queue(connection=self.conn)
-		rq.use_connection()  # Use RQ's default Redis connection
-		self.scheduler = Scheduler()
+		self.scheduler = Scheduler(connection=self.conn)
 
 	def run(self, collector, **kwargs):
 		class_name       = "%s.%s" % (collector.__class__.__module__, collector.__class__.__name__)
