@@ -226,6 +226,11 @@ class CollectArticlesAndSendEmail(CollectArticles):
 #    Collectors Launcher
 #
 # -----------------------------------------------------------------------------
+# load the module brokenpromises.operations (usefull for rq and report creation)
+from brokenpromises.operations import CollectArticles
+from brokenpromises.channels import get_available_channels
+from brokenpromises.worker import worker
+
 class CollectNext7days(Collector):
 	
 	def run(self, **kwargs):
@@ -289,8 +294,6 @@ class CollectNext2Years(Collector):
 # -----------------------------------------------------------------------------
 import unittest
 import settings
-# load the module for test context (usefull for rq and report creation)
-from brokenpromises.operations import CollectArticles
 
 class TestOperations(unittest.TestCase):
 	'''Test Class'''
