@@ -29,13 +29,14 @@ from brokenpromises import settings
 import datetime
 
 class RedisWorker(object):
+	TIMEOUT = 600
 
 	def __init__(self):
 		import rq
 		import redis
 		from   rq_scheduler import Scheduler
 		self.conn       = redis.from_url(settings.REDIS_URL)
-		self.queue      = rq.Queue("default", connection=self.conn, default_timeout=600)
+		self.queue      = rq.Queue("default", connection=self.conn, default_timeout=RedisWorker.TIMEOUT)
 		self.scheduler  = Scheduler("high"  , connection=self.conn)
 
 	def run(self, collector, **kwargs):
@@ -56,7 +57,7 @@ class RedisWorker(object):
 			kwargs         = kwargs,         # Keyword arguments passed into function when executed
 			interval       = interval_s,     # Time before the function is called again, in seconds
 			repeat         = None,           # Repeat this number of times (None means repeat forever)
-			timeout        = 600
+			timeout        = RedisWorker.TIMEOUT
 		)
 		return res
 
