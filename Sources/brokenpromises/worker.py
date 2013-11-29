@@ -35,7 +35,7 @@ class RedisWorker(object):
 		import redis
 		from   rq_scheduler import Scheduler
 		self.conn      = redis.from_url(settings.REDIS_URL)
-		self.queue     = rq.Queue(connection=self.conn)
+		self.queue     = rq.Queue(connection=self.conn, default_timeout=600)
 		self.scheduler = Scheduler(connection=self.conn)
 
 	def run(self, collector, **kwargs):
