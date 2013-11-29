@@ -111,7 +111,7 @@ class Storage(object):
 			search["name"] = name
 		if status:
 			search["meta.status"] = status
-		return [Report(**report) for report in report_collection.find(search).sort('date', 1)]
+		return [Report(**report) for report in report_collection.find(search).sort('date', -1)]
 
 # -----------------------------------------------------------------------------
 #
