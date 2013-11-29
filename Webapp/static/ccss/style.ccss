@@ -3,7 +3,7 @@ h1:
 	color: rgb(55, 66, 126)
 	img:
 		width:250px
-.navbar:
+.navibar:
 	ul:
 		padding:0 0 10px 0
 		margin:0
