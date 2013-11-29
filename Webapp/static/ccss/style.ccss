@@ -1,5 +1,6 @@
 h1:
 	text-align:center
+	color: rgb(55, 66, 126)
 .navbar:
 	ul:
 		padding:0 0 10px 0
@@ -32,6 +33,11 @@ body:
 .job-frame:
 	height: 100%
 	width:100%
+
+.Reports:
+	table:
+		td.date:
+			width:208px
 .Articles:
 	table:
 		tbody tr.article:
@@ -101,3 +107,19 @@ body:
 				color: #249907
 			.littlepart:
 				background-color:#FFFF00
+
+
+pre:
+	outline: 1px solid #ccc
+	padding: 5px
+	margin: 5px
+	.string:
+		color: green
+	.number:
+		color: darkorange
+	.boolean:
+		color: blue
+	.null  :
+		color: magenta
+	.key   :
+		color: red

@@ -1,25 +1,21 @@
+# -----------------------------------------------------------------------------
+#
+#    ScrollTo
+#
+# -----------------------------------------------------------------------------
 angular.module('brokenPromisesApp').directive "scrollTo", ->
 	(scope, element, attrs) ->
 		scope.$watch "$last", () ->
 			# save scroll position
-			previous_position = $(window).scrollTop()
+			previous_position = $(".panel.Articles").scrollTop()
 			container = $(element.get(0).parentElement)
-			setTimeout(=> # because of the final page height is not already known
-				body = container.find(".body")
-				$(window).scrollTo(container, attrs.scrollTo or 0, ->
-					$('body').css {
-						position : "fixed",
-						top      : -container.offset().top
-					}
-					body.css {
-						height: $(window).height() - body.offset().top
-					}
-				)
-			,100)
-			element.on '$destroy', =>
-				$('body').css {position:"static", }
-				$(window).scrollTo(previous_position)
+			$(".panel.Articles").scrollTo(container, attrs.scrollTo or 0)
 
+# -----------------------------------------------------------------------------
+#
+#    panelselector
+#
+# -----------------------------------------------------------------------------
 angular.module('brokenPromisesApp').directive "panelselector", ->
 	set_panel = (value) ->
 		$(".Panels > .wrapper").css
@@ -30,6 +26,11 @@ angular.module('brokenPromisesApp').directive "panelselector", ->
 			set_panel(value)
 		$(window).bind "resize", -> set_panel(scope.currentPanel)
 
+# -----------------------------------------------------------------------------
+#
+#    Panel
+#
+# -----------------------------------------------------------------------------
 angular.module('brokenPromisesApp').directive "panel", ->
 	c = 0
 	set_size = (element) ->

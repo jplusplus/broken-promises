@@ -30,6 +30,12 @@ angular.module('brokenPromisesApp', ['restangular'])
 			.getList().then (reports) =>
 				$scope.reports = reports.reports
 
+			$scope.setReport = (r) ->
+				if $scope.active_report == r
+					$scope.active_report = null
+				else
+					$scope.active_report = r
+
 # -----------------------------------------------------------------------------
 #
 #    ArticlesCtrl
@@ -44,19 +50,10 @@ angular.module('brokenPromisesApp', ['restangular'])
 
 		$scope.setArticle = (a) ->
 			if $scope.active_article == a
-				# $location.path("/")
 				$scope.active         = -1
 				$scope.active_article = null
 			else
-				# $location.path("/article/" + a.$$hashKey)
 				$scope.active         = 1
 				$scope.active_article = a
-
-		# $scope.vote = (article, note) ->
-		# 	article.note = note
-		# 	Restangular.one('articles', article._id).get().then((article) =>
-		# 		article.note = note
-		# 		article.put()
-		# 	)
 
 # EOF

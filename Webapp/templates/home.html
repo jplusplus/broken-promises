@@ -70,10 +70,17 @@
 					<tbody>
 						<tr
 							class="report"
-							ng-repeat="report in reports">
-							<td>{{report.collector}}</td>
+							ng-repeat="report in reports"
+							ng-click="setReport(report)">
+							<td>
+								{{report.collector}}
+								<div class="body"
+									ng-bind-html = "report.meta|json"
+									ng-if = "active_report.$$hashKey == report.$$hashKey">
+								</div>
+							</td>
 							<td>{{report.caller}}</td>
-							<td>{{report.date}}</td>
+							<td class="date">{{report.date}}</td>
 						</tr>
 					</tbody>
 				</table>

@@ -31,6 +31,28 @@ angular.module("brokenPromisesApp").filter "snippet", ->
 				string = string.replace(re, "<span class=\"littlepart\">" + ref_date['extracted_date'] + "</span>")
 		return string
 
+angular.module("brokenPromisesApp").filter 'json', ->
+	syntaxHighlight = (json) ->
+		if (typeof json != 'string')
+			json = JSON.stringify(json, undefined, 2)
+		json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+		return json.replace /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, (match) ->
+			cls = 'number'
+			if (/^"/.test(match))
+				if (/:$/.test(match))
+					cls = 'key'
+				else
+					cls = 'string'
+			else if (/true|false/.test(match))
+				cls = 'boolean'
+			else if (/null/.test(match))
+				cls = 'null'
+			return '<span class="' + cls + '">' + match + '</span>'
+
+	(str) ->
+		a = eval(str)
+		console.log $("<pre>").text(JSON.stringify(a, undefined, 2)).html()
+		return "<pre>"+syntaxHighlight(JSON.stringify(a, undefined, 2))+"</pre>"
 ###
 Filters out all duplicate items from an array by checking the specified key
 @param [key] {string} the name of the attribute of each object to compare for uniqueness
