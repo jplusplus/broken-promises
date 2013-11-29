@@ -1,6 +1,8 @@
 h1:
 	text-align:center
 	color: rgb(55, 66, 126)
+	img:
+		width:250px
 .navbar:
 	ul:
 		padding:0 0 10px 0
