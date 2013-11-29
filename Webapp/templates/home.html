@@ -64,7 +64,8 @@
 						<tr>
 							<th>Id</th>
 							<th>Collector</th>
-							<th>Caller</th>
+							<th>Searched Date</th>
+							<th>Status</th>
 							<th>Date</th>
 						</tr>
 					</thead>
@@ -81,7 +82,8 @@
 									ng-if = "active_report.$$hashKey == report.$$hashKey">
 								</div>
 							</td>
-							<td>{{report.caller}}</td>
+							<td>{{report.meta.searched_date | ref_date}}</td>
+							<td>{{report.meta.status}}</td>
 							<td class="date">{{report.date}}</td>
 						</tr>
 					</tbody>
