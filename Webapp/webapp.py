@@ -56,15 +56,12 @@ RQDashboard(app)
 
 assets = Environment(app)
 dthandler = lambda obj: obj.isoformat() if isinstance(obj, datetime.datetime)  or isinstance(obj, datetime.date) else None
+
 # -----------------------------------------------------------------------------
 #
-# Site pages
+#    API
 #
 # -----------------------------------------------------------------------------
-@app.route('/ui')
-def index():
-	response = make_response(render_template('home.html'))
-	return response
 
 @app.route("/last_scrape/<year>")
 @app.route("/last_scrape/<year>/<month>")
@@ -142,6 +139,16 @@ def reports(year=None, month=None, day=None):
 		"reports" : [_.__dict__ for _ in reports],
 	}, default=dthandler)
 	return Response(response,  mimetype='application/json')
+
+# -----------------------------------------------------------------------------
+#
+# Site pages
+#
+# -----------------------------------------------------------------------------
+@app.route('/ui')
+def index():
+	response = make_response(render_template('home.html'))
+	return response
 
 # -----------------------------------------------------------------------------
 #

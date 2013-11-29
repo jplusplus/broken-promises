@@ -3,18 +3,40 @@ angular.module('brokenPromisesApp', ['restangular'])
 	.config(["$sceProvider", ($sceProvider) ->
 		$sceProvider.enabled(false) # unsafe mode
 	])
-	.config ['RestangularProvider', (RestangularProvider) ->
+	.config(['RestangularProvider', (RestangularProvider) ->
 		RestangularProvider.setListTypeIsArray(false)
 		RestangularProvider.setRestangularFields({
 			id: "_id",
 		})
-	]
+	])
+# -----------------------------------------------------------------------------
+#
+#    NavigationCtrl
+#
+# -----------------------------------------------------------------------------
+	.controller 'NavigationCtrl', ($scope) =>
+		$scope.currentPanel = 1
+		$scope.changePanel = (a) ->
+			$scope.currentPanel = a
 
-angular.module('brokenPromisesApp')
-	.controller('ArticlesCtrl', ($scope, Restangular) =>
-		
+# -----------------------------------------------------------------------------
+#
+#    ReportsCtrl
+#
+# -----------------------------------------------------------------------------
+	.controller 'ReportsCtrl', ($scope, Restangular) =>
+		Restangular
+			.all('reports')
+			.getList().then (reports) =>
+				$scope.reports = reports.reports
+
+# -----------------------------------------------------------------------------
+#
+#    ArticlesCtrl
+#
+# -----------------------------------------------------------------------------
+	.controller 'ArticlesCtrl', ($scope, Restangular) =>
 		$scope.active = -1
-
 		Restangular
 			.all('articles')
 			.getList().then (articles) =>
@@ -36,6 +58,5 @@ angular.module('brokenPromisesApp')
 		# 		article.note = note
 		# 		article.put()
 		# 	)
-	)
 
 # EOF

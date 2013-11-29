@@ -19,7 +19,7 @@
 		<script type="text/javascript" src="[[url_for('static', filename='js/restangular.js') ]]"></script>
 		<script type="text/javascript" src="[[url_for('static', filename='js/bootstrap.js') ]]"></script>
 		<script type="text/javascript" src="[[url_for('static', filename='js/scrollto.js') ]]"></script>
-		[% assets filters="coffeescript", output="gen/scripts.js", "coffee/scripts.coffee", "coffee/filters/filters.coffee", "coffee/directives/scroll-to.coffee" %]
+		[% assets filters="coffeescript", output="gen/scripts.js", "coffee/scripts.coffee", "coffee/filters/filters.coffee", "coffee/directives/directive.coffee" %]
 			<script type="text/javascript" src="[[ ASSET_URL ]]"></script>
 		[% endassets %]
 	</body>

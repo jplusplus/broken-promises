@@ -1,48 +1,95 @@
 [% extends 'base.html' %]
 [% block content %]
 <h1>Broken Promises/Control Tower</h1>
-<div ng-controller="ArticlesCtrl">
-	{{ articles.length }} articles
-	<table class="table table-striped">
-		<thead>
-			<tr>
-				<th>Articles</th>
-				<th>Publication</th>
-				<th>Grade</th>
-			</tr>
-		</thead>
-		<tbody>
-			<tr
-				class="article"
-				ng-repeat="article in articles | orderBy:['ref_dates.0.date.toString()', 'title']" 
-				ng-class="{
-					minus    : article.note   == -1, 
-					plus     : article.note   ==  1, 
-					plusplus : article.note   ==  2, 
-					active   : active_article == article,
-					voted    : article.note
-				}">
-				<td ng-click="setArticle(article)">
-					<span class="ref_date" ng-repeat="ref_date in article.ref_dates | unique">{{ ref_date.date | ref_date }}</span>
-					<div class="source">{{article.source}}</div>
-					<div class="title">{{article.title}}</div>
-					<div class="snippet" ng-bind-html = "article.ref_dates[0]['extract'] | snippet:article.ref_dates|unique"></div>
-					<div class="body"
-						ng-bind-html = "article.body | snippet:article.ref_dates"
-						ng-if        = "active > 0 && active_article.$$hashKey == article.$$hashKey"
-						scroll-to    = "300">
-					</div>
-					<div class="url"><a href="{{article.url}}">{{article.url}}</a></div>
-				</td>
-				<td class="pub_date"><span>{{article.pub_date | pub_date }}</span></td>
-				<td class="grade">
-<!-- 					<a ng-click="vote(article, -1)">-1</a> / 
-					<a ng-click="vote(article,  1)">+1</a> / 
-					<a ng-click="vote(article,  2)">+2</a> -->
-					<div class="note">{{ article.note }}</div>
-				</td>
-			</tr>
-		</tbody>
-	</table>
+<div ng-controller="NavigationCtrl">
+	<div class="navbar">
+		<ul>
+			<li ng-click="changePanel(1)">Articles</li>
+			<li ng-click="changePanel(2)">Reports</li>
+			<li ng-click="changePanel(3)">Jobs</li>
+		</ul>
+	</div>
+
+	<div class="Panels">
+		<div class="wrapper" panelselector>
+
+			<div class="panel Articles" ng-controller="ArticlesCtrl" panel> 
+				{{ articles.length }} articles
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>Articles</th>
+							<th>Publication</th>
+							<th>Grade</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr
+							class="article"
+							ng-repeat="article in articles | orderBy:['ref_dates.0.date.toString()', 'title']" 
+							ng-class="{
+								minus    : article.note   == -1, 
+								plus     : article.note   ==  1, 
+								plusplus : article.note   ==  2, 
+								active   : active_article == article,
+								voted    : article.note
+							}">
+							<td ng-click="setArticle(article)">
+								<span class="ref_date" ng-repeat="ref_date in article.ref_dates | unique">{{ ref_date.date | ref_date }}</span>
+								<div class="source">{{article.source}}</div>
+								<div class="title">{{article.title}}</div>
+								<div class="snippet" ng-bind-html = "article.ref_dates[0]['extract'] | snippet:article.ref_dates|unique"></div>
+								<div class="body"
+									ng-bind-html = "article.body | snippet:article.ref_dates"
+									ng-if        = "active > 0 && active_article.$$hashKey == article.$$hashKey"
+									scroll-to    = "300">
+								</div>
+								<div class="url"><a href="{{article.url}}">{{article.url}}</a></div>
+							</td>
+							<td class="pub_date"><span>{{article.pub_date | pub_date }}</span></td>
+							<td class="grade">
+			<!-- 					<a ng-click="vote(article, -1)">-1</a> / 
+								<a ng-click="vote(article,  1)">+1</a> / 
+								<a ng-click="vote(article,  2)">+2</a> -->
+								<div class="note">{{ article.note }}</div>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<div class="panel Reports" ng-controller="ReportsCtrl" panel>
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>Collector</th>
+							<th>Caller</th>
+							<th>Date</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr
+							class="report"
+							ng-repeat="report in reports">
+							<td>{{report.collector}}</td>
+							<td>{{report.caller}}</td>
+							<td>{{report.date}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+
+			
+			<script language="javascript" type="text/javascript">
+			  function resizeIframe(obj) {
+			    obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
+			  }
+			</script>
+			<div class="panel Jobs" panel>
+				<iframe class="job-frame" src="/rq" scrolling="no" frameborder="0" onload='javascript:resizeIframe(this);'></iframe>
+			</div>
+		</div>
+	</div>
 </div>
 [% endblock %]
