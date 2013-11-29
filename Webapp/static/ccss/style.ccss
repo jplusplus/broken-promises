@@ -42,6 +42,8 @@ body:
 	table:
 		td.date:
 			width:208px
+		td.id:
+			width:240px
 .Articles:
 	table:
 		tbody tr.article:

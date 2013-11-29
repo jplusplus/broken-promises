@@ -55,7 +55,6 @@ app.config.from_envvar("WEBAPP_SETTINGS")
 RQDashboard(app)
 
 assets = Environment(app)
-dthandler = lambda obj: obj.isoformat() if isinstance(obj, datetime.datetime)  or isinstance(obj, datetime.date) else None
 
 # -----------------------------------------------------------------------------
 #
@@ -161,6 +160,19 @@ def after_request(response):
 	response.headers.add('Access-Control-Allow-Methods', 'GET, POST')
 	response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
 	return response
+
+# -----------------------------------------------------------------------------
+#
+#    Utils
+#
+# -----------------------------------------------------------------------------
+from bson.objectid import ObjectId
+def dthandler(obj):
+	if isinstance(obj, datetime.datetime) or isinstance(obj, datetime.date):
+		return obj.isoformat()
+	elif isinstance(obj, ObjectId):
+		return str(obj)
+	return None
 
 # -----------------------------------------------------------------------------
 #

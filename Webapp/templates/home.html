@@ -62,6 +62,7 @@
 				<table class="table table-striped">
 					<thead>
 						<tr>
+							<th>Id</th>
 							<th>Collector</th>
 							<th>Caller</th>
 							<th>Date</th>
@@ -72,6 +73,7 @@
 							class="report"
 							ng-repeat="report in reports"
 							ng-click="setReport(report)">
+							<td class="id">{{report._id}}</td>
 							<td>
 								{{report.collector}}
 								<div class="body"
