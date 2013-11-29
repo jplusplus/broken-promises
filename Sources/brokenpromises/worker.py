@@ -36,7 +36,7 @@ class RedisWorker(object):
 		from   rq_scheduler import Scheduler
 		self.conn       = redis.from_url(settings.REDIS_URL)
 		self.queue      = rq.Queue("default", connection=self.conn, default_timeout=600)
-		self.scheduler  = Scheduler("high"  , connection=self.conn, default_timeout=600)
+		self.scheduler  = Scheduler("high"  , connection=self.conn)
 
 	def run(self, collector, **kwargs):
 		class_name       = "%s.%s" % (collector.__class__.__module__, collector.__class__.__name__)
@@ -55,7 +55,8 @@ class RedisWorker(object):
 			args           = arg,            # Arguments passed into function when executed
 			kwargs         = kwargs,         # Keyword arguments passed into function when executed
 			interval       = interval_s,     # Time before the function is called again, in seconds
-			repeat         = None            # Repeat this number of times (None means repeat forever)
+			repeat         = None,           # Repeat this number of times (None means repeat forever)
+			timeout        = 600
 		)
 		return res
 
