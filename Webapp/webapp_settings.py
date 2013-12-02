@@ -18,6 +18,7 @@ else:
 	MONGO_PORT   = 27017
 	MONGO_DBNAME = 'broken-promises'
 
-REDIS_URL = os.environ.get("REDISCLOUD_URL")
+from brokenpromises import settings
+REDIS_URL = settings.REDIS_URL
 
 # EOF

@@ -88,6 +88,8 @@ class Collector(object):
 		params = self.__dict__.copy()
 		if params.get("channels"):
 			params['channels'] = [c.__module__ for c in self.channels]
+		if params.get("collector"):
+			params['collector'] = self.collector.__class__.__name__
 		return params
 
 	def pre_filter(self, results):

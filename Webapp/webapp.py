@@ -139,6 +139,20 @@ def reports(year=None, month=None, day=None):
 	}, default=dthandler)
 	return Response(response,  mimetype='application/json')
 
+@app.route("/scheduledjobs")
+def scheduled_jobs():
+	from rq_scheduler import Scheduler
+	import redis
+	conn           = redis.from_url(app.config['REDIS_URL'])
+	scheduler      = Scheduler(connection=conn)
+	scheduled_jobs = scheduler.get_jobs(with_times=True)
+	response       = json.dumps({
+		"status"   : "ok",
+		"count"    : len(scheduled_jobs),
+		"jobs"     : [ dict(_[0].__dict__.items() + {"next_work":_[1]}.items() ) for _ in scheduled_jobs ],
+	}, default=dthandler)
+	return Response(response,  mimetype='application/json')
+
 # -----------------------------------------------------------------------------
 #
 # Site pages

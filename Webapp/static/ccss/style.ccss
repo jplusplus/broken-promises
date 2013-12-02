@@ -12,7 +12,7 @@ h1:
 
 		display: block
 		float:left
-		width: 33.33%
+		width: 25%
 		height:50px
 		font-size:2em
 		text-align:center

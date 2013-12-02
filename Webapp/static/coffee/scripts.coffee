@@ -38,6 +38,23 @@ angular.module('brokenPromisesApp', ['restangular'])
 
 # -----------------------------------------------------------------------------
 #
+#    ScheduledJobsCtrl
+#
+# -----------------------------------------------------------------------------
+	.controller 'ScheduledJobsCtrl', ($scope, Restangular) =>
+		Restangular
+			.all('scheduledjobs')
+			.getList().then (jobs) =>
+				$scope.jobs = jobs.jobs
+
+			$scope.setJob = (job) ->
+				if $scope.active_job == job
+					$scope.active_job = null
+				else
+					$scope.active_job = job
+
+# -----------------------------------------------------------------------------
+#
 #    ArticlesCtrl
 #
 # -----------------------------------------------------------------------------

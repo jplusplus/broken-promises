@@ -7,6 +7,7 @@
 			<li ng-click="changePanel(1)">Articles</li>
 			<li ng-click="changePanel(2)">Reports</li>
 			<li ng-click="changePanel(3)">Jobs</li>
+			<li ng-click="changePanel(4)">Scheduled Job</li>
 		</ul>
 	</div>
 
@@ -101,6 +102,31 @@
 			</script>
 			<div class="panel Jobs" panel>
 				<iframe class="job-frame" src="/rq" scrolling="no" frameborder="0" onload='javascript:resizeIframe(this);'></iframe>
+			</div>
+
+			<div class="panel Scheduled" ng-controller="ScheduledJobsCtrl" panel>
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>Id</th>
+							<th>Collector</th>
+							<th>frequence</th>
+							<th>next work</th>
+							<th>created at</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr
+							class="report"
+							ng-repeat="job in jobs">
+							<td class="id">{{job._id}}</td>
+							<td class="id">{{job._kwargs.params.collector}}</td>
+							<td>{{job._kwargs.params.frequence}}</td>
+							<td>{{job.next_work}}</td>
+							<td>{{job.created_at}}</td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
 		</div>
 	</div>
