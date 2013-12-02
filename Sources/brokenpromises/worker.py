@@ -28,10 +28,13 @@
 from brokenpromises import settings
 import datetime
 import calendar
+import reporter
+
+debug, trace, info, warning, error, fatal = reporter.bind(__name__)
 
 class RedisWorker(object):
 	TIMEOUT    = settings.JOB_TIMEOUT
-	FREQUENCES = ["hourly", "daily", "weekly", "monthly", "yearly"]
+	FREQUENCES = ["minutely", "hourly", "daily", "weekly", "monthly", "yearly"]
 
 	def __init__(self):
 		import rq
@@ -65,7 +68,9 @@ class RedisWorker(object):
 
 	def schedule_periodically(self, date, frequence, collector, *arg, **kwargs):
 		from brokenpromises.worker import RunAndReplaceIntTheQueuePeriodically
-		assert frequence in RedisWorker.FREQUENCES, "frequence %s unknown."
+		assert frequence in RedisWorker.FREQUENCES, "frequence %s unknown." % (frequence)
+		if frequence == "minutely":
+			next_date = date + datetime.timedelta(minutes=1)
 		if frequence == "hourly":
 			next_date = date + datetime.timedelta(hours=1)
 		if frequence == "daily":
@@ -81,11 +86,12 @@ class RedisWorker(object):
 			year      = date.year + 1
 			day       = min(date.day, calendar.monthrange(year, date.month)[1])
 			next_date = datetime.datetime(year, date.month, day, date.hour, date.minute, date.second)
+		# Schedule in a wrapper which will requeue the job after
 		self.schedule(date, RunAndReplaceIntTheQueuePeriodically(next_date, frequence, collector), *arg, **kwargs)
 
 	def schedule(self, date, collector, *arg, **kwargs):
 		res    = None
-		kwargs = kwargs.update({
+		kwargs.update({
 			"collector" : "%s.%s" % (collector.__class__.__module__, collector.__class__.__name__),
 			"params"    : collector.get_params()
 		})
@@ -98,10 +104,13 @@ class RedisWorker(object):
 
 worker = RedisWorker()
 
-class RunAndReplaceIntTheQueuePeriodically(object):
+from brokenpromises.operations import Collector
+class RunAndReplaceIntTheQueuePeriodically(Collector):
 	""" Wrapper for perodic collector """
 
-	def __init__(self, collector, next_date):
+	def __init__(self, next_date, frequence, collector):
+		self.next_date = next_date
+		self.frequence = frequence
 		self.collector = collector
 
 	def run(self, **kwargs):
