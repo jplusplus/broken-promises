@@ -27,9 +27,11 @@
 
 from brokenpromises import settings
 import datetime
+import calendar
 
 class RedisWorker(object):
-	TIMEOUT = settings.JOB_TIMEOUT
+	TIMEOUT    = settings.JOB_TIMEOUT
+	FREQUENCES = ["hourly", "daily", "weekly", "monthly", "yearly"]
 
 	def __init__(self):
 		import rq
@@ -61,12 +63,32 @@ class RedisWorker(object):
 		)
 		return res
 
+	def schedule_periodically(self, date, frequence, collector, *arg, **kwargs):
+		from brokenpromises.worker import RunAndReplaceIntTheQueuePeriodically
+		assert frequence in RedisWorker.FREQUENCES, "frequence %s unknown."
+		if frequence == "hourly":
+			next_date = date + datetime.timedelta(hours=1)
+		if frequence == "daily":
+			next_date = date + datetime.timedelta(days=1)
+		if frequence == "weekly":
+			next_date = date + datetime.timedelta(weeks=1)
+		if frequence == "monthly":
+			year      = date.year + (date.month + 1) / 12
+			month     = date.month % 12 + 1
+			day       = min(date.day, calendar.monthrange(year, month)[1])
+			next_date = datetime.datetime(year, month, day, date.hour, date.minute, date.second)
+		if frequence == "yearly":
+			year      = date.year + 1
+			day       = min(date.day, calendar.monthrange(year, date.month)[1])
+			next_date = datetime.datetime(year, date.month, day, date.hour, date.minute, date.second)
+		self.schedule(date, RunAndReplaceIntTheQueuePeriodically(next_date, frequence, collector), *arg, **kwargs)
+
 	def schedule(self, date, collector, *arg, **kwargs):
 		res    = None
-		kwargs = kwargs + {
+		kwargs = kwargs.update({
 			"collector" : "%s.%s" % (collector.__class__.__module__, collector.__class__.__name__),
 			"params"    : collector.get_params()
-		}
+		})
 		if type(date) is datetime.timedelta:
 			res = self.scheduler.enqueue_in(date, collector.run, *arg, **kwargs)
 
@@ -74,20 +96,16 @@ class RedisWorker(object):
 			res = self.scheduler.enqueue_at(date, collector.run, *arg, **kwargs)
 		return res
 
-class SimpleWorker(object):
-
-	def __init__(self):
-		pass
-
-	def run(self, job, *arg, **kwargs):
-		return job.run(*arg, **kwargs)
-
-	def schedule_with_interval(self, date, interval_s, job, *arg, **kwargs):
-		pass
-
-	def schedule(self, date, job, *arg, **kwargs):
-		pass
-
 worker = RedisWorker()
+
+class RunAndReplaceIntTheQueuePeriodically(object):
+	""" Wrapper for perodic collector """
+
+	def __init__(self, collector, next_date):
+		self.collector = collector
+
+	def run(self, **kwargs):
+		worker.schedule_periodically(self.next_date, self.frequence, self.collector)
+		self.collector.run()
 
 # EOF
