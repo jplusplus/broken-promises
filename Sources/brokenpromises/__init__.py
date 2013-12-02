@@ -51,7 +51,7 @@ settings = Settings()
 import datetime
 from brokenpromises.worker     import worker
 from rq_scheduler              import Scheduler
-from brokenpromises.operations import CollectNext7days, CollectNext2Months, CollectNext2Years
+from brokenpromises.operations import CollectNext7days, CollectNext2Months, CollectNext2Years, CollectToday
 import redis
 conn      = redis.from_url(settings.REDIS_URL)
 scheduler = Scheduler(connection=conn)
@@ -62,19 +62,20 @@ for job in scheduled_jobs:
 		scheduler.cancel(job)
 
 today = datetime.date.today()
+
+# net midnight
 next_midnight = today + datetime.timedelta(days=1)
 next_midnight = datetime.datetime(next_midnight.year, next_midnight.month, next_midnight.day, 0, 10)
+# next month
+year          = today.year + (today.month + 1) / 12
+month         = today.month % 12 + 1
+next_month    = datetime.datetime(year, month, 1, 0, 10)
+#next new year
+next_year     = datetime.datetime(today.year + 1, 1, 1, 0, 20)
 
-# collect all the week
-all_the_days = 60 * 60 * 24
-worker.schedule_with_interval(date=next_midnight, interval_s=all_the_days, collector=CollectNext7days())
-
-# collect this month
-all_the_2_weeks = all_the_days * 15
-worker.schedule_with_interval(date=next_midnight, interval_s=all_the_2_weeks, collector=CollectNext2Months())
-
-#collect this year and the next year
-new_year = datetime.datetime(today.year + 1, 1, 1, 0, 20)
-worker.schedule_with_interval(date=new_year, interval_s=31556926, collector=CollectNext2Years())
+worker.schedule_periodically(date=next_midnight, frequence="daliy"  , collector=CollectToday())
+worker.schedule_periodically(date=next_midnight, frequence="daily"  , collector=CollectNext7days())
+worker.schedule_periodically(date=next_month   , frequence="monthly", collector=CollectNext2Months())
+worker.schedule_periodically(date=next_year    , frequence="yearly" , collector=CollectNext2Years())
 
 # EOF

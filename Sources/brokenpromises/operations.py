@@ -228,8 +228,16 @@ class CollectArticlesAndSendEmail(CollectArticles):
 # -----------------------------------------------------------------------------
 # load the module brokenpromises.operations (usefull for rq and report creation)
 from brokenpromises.operations import CollectArticles
-from brokenpromises.channels import get_available_channels
-from brokenpromises.worker import worker
+from brokenpromises.channels   import get_available_channels
+from brokenpromises.worker     import worker
+
+class CollectToday(Collector):
+	
+	def run(self, **kwargs):
+		today     = datetime.date.today()
+		date      = (today.year, today.month, today.day)
+		collector = CollectArticles(get_available_channels(), *date, use_storage=True, force_collect=True)
+		worker.run(collector)
 
 class CollectNext7days(Collector):
 	
@@ -253,7 +261,7 @@ class CollectNext2Months(Collector):
 			worker.run(collector)
 
 class CollectNext2Years(Collector):
-	
+
 	def run(self, **kwargs):
 		today = datetime.date.today()
 		for year in range(0,2):
