@@ -53,16 +53,15 @@ from brokenpromises.worker     import worker
 from rq_scheduler              import Scheduler
 from brokenpromises.operations import CollectNext7days, CollectNext2Months, CollectNext2Years, CollectToday
 import redis
-conn      = redis.from_url(settings.REDIS_URL)
-scheduler = Scheduler(connection=conn)
+conn           = redis.from_url(settings.REDIS_URL)
+scheduler      = Scheduler(connection=conn)
 scheduled_jobs = scheduler.get_jobs()
 # remove all jobs with interval
 for job in scheduled_jobs:
-	if job.meta.get('interval'):
+	if "RunAndReplaceIntTheQueuePeriodically" in job.description:
 		scheduler.cancel(job)
 
-today = datetime.date.today()
-
+today = datetime.datetime.now()
 # net midnight
 next_midnight = today + datetime.timedelta(days=1)
 next_midnight = datetime.datetime(next_midnight.year, next_midnight.month, next_midnight.day, 0, 10)
@@ -73,7 +72,8 @@ next_month    = datetime.datetime(year, month, 1, 0, 10)
 #next new year
 next_year     = datetime.datetime(today.year + 1, 1, 1, 0, 20)
 
-worker.schedule_periodically(date=next_midnight, frequence="daliy"  , collector=CollectToday())
+# enqueue periodic jobs
+worker.schedule_periodically(date=next_midnight, frequence="daily"  , collector=CollectToday())
 worker.schedule_periodically(date=next_midnight, frequence="daily"  , collector=CollectNext7days())
 worker.schedule_periodically(date=next_month   , frequence="monthly", collector=CollectNext2Months())
 worker.schedule_periodically(date=next_year    , frequence="yearly" , collector=CollectNext2Years())
