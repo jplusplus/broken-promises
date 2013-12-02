@@ -29,7 +29,7 @@ from brokenpromises import settings
 import datetime
 
 class RedisWorker(object):
-	TIMEOUT = 600
+	TIMEOUT = settings.JOB_TIMEOUT
 
 	def __init__(self):
 		import rq
