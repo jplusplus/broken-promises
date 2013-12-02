@@ -137,6 +137,7 @@ class CollectArticles(Collector):
 		self.date          = (year and int(year) or None, month and int(month) or None, day and int(day) or None)
 		self.force_collect = force_collect
 		self.storage       = self.use_storage and Storage() or None
+		self.report_extra  = report_extra
 
 	def run(self, **kwargs):
 		if self.use_storage and not self.force_collect:
@@ -156,9 +157,11 @@ class CollectArticles(Collector):
 						status         = "escaped",
 						related_report = report._id,
 						description    = "escaped because of report #%s" % (report._id),
+						channels       = [c.__module__ for c in self.channels],
 						current_cache  = CollectArticles.CACHE_FOR_COLLECT,
 						searched_date  = self.date
 					)
+					self.report.meta.update(self.report_extra)
 					self.storage.save_report(self.get_report())
 					# return articles and skip a new collect
 					return articles
@@ -194,6 +197,7 @@ class CollectArticles(Collector):
 			urls_found     = [_.url for _ in articles],
 			forced_collect = self.force_collect
 		)
+		self.report.meta.update(self.report_extra)
 		# save articles and report if storage is enable
 		if self.use_storage:
 			articles = [article for article, code in self.storage.save_article(articles)]
@@ -208,19 +212,29 @@ class CollectArticles(Collector):
 from mailer import send_email
 class CollectArticlesAndSendEmail(CollectArticles):
 
+	EMAIL_SUBJECT = "New data are available for the {date}"
+	EMAIL_BODY    = """
+	Hi,
+	New data are now available on Broken Promises for the date of {date}
+	Check this out {link}
+	""".replace("\t", "")
 	def __init__(self, channels, year, month=None, day=None, report_extra={}, use_storage=False, force_collect=False, email=None):
 		self.email = email
 		super(CollectArticlesAndSendEmail, self).__init__(
-			channels=channels, year=year, month=month, day=day, report_extra=report_extra,
+			channels=channels, year=year, month=month, day=day, report_extra={"email":email},
 			use_storage=use_storage, force_collect=force_collect)
 
 	def run(self, **kwargs):
 		response = super(CollectArticlesAndSendEmail, self).run(**kwargs)
-		link = "http://localhost:5000/...."
-		send_email(self.email,
-			subject = "Your request is served!",
-			body    = "Take a look to {link}".format(link=link)
-		)
+		self.report.meta['email'] = self.email
+		# if results exists, send an email
+		if self.get_report().meta.get('related_articles', 0) > 0 or len(self.storage.get_articles(self.date)) > 0:
+			link     = "http://brokenpromises.jplusplus.org"
+			date     = brokenpromises.utils.date_to_string(*self.date)
+			send_email(self.email,
+				subject = CollectArticlesAndSendEmail.EMAIL_SUBJECT.format(date=date),
+				body    = CollectArticlesAndSendEmail.EMAIL_BODY.format(date=date, link=link)
+			)
 		return response
 
 # -----------------------------------------------------------------------------

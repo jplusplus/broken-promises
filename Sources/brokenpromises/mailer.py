@@ -41,7 +41,7 @@ def send_email(to, subject="", body="", send_from=None):
 	'from_name'  : 'Broken-Promises',
 	'to'         : to,
 	'subject'    : subject,
-	'html'       : body,
+	'text'       : body,
 	}
 	mandrill_client.messages.send(message=message, async=True)
 	pass

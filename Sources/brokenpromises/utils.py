@@ -26,6 +26,7 @@
 #     along with Broken Promises.  If not, see <http://www.gnu.org/licenses/>.
 
 import datetime
+import calendar
 
 def get_all_date_formats(year, month=None, day=None):
 	formats = []
@@ -69,6 +70,14 @@ def get_the_date_before(year, month=None, day=None):
 	date = datetime.date(year, month or 1, day or 1)
 	return date
 
+def date_to_string(year, month=None, day=None):
+	date = "%s" % (year)
+	if month:
+		date = "%s %s" % (calendar.month_name[month][:3], date)
+		if day:
+			date = "%s %s" % (day, date)
+	return date
+
 # -----------------------------------------------------------------------------
 #
 # TESTS
@@ -91,6 +100,11 @@ class TestUtils(unittest.TestCase):
 		formats = get_all_date_formats("2013", 10, "10")
 		formats.sort()
 		assert(formats == ['10 October 2013', '10 October, 2013', '10 by October 2013', '10 by October, 2013', '10 in October 2013', '10 in October, 2013', '10 of October 2013', '10 of October, 2013', '10th October 2013', '10th by October 2013', '10th by October, 2013', '10th in October 2013', '10th in October, 2013', '10th of October 2013', '10th of October, 2013', '2013-10-10', '2013/10/10']), formats
+
+	def test_date_to_string(self):
+		assert date_to_string(2013)       == "2013"
+		assert date_to_string(2013, 2)    == "Feb 2013"
+		assert date_to_string(2013, 2, 3) == "3 Feb 2013"
 
 if __name__ == "__main__":
 	# unittest.main()
