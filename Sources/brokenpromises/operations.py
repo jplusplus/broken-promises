@@ -25,15 +25,15 @@
 #     You should have received a copy of the GNU General Public License
 #     along with Broken Promises.  If not, see <http://www.gnu.org/licenses/>.
 
+from brokenpromises         import settings, Report
+from brokenpromises.storage import Storage
 import brokenpromises.channels
 import brokenpromises.utils
-from brokenpromises.storage import Storage
 import nltk
 import os
 import dateparser
 import datetime
 import reporter
-from brokenpromises import Report
 
 debug, trace, info, warning, error, fatal = reporter.bind(__name__)
 
@@ -225,16 +225,22 @@ class CollectArticlesAndSendEmail(CollectArticles):
 			use_storage=use_storage, force_collect=force_collect)
 
 	def run(self, **kwargs):
+		# [ONLY IF STORAGE IS ENABLE] save the previous count of results.
+		if self.storage:
+			previous_count = len(self.storage.get_articles(self.date))
+		# collect articles
 		response = super(CollectArticlesAndSendEmail, self).run(**kwargs)
+		# add email to the report
 		self.report.meta['email'] = self.email
-		# if results exists, send an email
-		if self.get_report().meta.get('related_articles', 0) > 0 or len(self.storage.get_articles(self.date)) > 0:
-			link     = "http://brokenpromises.jplusplus.org"
-			date     = brokenpromises.utils.date_to_string(*self.date)
-			send_email(self.email,
-				subject = CollectArticlesAndSendEmail.EMAIL_SUBJECT.format(date=date),
-				body    = CollectArticlesAndSendEmail.EMAIL_BODY.format(date=date, link=link)
-			)
+		# [ONLY IF STORAGE IS ENABLE] if there are more results since the last collect, send an email
+		if self.storage:
+			if len(self.storage.get_articles(self.date)) > previous_count:
+				link     = settings.URL_TO_CLIENT
+				date     = brokenpromises.utils.date_to_string(*self.date)
+				send_email(self.email,
+					subject = CollectArticlesAndSendEmail.EMAIL_SUBJECT.format(date=date),
+					body    = CollectArticlesAndSendEmail.EMAIL_BODY.format(date=date, link=link)
+				)
 		return response
 
 # -----------------------------------------------------------------------------
@@ -317,7 +323,6 @@ class CollectNext2Years(Collector):
 #
 # -----------------------------------------------------------------------------
 import unittest
-import settings
 
 class TestOperations(unittest.TestCase):
 	'''Test Class'''

@@ -32,10 +32,10 @@ JOB_TIMEOUT = 600
 BP_CHANNEL_GUARDIAN_API_KEY = os.environ['BP_CHANNEL_GUARDIAN_API_KEY']
 BP_CHANNEL_NYTIMES_API_KEY  = os.environ['BP_CHANNEL_NYTIMES_API_KEY']
 
+URL_TO_CLIENT   = "http://brokenpromises.jplusplus.org"
+
 MONGODB_URI     = os.getenv("MONGOLAB_URI", "mongodb://localhost/broken-promises")
-
 REDIS_URL       = os.getenv("REDISCLOUD_URL", "redis://localhost:6379")
-
 MANDRILL_APIKEY = os.getenv("MANDRILL_APIKEY", 'pshoNLcX1BM7jNCHgJsFCA') # or test api key
 
 # set cache for http requests
