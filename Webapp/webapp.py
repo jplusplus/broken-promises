@@ -163,6 +163,7 @@ def scheduled_jobs():
 #
 # -----------------------------------------------------------------------------
 @app.route('/ui')
+@app.route('/')
 @login_required
 def index():
 	response = make_response(render_template('home.html'))
@@ -171,6 +172,7 @@ def index():
 @app.route("/login", methods=["GET", "POST"])
 def login():
 	if request.form.get("password"):
+		print request.form.get("password") == app.config['SUPERUSER_PASSWORD']
 		if request.form.get("password") == app.config['SUPERUSER_PASSWORD']:
 			login_user(load_user("superuser"))
 		return redirect(request.args.get("next") or url_for("index"))
