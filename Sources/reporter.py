@@ -346,7 +346,8 @@ class XMPPReporter(Reporter):
 
 	def _send( self, level, message):
 		for recipient in self.recipients:
-			self._sendMessage(self.name, self.password, recipient, message)
+			if level >= self.level:
+				self._sendMessage(self.name, self.password, recipient, message)
 
 # ------------------------------------------------------------------------------
 #

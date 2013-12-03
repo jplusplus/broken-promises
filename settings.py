@@ -43,4 +43,8 @@ import requests_cache
 from pymongo import MongoClient
 requests_cache.install_cache(MONGODB_URI.split("/")[-1], backend='mongodb', connection=MongoClient(MONGODB_URI), expire_after=345600)
 
+# set reporting
+import reporter
+reporter.REPORTER.register(reporter.StderrReporter())
+
 # EOF
