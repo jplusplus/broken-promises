@@ -43,10 +43,13 @@ class RedisWorker(object):
 		self.conn       = redis.from_url(settings.REDIS_URL)
 		self.queue      = rq.Queue("default", connection=self.conn, default_timeout=RedisWorker.TIMEOUT)
 		self.scheduler  = Scheduler("high"  , connection=self.conn)
+		rq.use_connection(self.conn)
 
 	def run(self, collector, **kwargs):
 		class_name       = "%s.%s" % (collector.__class__.__module__, collector.__class__.__name__)
 		collector_params = collector.get_params()
+		if len(self.queue.all()) >= 20:
+			warning("More than 20 jobs in the queue")
 		return self.queue.enqueue(collector.run, collector=class_name, params=collector_params, **kwargs)
 
 	def schedule_with_interval(self, date, interval_s, collector, *arg, **kwargs):

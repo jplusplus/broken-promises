@@ -339,13 +339,14 @@ class XMPPReporter(Reporter):
 		self.recipients = toUser
 		self._sendMessage = None
 		try:
+			import pyxmpp2.simple
 			self._sendMessage = pyxmpp2.simple.send_message
 		except ImportError, e:
 			raise Exception("PyXMPP2 Module is required for Jabber reporting")
 
 	def _send( self, level, message):
 		for recipient in self.recipients:
-			iself._sendMessage(self.name, self.password, recipient, message)
+			self._sendMessage(self.name, self.password, recipient, message)
 
 # ------------------------------------------------------------------------------
 #
