@@ -3,6 +3,10 @@ import os
 DEBUG          = True
 ASSETS_DEBUG   = DEBUG
 
+# Authentication
+SECRET_KEY         = "49602ea637a8369917c5ef57d269522ed6d9c809"
+SUPERUSER_PASSWORD = os.environ.get('SUPERUSER_PASSWORD', "brokenpromises")
+
 # MongoDB
 MONGOLAB_URI = os.environ.get('MONGOLAB_URI')
 if MONGOLAB_URI:

@@ -28,6 +28,7 @@
 from flask            import Flask, render_template, request, send_file, \
 	send_from_directory, Response, abort, session, redirect, url_for, make_response, json
 from flask.ext.assets import Environment
+from flask.ext.login  import LoginManager, login_user, login_required, UserMixin, logout_user
 from rq_dashboard     import RQDashboard
 
 from brokenpromises.storage    import Storage
@@ -55,6 +56,9 @@ app.config.from_envvar("WEBAPP_SETTINGS")
 RQDashboard(app)
 
 assets = Environment(app)
+login_manager = LoginManager()
+login_manager.login_view = "login"
+login_manager.init_app(app)
 
 # -----------------------------------------------------------------------------
 #
@@ -159,9 +163,24 @@ def scheduled_jobs():
 #
 # -----------------------------------------------------------------------------
 @app.route('/ui')
+@login_required
 def index():
 	response = make_response(render_template('home.html'))
 	return response
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+	if request.form.get("password"):
+		if request.form.get("password") == app.config['SUPERUSER_PASSWORD']:
+			login_user(load_user("superuser"))
+		return redirect(request.args.get("next") or url_for("index"))
+	return render_template("login.html")
+
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    return redirect("/login")
 
 # -----------------------------------------------------------------------------
 #
@@ -187,6 +206,15 @@ def dthandler(obj):
 	elif isinstance(obj, ObjectId):
 		return str(obj)
 	return None
+
+@login_manager.user_loader
+def load_user(userid):
+	if userid == "superuser":
+		user = UserMixin()
+		user.id = "superuser"
+		return user
+	else:
+		return None
 
 # -----------------------------------------------------------------------------
 #

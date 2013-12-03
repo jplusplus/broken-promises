@@ -1,0 +1,32 @@
+[% extends 'base.html' %]
+[% block content %]
+
+<style type="text/css">
+	.row {
+		padding-top: 20px;
+	}
+	.container {
+		max-width  : 340px !important;
+		text-align : center
+	}
+	#InputPassword {
+		text-align : center;
+	}
+</style>
+
+<div class="container">
+	<h1><img src="[[url_for('static', filename='img/logo.png')]]"/>/Control Tower</h1>
+	<div class="row">
+		<div class="">
+			<form method="post" class="center-block" action="/login">
+				<input type="hidden" name="next" value="/ui"/>
+				<div class="form-group">
+					<input type="password" name="password" class="form-control" id="InputPassword" placeholder="Password">
+				</div>
+				<br/>
+					<button type="submit" class="btn btn-primary">Submit</button>
+			</form>
+		</div>
+	</div>
+</div>
+[% endblock %]
