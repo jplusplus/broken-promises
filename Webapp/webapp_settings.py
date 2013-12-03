@@ -7,6 +7,10 @@ ASSETS_DEBUG   = DEBUG
 SECRET_KEY         = "49602ea637a8369917c5ef57d269522ed6d9c809"
 SUPERUSER_PASSWORD = os.environ.get('SUPERUSER_PASSWORD', "brokenpromises")
 
+#cache
+CACHE_TYPE            = "simple"
+CACHE_DEFAULT_TIMEOUT = 30 # in seconds
+
 # MongoDB
 MONGOLAB_URI = os.environ.get('MONGOLAB_URI')
 if MONGOLAB_URI:

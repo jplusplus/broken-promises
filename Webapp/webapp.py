@@ -29,6 +29,7 @@ from flask            import Flask, render_template, request, send_file, \
 	send_from_directory, Response, abort, session, redirect, url_for, make_response, json
 from flask.ext.assets import Environment
 from flask.ext.login  import LoginManager, login_user, login_required, UserMixin, logout_user
+from flask.ext.cache  import Cache
 from rq_dashboard     import RQDashboard
 
 from brokenpromises.storage    import Storage
@@ -53,12 +54,12 @@ class CustomFlask(Flask):
 
 app = CustomFlask(__name__)
 app.config.from_envvar("WEBAPP_SETTINGS")
-RQDashboard(app)
 
-assets = Environment(app)
-login_manager = LoginManager()
+RQDashboard(app)
+Environment(app)
+cache         = Cache(app)
+login_manager = LoginManager(app)
 login_manager.login_view = "login"
-login_manager.init_app(app)
 
 # -----------------------------------------------------------------------------
 #
@@ -69,6 +70,7 @@ login_manager.init_app(app)
 @app.route("/last_scrape/<year>")
 @app.route("/last_scrape/<year>/<month>")
 @app.route("/last_scrape/<year>/<month>/<day>")
+@cache.cached()
 def last_scrape(year, month=None, day=None):
 	date    = (int(year), month and int(month) or None, day and int(day) or None)
 	reports = STORAGE.get_reports(name="collector", searched_date=date, status="done")
@@ -91,6 +93,7 @@ def last_scrape(year, month=None, day=None):
 @app.route("/count/<year>")
 @app.route("/count/<year>/<month>")
 @app.route("/count/<year>/<month>/<day>")
+@cache.cached()
 def count_for_date(year, month=None, day=None):
 	date           = (int(year), month and int(month) or None, day and int(day) or None)
 	articles_count = STORAGE.count_articles(date)
@@ -119,6 +122,7 @@ def search_date(email, year, month=None, day=None):
 @app.route("/articles/<year>")
 @app.route("/articles/<year>/<month>")
 @app.route("/articles/<year>/<month>/<day>")
+@cache.cached()
 def articles(year=None, month=None, day=None):
 	date      = (year and int(year) or None, month and int(month) or None, day and int(day) or None)
 	articles  = STORAGE.get_articles(date)
@@ -133,6 +137,7 @@ def articles(year=None, month=None, day=None):
 @app.route("/reports/<year>")
 @app.route("/reports/<year>/<month>")
 @app.route("/reports/<year>/<month>/<day>")
+@cache.cached()
 def reports(year=None, month=None, day=None):
 	date      = (year and int(year) or None, month and int(month) or None, day and int(day) or None)
 	reports   = STORAGE.get_reports(searched_date=date)
