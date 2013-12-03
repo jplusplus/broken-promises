@@ -1,6 +1,6 @@
 import os
 
-DEBUG          = os.environ.get('DEBUG', True)
+DEBUG          = os.environ.get('DEBUG', 'True') == 'True'
 ASSETS_DEBUG   = DEBUG
 
 # Authentication
