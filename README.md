@@ -27,15 +27,19 @@ Will download and install all the dependances in a `venv` directory. (Virtualenv
 make install
 ```
 
-## Run Web Application
+## Run the Application (API + Control Tower)
 
-Launch Mongodb, the workers and 
+Launch Mongodb, the workers and the web application (API + Control Tower)
 
 ```bash
 make run
 ```
 
-Then visit [http://127.0.0.1:5000/ui/](http://127.0.0.1:5000/ui/)
+Then visit [http://127.0.0.1:5000](http://127.0.0.1:5000)
+
+![screenshot](Webapp/static/img/1-jobs.png)
+![screenshot](Webapp/static/img/2-reports.png)
+![screenshot](Webapp/static/img/3-scheduled.png)
 
 ## CLI
 
