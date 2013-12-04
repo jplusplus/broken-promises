@@ -265,7 +265,7 @@ class CollectNext7days(Collector):
 	
 	def run(self, **kwargs):
 		today = datetime.date.today()
-		for day in range(0, 7): # j+7
+		for day in range(1, 7): # j+7
 			date = today + datetime.timedelta(days=day)
 			date = (date.year, date.month, date.day)
 			collector = CollectArticles(get_available_channels(), *date, use_storage=True)
