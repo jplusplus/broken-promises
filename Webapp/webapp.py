@@ -125,7 +125,7 @@ def search_date(email, year, month=None, day=None):
 @cache.cached()
 def articles(year=None, month=None, day=None):
 	date      = (year and int(year) or None, month and int(month) or None, day and int(day) or None)
-	articles  = STORAGE.get_articles(date)
+	articles  = STORAGE.get_articles(date)[:20]
 	response  = json.dumps({
 		"status"   : "ok",
 		"count"    : len(articles),
