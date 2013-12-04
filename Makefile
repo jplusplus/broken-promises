@@ -1,10 +1,12 @@
 # Makefile -- Broken Promises
 
 WEBAPP     = $(wildcard */webapp.py)
+WORKERS    = Scripts/workers
 TEST       = Tests/all.py
 
 run:
 	mongod&
+	$(WORKERS)&
 	. `pwd`/.env ; python $(WEBAPP)
 
 install:
