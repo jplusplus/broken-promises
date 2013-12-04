@@ -227,14 +227,14 @@ class CollectArticlesAndSendEmail(CollectArticles):
 	def run(self, **kwargs):
 		# [ONLY IF STORAGE IS ENABLE] save the previous count of results.
 		if self.storage:
-			previous_count = len(self.storage.get_articles(self.date))
+			previous_count = self.storage.count_articles(self.date)
 		# collect articles
 		response = super(CollectArticlesAndSendEmail, self).run(**kwargs)
 		# add email to the report
 		self.report.meta['email'] = self.email
 		# [ONLY IF STORAGE IS ENABLE] if there are more results since the last collect, send an email
 		if self.storage:
-			if len(self.storage.get_articles(self.date)) > previous_count:
+			if self.storage.count_articles(self.date)> previous_count:
 				link     = settings.URL_TO_CLIENT
 				date     = brokenpromises.utils.date_to_string(*self.date)
 				send_email(self.email,
