@@ -8,9 +8,10 @@ Broken-Promises
 
 **a. Requirements**
 ```bash
-sudo apt-get install build-essential git-core python python-pip python-dev
+sudo apt-get install build-essential git-core python python-pip python-dev redis-server
 sudo pip install virtualenv
 ```
+And [MongoDB](http://www.mongodb.org/downloads).
 
 **b.  Download the project**
 ```bash
@@ -19,11 +20,17 @@ cd broken-promises
 ```
 
 **c. Install**
+
+Will download and install all the dependances in a `venv` directory. (Virtualenv required)
+
 ```bash
 make install
 ```
 
 ## Run Web Application
+
+Launch Mongodb, the workers and 
+
 ```bash
 make run
 ```
@@ -59,10 +66,10 @@ Options:
 
 ```
 
-### Scrap a given page
+### Scrap a given page using the appropriate channel 
 
 ```
-usage: scrap_article.py [-h] [--with-filters] url
+usage: scrap_article.py [-h] [--with-filters] [--dates] url
 
 positional arguments:
   url             url to scrap
@@ -70,6 +77,7 @@ positional arguments:
 optional arguments:
   -h, --help      show this help message and exit
   --with-filters  Apply filters to remove unwanted dates
+  --dates         Return the date found in the article
 
 ```
 ## Run tests
