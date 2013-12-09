@@ -36,7 +36,6 @@ from brokenpromises.storage    import Storage
 from brokenpromises.channels   import get_available_channels
 from brokenpromises.operations import CollectArticlesAndSendEmail
 from brokenpromises.worker     import worker
-
 import os
 import datetime
 
@@ -63,6 +62,33 @@ login_manager.login_view = "login"
 
 # -----------------------------------------------------------------------------
 #
+#    Utils
+#
+# -----------------------------------------------------------------------------
+from bson.objectid import ObjectId
+def dthandler(obj):
+	if isinstance(obj, datetime.datetime) or isinstance(obj, datetime.date):
+		return obj.isoformat()
+	elif isinstance(obj, ObjectId):
+		return str(obj)
+	return None
+
+@login_manager.user_loader
+def load_user(userid):
+	if userid == "superuser":
+		user = UserMixin()
+		user.id = "superuser"
+		return user
+	else:
+		return None
+
+def make_cache_key(*args, **kwargs):
+	path = request.path
+	args = str(hash(frozenset(request.args.items())))
+	return (path + args).encode('utf-8')
+
+# -----------------------------------------------------------------------------
+#
 #    API
 #
 # -----------------------------------------------------------------------------
@@ -70,7 +96,7 @@ login_manager.login_view = "login"
 @app.route("/last_scrape/<year>")
 @app.route("/last_scrape/<year>/<month>")
 @app.route("/last_scrape/<year>/<month>/<day>")
-@cache.cached()
+@cache.cached(key_prefix=make_cache_key)
 def last_scrape(year, month=None, day=None):
 	date    = (int(year), month and int(month) or None, day and int(day) or None)
 	reports = STORAGE.get_reports(name="collector", searched_date=date, status="done")
@@ -93,7 +119,7 @@ def last_scrape(year, month=None, day=None):
 @app.route("/count/<year>")
 @app.route("/count/<year>/<month>")
 @app.route("/count/<year>/<month>/<day>")
-@cache.cached()
+@cache.cached(key_prefix=make_cache_key)
 def count_for_date(year, month=None, day=None):
 	date           = (int(year), month and int(month) or None, day and int(day) or None)
 	articles_count = STORAGE.count_articles(date)
@@ -122,10 +148,12 @@ def search_date(email, year, month=None, day=None):
 @app.route("/articles/<year>")
 @app.route("/articles/<year>/<month>")
 @app.route("/articles/<year>/<month>/<day>")
-@cache.cached()
+@cache.cached(key_prefix=make_cache_key)
 def articles(year=None, month=None, day=None):
+	limit     = int(request.args.get('limit', 20))
+	skip      = int(request.args.get('skip' , 0))
 	date      = (year and int(year) or None, month and int(month) or None, day and int(day) or None)
-	articles  = STORAGE.get_articles(date)[:20]
+	articles  = STORAGE.get_articles(date, limit=limit, skip=skip)
 	response  = json.dumps({
 		"status"   : "ok",
 		"count"    : len(articles),
@@ -137,7 +165,7 @@ def articles(year=None, month=None, day=None):
 @app.route("/reports/<year>")
 @app.route("/reports/<year>/<month>")
 @app.route("/reports/<year>/<month>/<day>")
-@cache.cached()
+@cache.cached(key_prefix=make_cache_key)
 def reports(year=None, month=None, day=None):
 	date      = (year and int(year) or None, month and int(month) or None, day and int(day) or None)
 	reports   = STORAGE.get_reports(searched_date=date)
@@ -186,8 +214,8 @@ def login():
 @app.route("/logout")
 @login_required
 def logout():
-    logout_user()
-    return redirect("/login")
+	logout_user()
+	return redirect("/login")
 
 # -----------------------------------------------------------------------------
 #
@@ -200,28 +228,6 @@ def after_request(response):
 	response.headers.add('Access-Control-Allow-Methods', 'GET, POST')
 	response.headers.add('Access-Control-Allow-Headers', 'Content-Type')
 	return response
-
-# -----------------------------------------------------------------------------
-#
-#    Utils
-#
-# -----------------------------------------------------------------------------
-from bson.objectid import ObjectId
-def dthandler(obj):
-	if isinstance(obj, datetime.datetime) or isinstance(obj, datetime.date):
-		return obj.isoformat()
-	elif isinstance(obj, ObjectId):
-		return str(obj)
-	return None
-
-@login_manager.user_loader
-def load_user(userid):
-	if userid == "superuser":
-		user = UserMixin()
-		user.id = "superuser"
-		return user
-	else:
-		return None
 
 # -----------------------------------------------------------------------------
 #
