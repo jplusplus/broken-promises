@@ -315,6 +315,12 @@ class CollectNext2Years(Collector):
 			collector = CollectArticles(get_available_channels(), *date, use_storage=True)
 			worker.run(collector)
 
+class SummonMrClean(Collector):
+
+	def run(self, **kwargs):
+		collector = MrClean()
+		worker.run(collector)
+
 # -----------------------------------------------------------------------------
 #
 #    RefreshArticles : reparse given articles
