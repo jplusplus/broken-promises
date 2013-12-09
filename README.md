@@ -10,7 +10,7 @@ It can be hard to keep track of all promises and predictions. This tool makes it
 
 ## Note
 
-This is only the backend system wich will retrieve articles. To show them, we have build [broken-promises-client](https://github.com/jplusplus/broken-promises-client).
+This is only the backend system wich will retrieve articles. To show them, we have built [broken-promises-client](https://github.com/jplusplus/broken-promises-client).
 
 ## Installation
 
