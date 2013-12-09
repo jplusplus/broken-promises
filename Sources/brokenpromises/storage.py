@@ -89,6 +89,13 @@ class Storage(object):
 	def count_articles(self, date=None, limit=0, skip=0):
 		return self._get_articles(date, limit=limit, skip=skip).count()
 
+	def _remove_article(self, article):
+		articles_collection = self.get_collection(Storage.COLLECTION_ARTICLES)
+		return articles_collection.remove(article)
+
+	def remove_article(self, article):
+		self._remove_article(article)
+
 	# -----------------------------------------------------------------------------
 	#
 	#    Reports
