@@ -33,6 +33,7 @@ import nltk
 import os
 import dateparser
 import datetime
+import calendar
 import reporter
 
 debug, trace, info, warning, error, fatal = reporter.bind(__name__)
@@ -225,7 +226,10 @@ class MrClean(Collector):
 		self.set_report(removed_articles=[])
 		for article in articles:
 			for ref_date in article.ref_dates:
-				r_date = datetime.date(ref_date['date'][0], ref_date['date'][1] or 12, ref_date['date'][2] or 31)
+				year   = ref_date['date'][0]
+				month  = ref_date['date'][1] or 12
+				day    = ref_date['date'][2] or calendar.monthrange(year, month)[1]
+				r_date = datetime.date(year, month, day)
 				if r_date >= week_before:
 					break
 			else:
