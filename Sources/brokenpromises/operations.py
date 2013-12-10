@@ -211,15 +211,17 @@ class CollectArticles(Collector):
 # -----------------------------------------------------------------------------
 
 class MrClean(Collector):
+	"""
+	delete articles older than 1 week
+	"""
 
 	def __init__(self):
 		super(MrClean, self).__init__()
 		self.storage = Storage()
 
 	def run(self, **kwargs):
-		articles = self.storage.get_articles()
+		articles    = self.storage.get_articles()
 		week_before = datetime.date.today() - datetime.timedelta(7) # 1 week delta
-		to_remove = ()
 		for article in articles:
 			for ref_date in article.ref_dates:
 				r_date = datetime.date(ref_date['date'][0], ref_date['date'][1] or 12, ref_date['date'][2] or 31)
@@ -314,38 +316,6 @@ class CollectNext2Years(Collector):
 			date      = [today.year + year, None, None]
 			collector = CollectArticles(get_available_channels(), *date, use_storage=True)
 			worker.run(collector)
-
-class SummonMrClean(Collector):
-
-	def run(self, **kwargs):
-		collector = MrClean()
-		worker.run(collector)
-
-# -----------------------------------------------------------------------------
-#
-#    RefreshArticles : reparse given articles
-#
-# -----------------------------------------------------------------------------
-# class RefreshArticles(Collector):
-
-# 	def __init__(self, articles, scrape=False):
-# 		super(RefreshArticles, self).__init__()
-# 		self.articles = articles
-# 		self.scrape   = scrape
-
-# 	def run(self):
-# 		articles = self.articles
-# 		# pre-filters
-# 		self.pre_filter(articles)
-# 		# parsing date
-# 		for article in articles:
-# 			if self.scrape:
-# 				Channel       = brokenpromises.channels.perform_channels_import(article.channel)
-# 				article.body  = Channel().scrape_body_article(article.url)
-# 			article.ref_dates = self.retrieve_referenced_dates(article.body)
-# 		# post-filters
-# 		articles = self.post_filter(articles)
-# 		return articles
 
 # -----------------------------------------------------------------------------
 #

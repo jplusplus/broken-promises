@@ -51,7 +51,7 @@ settings = Settings()
 import datetime
 from brokenpromises.worker     import worker
 from rq_scheduler              import Scheduler
-from brokenpromises.operations import CollectNext7days, CollectNext2Months, CollectNext2Years, CollectToday, SummonMrClean
+from brokenpromises.operations import CollectNext7days, CollectNext2Months, CollectNext2Years, CollectToday, MrClean
 import redis
 conn           = redis.from_url(settings.REDIS_URL)
 scheduler      = Scheduler(connection=conn)
@@ -75,7 +75,7 @@ next_year     = datetime.datetime(today.year + 1, 1, 1, 0, 20)
 # enqueue periodic jobs
 worker.schedule_periodically(date=next_midnight, frequence="daily"  , collector=CollectToday())
 worker.schedule_periodically(date=next_midnight, frequence="daily"  , collector=CollectNext7days())
-worker.schedule_periodically(date=next_midnight, frequence="daily"  , collector=SummonMrClean())
+worker.schedule_periodically(date=next_midnight, frequence="daily"  , collector=MrClean())
 worker.schedule_periodically(date=next_month   , frequence="monthly", collector=CollectNext2Months())
 worker.schedule_periodically(date=next_year    , frequence="yearly" , collector=CollectNext2Years())
 
