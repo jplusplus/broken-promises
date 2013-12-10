@@ -223,7 +223,7 @@ class MrClean(Collector):
 	def run(self, **kwargs):
 		articles    = self.storage.get_articles()
 		week_before = datetime.date.today() - datetime.timedelta(7) # 1 week delta
-		self.set_report(removed_articles=[])
+		removed_articles = []
 		for article in articles:
 			for ref_date in article.ref_dates:
 				year   = ref_date['date'][0]
@@ -233,8 +233,13 @@ class MrClean(Collector):
 				if r_date >= week_before:
 					break
 			else:
-				self.report.removed_articles.append(article.__dict__)
+				removed_articles.append(article.__dict__)
 				self.storage.remove_article(article._id)
+		self.set_report(
+			status           = "done",
+			count            = len(removed_articles),
+			removed_articles = removed_articles)
+
 		self.storage.save_report(self.get_report())
 
 # -----------------------------------------------------------------------------
